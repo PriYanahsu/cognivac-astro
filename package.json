@@ -10,11 +10,11 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "start": "node dist/server/entry.mjs",
+    "start": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/node": "^11.1.0",
+    "@astrojs/vercel": "^11.0.5",
     "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
     "@lucide/astro": "^1.29.0",
     "@tailwindcss/vite": "^4.3.3",

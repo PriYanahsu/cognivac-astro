@@ -1,6 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import node from '@astrojs/node';
+import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
@@ -13,7 +13,7 @@ export default defineConfig({
    * which is why an adapter is present at all.
    */
   output: 'static',
-  adapter: node({ mode: 'standalone' }),
+  adapter: vercel(),
 
   vite: {
     plugins: [tailwindcss()],
