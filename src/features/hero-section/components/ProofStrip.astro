@@ -12,7 +12,7 @@ const loop = [...PROOF_STRIP.stats, ...PROOF_STRIP.stats];
 ---
 
 <div
-  class="relative w-full overflow-hidden bg-[#0e0e10] py-5 sm:py-8 lg:py-10"
+  class="relative w-full overflow-hidden bg-[#0e0e10] py-3 sm:py-7 lg:py-9"
   aria-label={PROOF_STRIP.label}
 >
   <div
@@ -34,13 +34,13 @@ const loop = [...PROOF_STRIP.stats, ...PROOF_STRIP.stats];
           const isClone = index >= PROOF_STRIP.stats.length;
           return (
             <div
-              class="flex w-[min(85vw,22rem)] shrink-0 flex-col justify-center border-r border-white/15 px-8 text-center sm:w-[26rem] sm:px-14"
+              class="flex w-[11.5rem] shrink-0 flex-col justify-center border-r border-white/15 px-3 text-center sm:w-[26rem] sm:px-14"
               aria-hidden={isClone ? "true" : undefined}
             >
-              <dt class="text-base font-bold tracking-tight text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.65)] sm:text-xl lg:text-2xl">
+              <dt class="text-[13px] font-bold tracking-tight text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.65)] sm:text-xl lg:text-2xl">
                 {stat.value}
               </dt>
-              <dd class="mt-0.5 text-xs leading-snug text-white/70 sm:mt-1.5 sm:text-sm">
+              <dd class="mt-0.5 text-[9px] leading-snug text-white/70 sm:mt-1.5 sm:text-sm">
                 {stat.detail}
               </dd>
             </div>

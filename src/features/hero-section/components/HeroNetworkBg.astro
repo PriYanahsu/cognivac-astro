@@ -9,25 +9,16 @@
 
 <div data-hero-network class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
   <div class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-90"></div>
+  <canvas
+    data-hero-canvas
+    class="absolute inset-0 h-full w-full opacity-[0.32] md:opacity-100"
+  ></canvas>
   {/*
-    The backdrop is landscape, so covering a tall phone viewport crops to
-    its plain cream centre and discards the blue corners entirely. This
-    puts that accent back on small screens only — from md up the image's
-    own corners are in frame and a second glow would double them.
+    Scrim over the network canvas: strongest behind the headline.
+    Mobile gets a heavier wash so the mesh doesn't fight the copy.
   */}
   <div
-    class="absolute inset-0 bg-[radial-gradient(ellipse_95%_30%_at_100%_0%,rgba(56,160,235,0.34)_0%,rgba(56,160,235,0.1)_45%,transparent_75%),radial-gradient(ellipse_90%_28%_at_0%_100%,rgba(30,120,230,0.34)_0%,rgba(30,120,230,0.1)_45%,transparent_75%)] md:hidden"
-  >
-  </div>
-  <canvas data-hero-canvas class="absolute inset-0 h-full w-full"></canvas>
-  {/*
-    Scrim over the network canvas: strongest behind the headline, easing
-    off toward the edges so the backdrop image's colour still reads there.
-    It no longer has to wash all the way to #FAFAFA at the border — the
-    image covers what used to be a hard cut.
-  */}
-  <div
-    class="absolute inset-0 bg-[radial-gradient(ellipse_58%_48%_at_50%_34%,rgba(250,250,250,0.76)_0%,rgba(250,250,250,0.38)_48%,rgba(250,250,250,0.16)_100%)]"
+    class="absolute inset-0 bg-[radial-gradient(ellipse_72%_58%_at_50%_32%,rgba(250,250,250,0.94)_0%,rgba(250,250,250,0.78)_40%,rgba(250,250,250,0.55)_100%)] md:bg-[radial-gradient(ellipse_58%_48%_at_50%_34%,rgba(250,250,250,0.76)_0%,rgba(250,250,250,0.38)_48%,rgba(250,250,250,0.16)_100%)]"
   >
   </div>
 </div>
