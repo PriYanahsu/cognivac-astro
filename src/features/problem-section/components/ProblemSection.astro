@@ -17,23 +17,25 @@ import { PROBLEM_CONTENT, PROBLEM_POINTS } from "../constants";
 const total = String(PROBLEM_POINTS.length).padStart(2, "0");
 ---
 
-<section class="relative bg-lavender/30 py-16 sm:py-20 lg:py-28">
+<section class="relative bg-lavender/30 py-10 sm:py-20 lg:py-28">
   <Container>
-    <div class="grid items-start gap-10 lg:grid-cols-12 lg:gap-16">
+    <div class="grid items-start gap-6 sm:gap-10 lg:grid-cols-12 lg:gap-16">
       <FadeIn class="lg:sticky lg:top-28 lg:col-span-5 lg:self-start">
-        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+        <SectionLabel class="mb-0 text-[12px] tracking-[0.08em] sm:text-sm">
           {PROBLEM_CONTENT.label}
         </SectionLabel>
-        <h2 class="text-section mt-5 max-w-[22ch] text-primary">
+        <h2
+          class="mt-3 max-w-[22ch] text-[1.35rem] font-bold leading-[1.2] tracking-[-0.02em] text-primary sm:mt-5 sm:text-section"
+        >
           {PROBLEM_CONTENT.title}
         </h2>
         <p
-          class="mt-5 max-w-[46ch] text-[16px] leading-[1.6] text-muted sm:text-[18px]"
+          class="mt-3 max-w-[46ch] text-[14px] leading-[1.55] text-muted sm:mt-5 sm:text-[18px] sm:leading-[1.6]"
         >
           {PROBLEM_CONTENT.description}
         </p>
         <p
-          class="mt-6 max-w-[40ch] border-l-2 border-accent pl-4 text-[16px] font-semibold leading-snug text-primary sm:text-[18px]"
+          class="mt-4 max-w-[40ch] border-l-2 border-accent pl-3 text-[14px] font-semibold leading-snug text-primary sm:mt-6 sm:pl-4 sm:text-[18px]"
         >
           {PROBLEM_CONTENT.pivot}
         </p>
@@ -101,23 +103,23 @@ const total = String(PROBLEM_POINTS.length).padStart(2, "0");
 
               <div
                 data-problem-body
-                class="py-7 transition-transform duration-500 ease-out sm:py-9"
+                class="py-5 transition-transform duration-500 ease-out sm:py-9"
               >
                 <span
                   data-problem-tag
-                  class="block text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors duration-500"
+                  class="block text-[10px] font-semibold uppercase tracking-[0.18em] transition-colors duration-500 sm:text-[11px]"
                 >
                   {point.tag}
                 </span>
                 <h3
                   data-problem-title
-                  class="text-card-title mt-2 transition-colors duration-500"
+                  class="mt-1.5 text-[1.05rem] font-bold leading-snug transition-colors duration-500 sm:mt-2 sm:text-card-title"
                 >
                   {point.title}
                 </h3>
                 <p
                   data-problem-desc
-                  class="mt-2.5 max-w-[52ch] text-[15px] leading-[1.65] transition-colors duration-500 sm:text-[16.5px]"
+                  class="mt-1.5 max-w-[52ch] text-[13.5px] leading-[1.55] transition-colors duration-500 sm:mt-2.5 sm:text-[16.5px] sm:leading-[1.65]"
                 >
                   {point.description}
                 </p>

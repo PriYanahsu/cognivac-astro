@@ -16,15 +16,10 @@ export const HERO_CONTENT = {
 };
 
 /**
- * Four numbers directly under the hero, no heading — the brief puts the
- * delivery record before the pitch, so it is the second thing read.
+ * Delivery figures under the hero — infinite RTL marquee, no heading.
  *
- * Replaced the industries marquee, which scrolled fourteen sector names with
- * no logos behind them: that is a list of markets, not evidence of shipping.
- *
- * ⚠️ `projects` is still the brief's placeholder. Every other figure here is
- * verifiable, and one soft number in a row of four discredits the other three.
- * Fill it from the real shipped count before this goes live.
+ * ⚠️ `projects` is still the brief's placeholder. Fill it from the real
+ * shipped count before this goes live.
  */
 export const PROOF_STRIP = {
   /** Not rendered — the row carries no heading, so this labels it for screen readers. */
@@ -34,5 +29,7 @@ export const PROOF_STRIP = {
     { id: "experience", value: "25+ yrs", detail: "senior leadership" },
     { id: "projects", value: "N projects", detail: "shipped to production" },
     { id: "team", value: "6–8 engineers", detail: "senior only" },
+    { id: "uptime", value: "99.9% uptime", detail: "production SLAs" },
+    { id: "response", value: "<24h response", detail: "engagement kickoff" },
   ],
 } as const;

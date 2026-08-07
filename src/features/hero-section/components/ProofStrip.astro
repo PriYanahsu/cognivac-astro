@@ -1,17 +1,18 @@
 ---
-import Container from "@/components/shared/Container.astro";
 import { PROOF_STRIP } from "@/features/hero-section/constants";
 
 /**
  * Port of features/hero-section/components/proof-strip.tsx.
  *
- * Full-bleed dark proof band. AI network art is the visible bg; a light
- * charcoal veil keeps stats readable without crushing the image.
+ * Full-bleed dark proof band. Stats scroll RTL in an infinite loop;
+ * the track is duplicated so -50% translate loops cleanly.
  */
+
+const loop = [...PROOF_STRIP.stats, ...PROOF_STRIP.stats];
 ---
 
 <div
-  class="relative w-full overflow-hidden bg-[#0e0e10] py-10 sm:py-11 lg:py-12"
+  class="relative w-full overflow-hidden bg-[#0e0e10] py-5 sm:py-8 lg:py-10"
   aria-label={PROOF_STRIP.label}
 >
   <div
@@ -20,33 +21,32 @@ import { PROOF_STRIP } from "@/features/hero-section/constants";
     style="background-image: url(/images/proof-strip-bg.png)"
   >
   </div>
-  <!-- Light veil only — enough for white type, keeps blue network visible -->
   <div
     aria-hidden="true"
     class="pointer-events-none absolute inset-0 bg-[#0e0e10]/35"
   >
   </div>
 
-  <Container class="relative z-10">
-    <dl class="grid grid-cols-2 gap-y-8 sm:grid-cols-4 sm:gap-y-0">
+  <div class="proof-strip-marquee relative z-10">
+    <dl class="proof-strip-track flex w-max items-stretch">
       {
-        PROOF_STRIP.stats.map((stat, index) => (
-          <div
-            class:list={[
-              "px-3 text-center sm:px-5",
-              index % 2 !== 0 && "border-l border-white/20",
-              index > 0 && "sm:border-l sm:border-white/20",
-            ]}
-          >
-            <dt class="text-lg font-bold tracking-tight text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.65)] sm:text-xl lg:text-2xl">
-              {stat.value}
-            </dt>
-            <dd class="mt-1.5 text-[13px] leading-snug text-white/70 sm:text-sm">
-              {stat.detail}
-            </dd>
-          </div>
-        ))
+        loop.map((stat, index) => {
+          const isClone = index >= PROOF_STRIP.stats.length;
+          return (
+            <div
+              class="flex w-[min(85vw,22rem)] shrink-0 flex-col justify-center border-r border-white/15 px-8 text-center sm:w-[26rem] sm:px-14"
+              aria-hidden={isClone ? "true" : undefined}
+            >
+              <dt class="text-base font-bold tracking-tight text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.65)] sm:text-xl lg:text-2xl">
+                {stat.value}
+              </dt>
+              <dd class="mt-0.5 text-xs leading-snug text-white/70 sm:mt-1.5 sm:text-sm">
+                {stat.detail}
+              </dd>
+            </div>
+          );
+        })
       }
     </dl>
-  </Container>
+  </div>
 </div>

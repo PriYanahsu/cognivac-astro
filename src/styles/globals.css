@@ -270,6 +270,56 @@ h6 {
   color: #fff;
 }
 
+/* Proof strip marquee (RTL) */
+@keyframes proof-strip-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.proof-strip-track {
+  animation: proof-strip-marquee 40s linear infinite;
+}
+
+.proof-strip-marquee {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 6%,
+    #000 94%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 6%,
+    #000 94%,
+    transparent 100%
+  );
+}
+
+@media (min-width: 768px) {
+  .proof-strip-marquee {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 10%,
+      #000 90%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 10%,
+      #000 90%,
+      transparent 100%
+    );
+  }
+}
+
 /* Hero AI network backdrop */
 @keyframes hero-flow-dash {
   to {
@@ -339,6 +389,10 @@ h6 {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .proof-strip-track {
+    animation: none;
+  }
+
   .hero-flow,
   .hero-flow-delay-1,
   .hero-flow-delay-2,
