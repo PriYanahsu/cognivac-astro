@@ -20,7 +20,8 @@ const { side = "right", class: className } = Astro.props;
 
   <div
     data-overlay
-    class="fixed inset-0 z-50 bg-primary/50 backdrop-blur-sm"
+    data-state="closed"
+    class="fixed inset-0 z-[60] bg-primary/50 backdrop-blur-sm"
     aria-hidden="true"
   >
   </div>
@@ -28,12 +29,13 @@ const { side = "right", class: className } = Astro.props;
   <div
     data-overlay-panel
     data-sheet-panel
+    data-state="closed"
     data-lenis-prevent
     role="dialog"
     aria-modal="true"
     aria-label="Menu"
     class={cn(
-      "fixed z-50 flex h-full w-full max-w-sm flex-col bg-white p-6 shadow-soft-lg",
+      "fixed z-[60] flex h-dvh w-full max-w-sm flex-col bg-white p-6 shadow-soft-lg",
       side === "right" && "inset-y-0 right-0",
       side === "left" && "inset-y-0 left-0",
       className

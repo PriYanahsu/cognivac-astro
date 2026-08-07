@@ -10,6 +10,10 @@
  *   [data-overlay-close]     closes it
  *   [data-overlay]           backdrop; clicking it closes
  *   [data-overlay-panel]     the focus-trapped surface
+ *
+ * Overlay + panel are portaled to document.body so they escape the navbar
+ * pill's backdrop-filter containing block (fixed descendants otherwise clip
+ * to the ~56px bar).
  */
 
 const FOCUSABLE =
@@ -17,9 +21,31 @@ const FOCUSABLE =
 
 let openRoot: HTMLElement | null = null;
 let lastTrigger: HTMLElement | null = null;
+let overlaySeq = 0;
 
-function panelOf(root: HTMLElement) {
-  return root.querySelector<HTMLElement>("[data-overlay-panel]");
+function partsOf(root: HTMLElement) {
+  const id = root.dataset.overlayId;
+  if (!id) {
+    return {
+      overlay: root.querySelector<HTMLElement>("[data-overlay]"),
+      panel: root.querySelector<HTMLElement>("[data-overlay-panel]"),
+    };
+  }
+  return {
+    overlay: document.querySelector<HTMLElement>(
+      `[data-overlay][data-overlay-id="${id}"]`
+    ),
+    panel: document.querySelector<HTMLElement>(
+      `[data-overlay-panel][data-overlay-id="${id}"]`
+    ),
+  };
+}
+
+function setState(root: HTMLElement, state: "open" | "closed") {
+  root.dataset.state = state;
+  const { overlay, panel } = partsOf(root);
+  if (overlay) overlay.dataset.state = state;
+  if (panel) panel.dataset.state = state;
 }
 
 function lockScroll(locked: boolean) {
@@ -34,7 +60,7 @@ export function closeOverlay() {
   if (!openRoot) return;
 
   const root = openRoot;
-  root.dataset.state = "closed";
+  setState(root, "closed");
   root
     .querySelectorAll<HTMLElement>("[data-overlay-trigger]")
     .forEach((t) => t.setAttribute("aria-expanded", "false"));
@@ -49,7 +75,7 @@ export function closeOverlay() {
 export function openOverlay(root: HTMLElement, trigger?: HTMLElement) {
   if (openRoot && openRoot !== root) closeOverlay();
 
-  root.dataset.state = "open";
+  setState(root, "open");
   root
     .querySelectorAll<HTMLElement>("[data-overlay-trigger]")
     .forEach((t) => t.setAttribute("aria-expanded", "true"));
@@ -60,7 +86,7 @@ export function openOverlay(root: HTMLElement, trigger?: HTMLElement) {
 
   // Wait a frame so the panel is visible before focus moves into it.
   requestAnimationFrame(() => {
-    const panel = panelOf(root);
+    const { panel } = partsOf(root);
     if (!panel) return;
     const autofocus = panel.querySelector<HTMLElement>("[data-autofocus]");
     (autofocus ?? panel.querySelector<HTMLElement>(FOCUSABLE) ?? panel).focus();
@@ -78,7 +104,7 @@ function onKeydown(event: KeyboardEvent) {
 
   if (event.key !== "Tab") return;
 
-  const panel = panelOf(openRoot);
+  const { panel } = partsOf(openRoot);
   if (!panel) return;
 
   const focusable = Array.from(
@@ -99,13 +125,35 @@ function onKeydown(event: KeyboardEvent) {
   }
 }
 
+function portalOverlay(root: HTMLElement) {
+  const overlay = root.querySelector<HTMLElement>("[data-overlay]");
+  const panel = root.querySelector<HTMLElement>("[data-overlay-panel]");
+  if (!overlay || !panel) return;
+
+  const id = root.dataset.overlayId ?? `ov-${++overlaySeq}`;
+  root.dataset.overlayId = id;
+  overlay.dataset.overlayId = id;
+  panel.dataset.overlayId = id;
+  overlay.dataset.state = root.dataset.state ?? "closed";
+  panel.dataset.state = root.dataset.state ?? "closed";
+
+  if (overlay.parentElement !== document.body) {
+    document.body.append(overlay, panel);
+  }
+}
+
 export function initOverlays() {
   document
     .querySelectorAll<HTMLElement>("[data-overlay-root]")
     .forEach((root) => {
-      if (root.dataset.overlayReady === "true") return;
+      if (root.dataset.overlayReady === "true") {
+        // Re-portal after Astro page swaps in case nodes were remounted.
+        portalOverlay(root);
+        return;
+      }
       root.dataset.overlayReady = "true";
       root.dataset.state = "closed";
+      portalOverlay(root);
 
       root.addEventListener("click", (event) => {
         const target = event.target as HTMLElement;
@@ -115,13 +163,14 @@ export function initOverlays() {
             root,
             target.closest<HTMLElement>("[data-overlay-trigger]") ?? undefined
           );
-          return;
         }
+      });
 
-        // Backdrop: only a direct hit, never a click that bubbled from the panel.
-        if (target.closest("[data-overlay-close]") || target.matches("[data-overlay]")) {
-          closeOverlay();
-        }
+      const { overlay, panel } = partsOf(root);
+      overlay?.addEventListener("click", () => closeOverlay());
+      panel?.addEventListener("click", (event) => {
+        const target = event.target as HTMLElement;
+        if (target.closest("[data-overlay-close]")) closeOverlay();
       });
     });
 }

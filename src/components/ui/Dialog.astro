@@ -20,7 +20,8 @@ const titleId = `dialog-title-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}
 
   <div
     data-overlay
-    class="fixed inset-0 z-50 bg-primary/60 backdrop-blur-sm"
+    data-state="closed"
+    class="fixed inset-0 z-[60] bg-primary/60 backdrop-blur-sm"
     aria-hidden="true"
   >
   </div>
@@ -28,12 +29,13 @@ const titleId = `dialog-title-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}
   <div
     data-overlay-panel
     data-dialog-panel
+    data-state="closed"
     data-lenis-prevent
     role="dialog"
     aria-modal="true"
     aria-labelledby={titleId}
     class={cn(
-      "fixed left-1/2 top-1/2 z-50 w-full max-w-lg rounded-2xl bg-white p-6 shadow-soft-lg",
+      "fixed left-1/2 top-1/2 z-[60] w-full max-w-lg rounded-2xl bg-white p-6 shadow-soft-lg",
       className
     )}
   >

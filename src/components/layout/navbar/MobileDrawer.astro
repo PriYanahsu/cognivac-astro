@@ -1,82 +1,108 @@
 ---
-import { Menu, X, ChevronDown } from "@lucide/astro";
+import { X, ChevronDown } from "@lucide/astro";
 import Sheet from "@/components/ui/Sheet.astro";
 import GradientButton from "@/components/shared/GradientButton.astro";
 import GhostButton from "@/components/shared/GhostButton.astro";
 import { NAV_ITEMS } from "@/constants/navigation";
-import { NAV_ROUTES } from "@/constants/site";
+import { SITE_CONFIG, NAV_ROUTES } from "@/constants/site";
 
-/** Port of components/layout/navbar/mobile-drawer.tsx. */
+/** Port of components/layout/navbar/mobile-drawer.tsx — animated mobile menu. */
 ---
 
-<Sheet side="right" class="overflow-y-auto">
+<Sheet
+  side="right"
+  class="flex flex-col overflow-y-auto overscroll-contain border-l border-border/60 bg-[#FAFAFA] p-0 pt-[max(0.75rem,env(safe-area-inset-top))] pb-[max(1.25rem,env(safe-area-inset-bottom))]"
+>
   <button
     slot="trigger"
     type="button"
     data-overlay-trigger
+    data-hamburger
     aria-label="Open menu"
     aria-expanded="false"
-    class="flex h-10 w-10 items-center justify-center rounded-full text-white/75 hover:bg-white/10 hover:text-white lg:hidden"
+    class="flex h-9 w-9 items-center justify-center rounded-full text-white/80 transition-colors duration-200 hover:bg-white/10 hover:text-white active:scale-95 sm:h-10 sm:w-10 lg:hidden"
   >
-    <Menu class="h-5 w-5" />
+    <span class="relative block h-3.5 w-4" aria-hidden="true">
+      <span data-ham-line class="absolute left-0 top-0 h-[1.5px] w-full rounded-full bg-current"></span>
+      <span data-ham-line class="absolute left-0 top-[6px] h-[1.5px] w-full rounded-full bg-current"></span>
+      <span data-ham-line class="absolute left-0 top-[12px] h-[1.5px] w-full rounded-full bg-current"></span>
+    </span>
   </button>
 
-  <div class="mb-6 flex flex-row items-center justify-between gap-2">
-    <p class="text-xl font-bold text-primary">Menu</p>
+  <div class="mb-0 flex flex-row items-center justify-between border-b border-border/70 px-5 py-4">
+    <img
+      src="/icons/cognivac.png"
+      alt={SITE_CONFIG.name}
+      width="120"
+      height="34"
+      class="h-6 w-auto"
+      decoding="async"
+    />
     <button
       type="button"
       data-overlay-close
       aria-label="Close menu"
-      class="rounded-full p-2 hover:bg-lavender"
+      class="flex h-9 w-9 items-center justify-center rounded-full text-primary/70 transition-colors hover:bg-lavender hover:text-primary active:scale-95"
     >
       <X class="h-5 w-5" />
     </button>
   </div>
 
-  <nav aria-label="Mobile navigation">
-    <ul data-drawer-nav class="flex flex-col gap-1">
+  <nav aria-label="Mobile navigation" class="flex-1 px-3 py-4">
+    <ul data-drawer-nav class="flex flex-col gap-0.5">
       {
-        NAV_ITEMS.map((item) => {
+        NAV_ITEMS.map((item, index) => {
           const hasChildren = Boolean(item.children?.length);
 
           return (
-            <li data-drawer-item data-state="closed">
+            <li
+              data-drawer-item
+              data-state="closed"
+              data-drawer-stagger
+              style={`--stagger:${index}`}
+            >
               {hasChildren ? (
-                <>
+                <div data-drawer-group class="overflow-hidden rounded-2xl transition-colors duration-300">
                   <button
                     type="button"
                     data-drawer-trigger
                     aria-expanded="false"
-                    class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-base font-semibold text-primary hover:bg-lavender"
+                    class="flex w-full items-center justify-between px-4 py-3.5 text-left text-[15px] font-semibold text-primary"
                   >
                     {item.label}
                     <ChevronDown
                       data-drawer-chevron
-                      class="h-4 w-4 transition-transform"
+                      class="h-4 w-4 text-muted transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
                     />
                   </button>
-                  <ul
-                    data-drawer-panel
-                    class="mb-2 ml-3 hidden border-l border-border pl-3"
-                  >
-                    {item.children!.map((child) => (
-                      <li>
-                        <a
-                          href={child.href}
-                          data-overlay-close
-                          class="block rounded-lg px-3 py-2.5 text-sm text-muted hover:bg-lavender hover:text-primary"
-                        >
-                          {child.label}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </>
+                  <div data-drawer-panel class="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]">
+                    <ul class="min-h-0 overflow-hidden border-t border-border/50">
+                      {item.children!.map((child) => (
+                        <li>
+                          <a
+                            href={child.href}
+                            data-overlay-close
+                            class="block px-4 py-3 pl-5 text-sm text-muted transition-colors hover:bg-white/70 hover:text-primary"
+                          >
+                            <span class="font-medium text-primary/90">
+                              {child.label}
+                            </span>
+                            {child.description ? (
+                              <span class="mt-0.5 block text-[12px] leading-snug text-muted-light">
+                                {child.description}
+                              </span>
+                            ) : null}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
               ) : (
                 <a
                   href={item.href}
                   data-overlay-close
-                  class="block rounded-xl px-3 py-3 text-base font-semibold text-primary hover:bg-lavender"
+                  class="block rounded-2xl px-4 py-3.5 text-[15px] font-semibold text-primary transition-colors hover:bg-lavender/60"
                 >
                   {item.label}
                 </a>
@@ -88,7 +114,10 @@ import { NAV_ROUTES } from "@/constants/site";
     </ul>
   </nav>
 
-  <div class="mt-8 flex flex-col gap-3">
+  <div
+    data-drawer-cta
+    class="mt-auto flex flex-col gap-2.5 border-t border-border/70 px-5 pt-5"
+  >
     <GhostButton href={NAV_ROUTES.contact} class="w-full">
       Contact us
     </GhostButton>
@@ -99,12 +128,85 @@ import { NAV_ROUTES } from "@/constants/site";
 </Sheet>
 
 <style>
+  [data-ham-line] {
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      top 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.3s ease,
+      scale 0.3s ease;
+  }
+
+  [data-hamburger][aria-expanded="true"] [data-ham-line]:nth-child(1) {
+    top: 6px;
+    transform: rotate(45deg);
+  }
+
+  [data-hamburger][aria-expanded="true"] [data-ham-line]:nth-child(2) {
+    opacity: 0;
+    scale: 0 1;
+  }
+
+  [data-hamburger][aria-expanded="true"] [data-ham-line]:nth-child(3) {
+    top: 6px;
+    transform: rotate(-45deg);
+  }
+
+  [data-drawer-item][data-state="open"] [data-drawer-group] {
+    background-color: color-mix(in srgb, var(--lavender) 60%, transparent);
+  }
+
   [data-drawer-item][data-state="open"] [data-drawer-panel] {
-    display: block;
+    grid-template-rows: 1fr;
   }
 
   [data-drawer-item][data-state="open"] [data-drawer-chevron] {
     transform: rotate(180deg);
+    color: var(--accent);
+  }
+
+  /* Stagger in when sheet opens (panel gets data-state=open via overlay.ts) */
+  [data-sheet-panel][data-state="open"] [data-drawer-stagger] {
+    animation: drawer-item-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(0.05s + var(--stagger, 0) * 0.045s);
+  }
+
+  [data-sheet-panel][data-state="open"] [data-drawer-cta] {
+    animation: drawer-cta-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 0.28s;
+  }
+
+  @keyframes drawer-item-in {
+    from {
+      opacity: 0;
+      transform: translateX(18px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes drawer-cta-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-ham-line],
+    [data-drawer-chevron],
+    [data-drawer-panel] {
+      transition: none;
+    }
+
+    [data-sheet-panel][data-state="open"] [data-drawer-stagger],
+    [data-sheet-panel][data-state="open"] [data-drawer-cta] {
+      animation: none;
+    }
   }
 </style>
 
@@ -125,7 +227,6 @@ import { NAV_ROUTES } from "@/constants/site";
 
       const wasOpen = item.dataset.state === "open";
 
-      // Single-expanded, matching the React `expanded` state.
       nav
         .querySelectorAll<HTMLElement>("[data-drawer-item]")
         .forEach((sibling) => {
