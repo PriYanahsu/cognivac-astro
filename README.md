@@ -1,43 +1,92 @@
-# Astro Starter Kit: Minimal
+# Cognivac — Astro
 
-```sh
-npm create astro@latest -- --template minimal
+The Cognivac marketing site, ported from the Next.js 15 app in the parent
+directory to Astro with **no React on the client**. Every page is prerendered to
+static HTML; the only JavaScript that ships is a handful of small inline
+modules plus Lenis for smooth scrolling.
+
+## Requirements
+
+Node **22.12+** (Astro 7 requires it). If your shell defaults to Node 20:
+
+```bash
+nvm use 22
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Commands
 
-## 🚀 Project Structure
+| Command           | Does                                                |
+| ----------------- | --------------------------------------------------- |
+| `npm run dev`     | Dev server on http://localhost:4321                  |
+| `npm run build`   | Prerender every page into `dist/`                    |
+| `npm run preview` | Serve the build locally                              |
+| `npm run start`   | Run the built Node server (needed for `/api/contact`)|
+| `npm run check`   | Type-check `.astro` and `.ts` files                  |
 
-Inside of your Astro project, you'll see the following folders and files:
+## Folder structure
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+The layout mirrors the Next.js project one-for-one so the two stay easy to
+compare. Only the framework-specific pieces move.
+
+```
+src/
+├── pages/              ← was app/            (file-based routes)
+│   ├── index.astro                            app/page.tsx
+│   ├── about.astro · services.astro · …       app/<route>/page.tsx
+│   ├── 404.astro                              app/not-found.tsx
+│   ├── sitemap.xml.ts · robots.txt.ts         app/sitemap.ts · app/robots.ts
+│   ├── manifest.webmanifest.ts                app/manifest.ts
+│   └── api/contact.ts                         app/api/contact/route.ts
+├── layouts/Layout.astro ← was app/layout.tsx + src/providers/
+├── styles/globals.css   ← was app/globals.css (copied, plus the CSS that
+│                          replaces framer-motion)
+├── components/
+│   ├── ui/             Button, Input, Label, Separator, Accordion,
+│   │                   Dialog, Sheet   (were Radix primitives)
+│   ├── shared/         Container, SectionLabel, GradientButton,
+│   │                   GhostButton, StatCounter, PageHero, SocialIcon
+│   ├── animations/     FadeIn, SlideUp, SlideUpItem, RevealText,
+│   │                   MagneticButton
+│   └── layout/         navbar/ · footer/ · ScrollProgress.astro
+├── features/           identical folder names to the Next project
+│   ├── hero-section/ problem-section/ trust-sections/ case-highlights/
+│   ├── stats-band/ platform-section/ why-cognivac/ process-section/
+│   ├── security-section/ industries-showcase/ testimonials-section/
+│   ├── cta-section/ home/ about-cognivac/
+│   └── about/ services/ industries/ case-studies/ blog/ careers/ contact/
+├── constants/  site.ts · navigation.ts        (copied verbatim)
+├── types/      index.ts                       (copied verbatim)
+└── lib/        utils.ts · overlay.ts · reveal.ts · seo/
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+Every `constants.ts` under `features/` is byte-identical to the Next version,
+as are `types/index.ts`, `constants/navigation.ts`, and `lib/utils.ts`.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+### Two naming differences
 
-Any static assets, like images, can be placed in the `public/` directory.
+- **`index.tsx` → a named component.** Astro cannot import a directory, so
+  `features/about/index.tsx` becomes `features/about/AboutPage.astro`.
+- **Page metadata moves to `metadata.ts`.** Astro components cannot export
+  values for import, so each feature keeps its metadata in a sibling module.
 
-## 🧞 Commands
+## What replaced what
 
-All commands are run from the root of the project, from a terminal:
+| Next.js                        | Astro                                              |
+| ------------------------------ | -------------------------------------------------- |
+| framer-motion `whileInView`    | `lib/reveal.ts` + CSS transitions                  |
+| framer-motion springs          | rAF spring integration, same stiffness/damping     |
+| `@radix-ui/react-dialog`       | `lib/overlay.ts` (Escape, focus trap, scroll lock) |
+| `@radix-ui/react-accordion`    | `Accordion.astro`, `grid-template-rows` animation  |
+| react-hook-form + zod (client) | inline validators with identical messages          |
+| `next/font/google`             | `@fontsource-variable/plus-jakarta-sans`           |
+| `next/image`, `next/link`      | `<img>`, `<a>`                                     |
+| lucide-react                   | `@lucide/astro` (rendered at build time)           |
+| gsap + ScrollTrigger           | removed — it was a no-op (see `Layout.astro`)      |
+| lenis                          | unchanged                                          |
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+## Rendering
 
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+`output: 'static'` with the Node adapter. Every page is prerendered; only
+`src/pages/api/contact.ts` sets `export const prerender = false`. If you drop
+the contact endpoint, the adapter can be removed and the build becomes pure
+static files.

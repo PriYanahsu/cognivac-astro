@@ -1,0 +1,83 @@
+---
+import { Quote } from "@lucide/astro";
+import Container from "@/components/shared/Container.astro";
+import SectionLabel from "@/components/shared/SectionLabel.astro";
+import FadeIn from "@/components/animations/FadeIn.astro";
+import { TESTIMONIALS } from "@/features/home/constants/content";
+import { TESTIMONIAL_META, TESTIMONIALS_CONTENT } from "../constants";
+
+/** Port of features/testimonials-section/components/testimonials-section.tsx. */
+function initials(name: string) {
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .slice(0, 2)
+    .join("");
+}
+---
+
+<section class="border-y border-border bg-card py-16 sm:py-20 lg:py-28">
+  <Container>
+    <FadeIn>
+      <div class="mx-auto max-w-3xl text-center">
+        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+          {TESTIMONIALS_CONTENT.label}
+        </SectionLabel>
+        <h2 class="text-section mt-5 text-primary">
+          {TESTIMONIALS_CONTENT.title}
+        </h2>
+        <p
+          class="mx-auto mt-4 max-w-[52ch] text-[16px] leading-[1.6] text-muted sm:text-[18px]"
+        >
+          {TESTIMONIALS_CONTENT.description}
+        </p>
+      </div>
+    </FadeIn>
+
+    <div class="mt-10 grid gap-5 sm:mt-12 md:grid-cols-3 md:gap-6 lg:mt-14">
+      {
+        TESTIMONIALS.map((testimonial, i) => {
+          const avatar = TESTIMONIAL_META[testimonial.id]?.avatar;
+
+          return (
+            <FadeIn delay={0.08 * (i + 1)}>
+              <figure class="flex h-full flex-col rounded-[18px] border border-border bg-background p-6 sm:rounded-[22px] sm:p-8">
+                <Quote class="h-6 w-6 shrink-0 text-accent" />
+
+                <blockquote class="mt-5 text-[16px] leading-[1.65] text-primary sm:text-[17.5px]">
+                  {testimonial.quote}
+                </blockquote>
+
+                <figcaption class="mt-auto flex items-center gap-3.5 pt-7">
+                  {avatar ? (
+                    <img
+                      src={avatar}
+                      alt={testimonial.name}
+                      width="44"
+                      height="44"
+                      loading="lazy"
+                      decoding="async"
+                      class="h-11 w-11 shrink-0 rounded-full object-cover"
+                    />
+                  ) : (
+                    <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-lavender text-[13px] font-bold text-primary">
+                      {initials(testimonial.name)}
+                    </span>
+                  )}
+                  <div class="min-w-0">
+                    <p class="text-[15px] font-bold leading-tight text-primary">
+                      {testimonial.name}
+                    </p>
+                    <p class="mt-1 text-[13.5px] leading-snug text-muted">
+                      {testimonial.role}, {testimonial.company}
+                    </p>
+                  </div>
+                </figcaption>
+              </figure>
+            </FadeIn>
+          );
+        })
+      }
+    </div>
+  </Container>
+</section>

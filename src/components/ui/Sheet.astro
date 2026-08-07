@@ -1,0 +1,44 @@
+---
+import { cn } from "@/lib/utils";
+
+/**
+ * Port of components/ui/sheet.tsx (was @radix-ui/react-dialog).
+ * Open/close, Escape, focus trap, and scroll lock come from lib/overlay.ts.
+ *
+ * Slots: `trigger` renders in place; the default slot fills the panel.
+ */
+interface Props {
+  side?: "left" | "right";
+  class?: string;
+}
+
+const { side = "right", class: className } = Astro.props;
+---
+
+<div data-overlay-root data-state="closed" class="contents">
+  <slot name="trigger" />
+
+  <div
+    data-overlay
+    class="fixed inset-0 z-50 bg-primary/50 backdrop-blur-sm"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div
+    data-overlay-panel
+    data-sheet-panel
+    data-lenis-prevent
+    role="dialog"
+    aria-modal="true"
+    aria-label="Menu"
+    class={cn(
+      "fixed z-50 flex h-full w-full max-w-sm flex-col bg-white p-6 shadow-soft-lg",
+      side === "right" && "inset-y-0 right-0",
+      side === "left" && "inset-y-0 left-0",
+      className
+    )}
+  >
+    <slot />
+  </div>
+</div>

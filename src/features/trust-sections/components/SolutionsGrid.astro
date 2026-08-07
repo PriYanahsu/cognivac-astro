@@ -1,0 +1,567 @@
+---
+import {
+  Bot,
+  Brain,
+  Cloud,
+  Workflow,
+  AppWindow,
+  ChevronLeft,
+  ChevronRight,
+} from "@lucide/astro";
+import Container from "@/components/shared/Container.astro";
+import SectionLabel from "@/components/shared/SectionLabel.astro";
+import { SOLUTIONS } from "@/features/trust-sections/constants";
+
+/**
+ * Port of features/trust-sections/components/solutions-grid.tsx.
+ *
+ * The 3D cylinder deck — per-breakpoint geometry, pointer dragging with a
+ * click-vs-drag slop test, circular index wrapping, arrow-key navigation,
+ * the centred tab strip, and the staggered reveal — is reimplemented in the
+ * script below. Every card is server-rendered (good for crawling); JS only
+ * positions them.
+ */
+const ICONS = { Bot, Brain, Cloud, Workflow, AppWindow } as const;
+
+const initialActive = Math.min(2, SOLUTIONS.length - 1);
+---
+
+<section class="relative overflow-hidden bg-[#1a1a1c] py-16 text-white lg:py-24">
+  <Container class="relative z-10 w-full">
+    <div
+      data-reveal-stagger
+      data-reveal-margin="-20% 0px -20% 0px"
+      data-stagger="0.1"
+      data-delay-children="0"
+      style="--reveal-item-y:20px;--reveal-item-duration:0.55s"
+      class="mx-auto max-w-6xl text-center"
+    >
+      <div data-reveal-item>
+        <SectionLabel
+          tone="accent"
+          class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm"
+        >
+          Solutions
+        </SectionLabel>
+      </div>
+      <h2
+        data-reveal-item
+        class="mt-5 text-[clamp(1.625rem,3.5vw+0.75rem,3.75rem)] font-bold leading-[1.08] tracking-[-0.02em] text-white"
+      >
+        What we build for enterprise teams
+      </h2>
+      <p
+        data-reveal-item
+        class="mx-auto mt-4 max-w-[640px] px-1 text-[16px] leading-[1.55] text-white/75 sm:mt-6 sm:text-[19px] sm:leading-[1.6] md:text-[20px]"
+      >
+        End-to-end capability across intelligence, platforms, and product —
+        delivered with production rigor.
+      </p>
+    </div>
+
+    {/* Tabs: mobile = prev / active title / next; sm+ = scrollable pills */}
+    <div data-deck-tabs class="relative z-20 mt-10 sm:mt-12 md:mt-14">
+      {/* Mobile control */}
+      <div class="flex items-center gap-3 sm:hidden">
+        <button
+          type="button"
+          data-deck-prev
+          aria-label="Previous solution"
+          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/25 text-white transition-colors active:bg-white/10"
+        >
+          <ChevronLeft class="h-4 w-4" />
+        </button>
+        <div class="min-w-0 flex-1 text-center">
+          <span
+            class="inline-flex max-w-full items-center justify-center rounded-full border border-accent bg-accent px-4 py-2 text-[13px] font-semibold text-white"
+          >
+            <span data-deck-active-title class="truncate"
+              >{SOLUTIONS[initialActive].title}</span
+            >
+          </span>
+        </div>
+        <button
+          type="button"
+          data-deck-next
+          aria-label="Next solution"
+          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/25 text-white transition-colors active:bg-white/10"
+        >
+          <ChevronRight class="h-4 w-4" />
+        </button>
+      </div>
+      <div class="mt-3 flex items-center justify-center gap-1.5 sm:hidden">
+        {
+          SOLUTIONS.map((solution, i) => (
+            <button
+              type="button"
+              data-deck-dot
+              data-index={i}
+              aria-label={solution.title}
+              class="h-1.5 rounded-full transition-all duration-300"
+            />
+          ))
+        }
+      </div>
+
+      {/* Tablet / desktop pills */}
+      <div class="hidden items-center justify-center gap-2.5 sm:flex">
+        <button
+          type="button"
+          data-deck-prev
+          aria-label="Previous solution"
+          class="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full border border-white/25 text-white transition-colors hover:border-white/50 hover:bg-white/10"
+        >
+          <ChevronLeft class="h-4 w-4" />
+        </button>
+
+        <div
+          data-deck-tabs-viewport
+          class="max-w-[min(760px,calc(100%-5.5rem))] overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          <div class="flex justify-center gap-2">
+            {
+              SOLUTIONS.map((solution, i) => (
+                <button
+                  type="button"
+                  data-deck-tab
+                  data-index={i}
+                  class="shrink-0 whitespace-nowrap rounded-full border px-[18px] py-2 text-sm font-semibold transition-all duration-300"
+                >
+                  {solution.title}
+                </button>
+              ))
+            }
+          </div>
+        </div>
+
+        <button
+          type="button"
+          data-deck-next
+          aria-label="Next solution"
+          class="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full border border-white/25 text-white transition-colors hover:border-white/50 hover:bg-white/10"
+        >
+          <ChevronRight class="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  </Container>
+
+  {/* Full-bleed 3D circular stage — sized per breakpoint so peeks stay visible */}
+  <div
+    data-deck-stage
+    data-active={initialActive}
+    class="relative z-10 mt-6 w-full touch-pan-y select-none overflow-hidden sm:mt-8 md:mt-10"
+  >
+    <div data-deck-perspective class="relative mx-auto h-full w-full">
+      <div data-deck-track class="relative h-full w-full" style="transform-style: preserve-3d">
+        {
+          SOLUTIONS.map((solution, i) => {
+            const Icon = ICONS[solution.icon as keyof typeof ICONS] ?? Bot;
+
+            return (
+              <div
+                data-deck-card
+                data-index={i}
+                data-href={solution.href}
+                role="button"
+                tabindex="-1"
+                aria-label={`Show ${solution.title}`}
+                class="group absolute left-1/2 top-4 flex flex-col overflow-hidden rounded-[18px] p-4 text-left text-[#0b0b0f] shadow-[0_30px_60px_-20px_rgba(0,0,0,0.65)] will-change-transform sm:top-7 sm:rounded-[22px] sm:p-6 md:top-10 md:p-[30px]"
+                style={`background:${solution.color};opacity:0;pointer-events:none`}
+              >
+                <div class="flex min-h-0 flex-1 flex-col overflow-hidden">
+                  <div class="mb-3 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-black/[0.08] text-[#0b0b0f] sm:mb-4 sm:h-11 sm:w-11 sm:rounded-2xl">
+                    <Icon class="h-4 w-4 sm:h-5 sm:w-5" stroke-width={1.75} />
+                  </div>
+                  <h3 class="m-0 mb-1.5 line-clamp-1 text-[18px] font-semibold tracking-[-0.02em] leading-[1.15] text-[#0b0b0f] sm:mb-2 sm:line-clamp-2 sm:text-[22px] md:text-[24px]">
+                    {solution.title}
+                  </h3>
+                  <p class="m-0 mb-3 line-clamp-2 max-w-[28ch] text-[12px] leading-[1.45] text-[#0b0b0f]/72 sm:mb-5 sm:line-clamp-3 sm:max-w-none sm:text-[14px] sm:leading-[1.5] md:text-[15px]">
+                    {solution.description}
+                  </p>
+                  <div class="mb-2 hidden gap-5 border-t border-black/10 pt-3.5 sm:mb-0 sm:flex md:gap-7 md:pt-4">
+                    {solution.stats.map((stat) => (
+                      <div class="min-w-0">
+                        <b class="block text-[16px] font-semibold tracking-[-0.02em] text-[#0b0b0f] md:text-[18px]">
+                          {stat.value}
+                        </b>
+                        <span class="mt-0.5 block line-clamp-1 text-[11px] leading-snug text-[#0b0b0f]/55 md:text-[12px]">
+                          {stat.label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <span
+                    data-deck-cta
+                    class="mt-auto inline-flex h-5 shrink-0 items-center gap-0.5 text-[12px] font-semibold tracking-[-0.01em] text-[#0b0b0f]/80 opacity-0 pointer-events-none sm:mt-4 sm:h-auto sm:text-[13px] [@media(hover:hover)]:hidden"
+                  >
+                    View solution
+                    <ChevronRight class="h-3.5 w-3.5" />
+                  </span>
+                </div>
+                <div class="relative mt-3 h-[88px] shrink-0 overflow-hidden rounded-2xl sm:mt-4 sm:h-[130px] md:h-[150px]">
+                  <img
+                    src={solution.image}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    draggable="false"
+                    class="absolute inset-0 h-full w-full object-cover"
+                  />
+                </div>
+                <span
+                  data-deck-hover-cta
+                  class="pointer-events-none absolute left-1/2 top-1/2 z-50 hidden -translate-x-1/2 -translate-y-1/2 scale-90 whitespace-nowrap rounded-full bg-black/85 px-[22px] py-3 text-[13px] font-semibold text-white opacity-0 transition-all duration-300 hover:bg-accent"
+                >
+                  View solution →
+                </span>
+              </div>
+            );
+          })
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Tab / dot active states — were conditional class strings in React. */
+  [data-deck-tab] {
+    border-color: rgb(255 255 255 / 0.18);
+    background-color: rgb(255 255 255 / 0.05);
+    color: rgb(255 255 255 / 0.75);
+  }
+
+  [data-deck-tab]:hover {
+    border-color: rgb(255 255 255 / 0.4);
+  }
+
+  [data-deck-tab][data-active="true"] {
+    border-color: var(--accent);
+    background-color: var(--accent);
+    color: #fff;
+  }
+
+  [data-deck-dot] {
+    width: 0.375rem;
+    background-color: rgb(255 255 255 / 0.3);
+  }
+
+  [data-deck-dot][data-active="true"] {
+    width: 1.25rem;
+    background-color: var(--accent);
+  }
+
+  /* Centre card only: tap affordance on touch, hover pill on pointer devices. */
+  [data-deck-card][data-center="true"] [data-deck-cta] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  @media (hover: hover) {
+    [data-deck-card][data-center="true"] [data-deck-hover-cta] {
+      display: block;
+    }
+
+    [data-deck-card][data-center="true"]:hover [data-deck-hover-cta] {
+      pointer-events: auto;
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+</style>
+
+<script>
+  const EASE_CSS = "cubic-bezier(.16,1,.3,1)";
+  const REVEAL_EASE = "cubic-bezier(.22,1,.36,1)";
+  const DRAG_THRESHOLD_MD = 90;
+  const DRAG_THRESHOLD_SM = 56;
+  const CLICK_SLOP = 8;
+
+  /** Shortest signed index distance on a circular deck (−⌊n/2⌋ … ⌊n/2⌋). */
+  function circularDelta(i: number, active: number, n: number) {
+    let d = i - active;
+    if (d > n / 2) d -= n;
+    if (d < -n / 2) d += n;
+    return d;
+  }
+
+  function initSolutionsDeck() {
+    const stage = document.querySelector<HTMLElement>("[data-deck-stage]");
+    if (!stage || stage.dataset.deckReady === "true") return;
+    stage.dataset.deckReady = "true";
+
+    const section = stage.closest("section");
+    const perspectiveEl = stage.querySelector<HTMLElement>(
+      "[data-deck-perspective]"
+    );
+    const cards = Array.from(
+      stage.querySelectorAll<HTMLElement>("[data-deck-card]")
+    );
+    const tabs = Array.from(
+      section?.querySelectorAll<HTMLElement>("[data-deck-tab]") ?? []
+    );
+    const dots = Array.from(
+      section?.querySelectorAll<HTMLElement>("[data-deck-dot]") ?? []
+    );
+    const tabsViewport = section?.querySelector<HTMLElement>(
+      "[data-deck-tabs-viewport]"
+    );
+    const activeTitle = section?.querySelector<HTMLElement>(
+      "[data-deck-active-title]"
+    );
+
+    const count = cards.length;
+    if (count === 0) return;
+
+    const titles = cards.map(
+      (card) => card.querySelector("h3")?.textContent?.trim() ?? ""
+    );
+
+    let active = Number(stage.dataset.active ?? "0");
+    let dragOffset = 0;
+    let dragging = false;
+    let revealed = false;
+
+    const drag = { active: false, startX: 0, dx: 0, moved: false };
+
+    /* ---- per-breakpoint geometry (identical values to the React version) ---- */
+    let isSm = false;
+    let isMd = false;
+    let vw = 390;
+    let cardW = 210;
+    let cardH = 290;
+    let spacing = 164;
+    let angleStep = 37;
+    let radius = 203;
+    let archLift = 22;
+    let dragThreshold = DRAG_THRESHOLD_SM;
+    let visibleRadius = 1;
+    let scaleStep = 0.1;
+    let rotateZStep = 1.2;
+
+    const measure = () => {
+      vw = window.innerWidth;
+      isSm = window.matchMedia("(min-width: 640px)").matches;
+      isMd = window.matchMedia("(min-width: 768px)").matches;
+
+      visibleRadius = isMd ? 2 : 1;
+      cardW = isMd ? 400 : isSm ? 300 : Math.round(Math.min(210, vw * 0.54));
+      cardH = isMd ? 480 : isSm ? 420 : Math.round(cardW * 1.38);
+      spacing = isMd ? 240 : isSm ? 180 : Math.round(cardW * 0.78);
+      angleStep = isMd ? 32 : isSm ? 30 : 37;
+      radius = isMd ? 480 : isSm ? 300 : Math.round(Math.max(185, vw * 0.52));
+      archLift = isMd ? 48 : isSm ? 32 : 22;
+      dragThreshold = isMd ? DRAG_THRESHOLD_MD : DRAG_THRESHOLD_SM;
+      scaleStep = isMd ? 0.035 : isSm ? 0.045 : 0.1;
+      rotateZStep = isMd ? 1.6 : isSm ? 1.1 : 1.2;
+
+      stage.style.height = `${cardH + (isMd ? 110 : isSm ? 90 : 80)}px`;
+      if (perspectiveEl) {
+        perspectiveEl.style.perspective = isMd
+          ? "1000px"
+          : isSm
+            ? "850px"
+            : "720px";
+        perspectiveEl.style.perspectiveOrigin = "50% 42%";
+      }
+    };
+
+    /* ---- render ---- */
+    const render = () => {
+      cards.forEach((card, i) => {
+        const delta = circularDelta(i, active, count);
+        const dragProgress = dragOffset / spacing;
+        const pos = delta + dragProgress;
+        const abs = Math.abs(pos);
+        const absDelta = Math.abs(delta);
+        const hidden = absDelta > visibleRadius;
+        const isCenter = delta === 0;
+
+        const angleDeg = pos * angleStep;
+        const angleRad = (angleDeg * Math.PI) / 180;
+        const x = Math.sin(angleRad) * radius;
+        const z = Math.cos(angleRad) * radius - radius;
+        const y = (1 - Math.cos(angleRad)) * archLift;
+        const rotateY = -angleDeg;
+        const rotateZ = pos * rotateZStep;
+        const scale = 1 - Math.min(abs, 2) * scaleStep;
+        const baseOpacity = hidden
+          ? 0
+          : absDelta === visibleRadius
+            ? isMd
+              ? 0.7
+              : 0.65
+            : 1;
+
+        const enterY = revealed ? 0 : 40;
+        const enterScale = revealed ? 1 : 0.92;
+        const revealDelay = revealed ? 0.06 + absDelta * 0.11 : absDelta * 0.05;
+        const opacity = baseOpacity * (revealed ? 1 : 0);
+        const zIndex = 30 - Math.round(abs * 5);
+
+        card.style.width = `${cardW}px`;
+        card.style.height = `${cardH}px`;
+        card.style.transform = `translateX(-50%) translate3d(${x}px, ${y + enterY}px, ${z}px) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg) scale(${scale * enterScale})`;
+        card.style.opacity = String(opacity);
+        card.style.zIndex = String(zIndex);
+        card.style.pointerEvents = hidden || !revealed ? "none" : "auto";
+        card.style.backfaceVisibility = "hidden";
+        card.style.transition = dragging
+          ? "none"
+          : `transform 0.85s ${EASE_CSS}, opacity 1s ${REVEAL_EASE} ${revealDelay}s`;
+
+        card.dataset.center = isCenter ? "true" : "false";
+        card.tabIndex = hidden || !revealed ? -1 : 0;
+        card.setAttribute(
+          "aria-label",
+          `${isCenter ? "View" : "Show"} ${titles[i]}`
+        );
+      });
+
+      tabs.forEach((tab, i) => {
+        tab.dataset.active = i === active ? "true" : "false";
+      });
+      dots.forEach((dot, i) => {
+        dot.dataset.active = i === active ? "true" : "false";
+      });
+      if (activeTitle) activeTitle.textContent = titles[active];
+    };
+
+    const setActiveIndex = (i: number) => {
+      active = ((i % count) + count) % count;
+      dragOffset = 0;
+      stage.dataset.active = String(active);
+      render();
+      scrollTabIntoView();
+    };
+
+    /** Centres the active pill in the strip (sm+ only, as in React). */
+    const scrollTabIntoView = () => {
+      if (!isSm || !tabsViewport) return;
+      const tab = tabs[active];
+      if (!tab) return;
+      const left = tab.offsetLeft - (tabsViewport.clientWidth - tab.offsetWidth) / 2;
+      tabsViewport.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
+    };
+
+    /* ---- reveal, with the 120ms hysteresis from the React version ---- */
+    let revealTimer = 0;
+    const revealObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          window.clearTimeout(revealTimer);
+          revealed = true;
+          render();
+        } else {
+          revealTimer = window.setTimeout(() => {
+            revealed = false;
+            render();
+          }, 120);
+        }
+      },
+      { threshold: 0.18, rootMargin: "0px 0px -6% 0px" }
+    );
+    revealObserver.observe(stage);
+
+    /* ---- pointer drag ---- */
+    stage.addEventListener("pointerdown", (event) => {
+      drag.active = true;
+      drag.startX = event.clientX;
+      drag.dx = 0;
+      drag.moved = false;
+      dragging = true;
+      stage.setPointerCapture(event.pointerId);
+    });
+
+    stage.addEventListener("pointermove", (event) => {
+      if (!drag.active) return;
+      const dx = event.clientX - drag.startX;
+      drag.dx = dx;
+      if (Math.abs(dx) > CLICK_SLOP) drag.moved = true;
+      dragOffset = dx;
+      render();
+    });
+
+    const endDrag = (event: PointerEvent) => {
+      if (!drag.active) return;
+      drag.active = false;
+      dragging = false;
+
+      const dx = drag.dx;
+      if (dx > dragThreshold) setActiveIndex(active - 1);
+      else if (dx < -dragThreshold) setActiveIndex(active + 1);
+      else {
+        dragOffset = 0;
+        render();
+      }
+
+      try {
+        stage.releasePointerCapture(event.pointerId);
+      } catch {
+        /* already released */
+      }
+    };
+
+    stage.addEventListener("pointerup", endDrag);
+    stage.addEventListener("pointercancel", endDrag);
+    stage.addEventListener("pointerleave", (event) => {
+      if (drag.active) endDrag(event);
+    });
+
+    /* ---- card activation ---- */
+    const onCardActivate = (index: number) => {
+      if (drag.moved) return;
+      if (index === active) {
+        const href = cards[index].dataset.href;
+        if (href) window.location.href = href;
+        return;
+      }
+      setActiveIndex(index);
+    };
+
+    cards.forEach((card, i) => {
+      card.addEventListener("click", () => onCardActivate(i));
+      card.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onCardActivate(i);
+        }
+      });
+    });
+
+    /* ---- controls ---- */
+    section
+      ?.querySelectorAll<HTMLElement>("[data-deck-prev]")
+      .forEach((btn) =>
+        btn.addEventListener("click", () => setActiveIndex(active - 1))
+      );
+    section
+      ?.querySelectorAll<HTMLElement>("[data-deck-next]")
+      .forEach((btn) =>
+        btn.addEventListener("click", () => setActiveIndex(active + 1))
+      );
+
+    [...tabs, ...dots].forEach((el) =>
+      el.addEventListener("click", () =>
+        setActiveIndex(Number(el.dataset.index ?? "0"))
+      )
+    );
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") setActiveIndex(active - 1);
+      if (event.key === "ArrowRight") setActiveIndex(active + 1);
+    });
+
+    window.addEventListener("resize", () => {
+      measure();
+      render();
+    });
+
+    measure();
+    render();
+  }
+
+  initSolutionsDeck();
+  document.addEventListener("astro:page-load", initSolutionsDeck);
+</script>

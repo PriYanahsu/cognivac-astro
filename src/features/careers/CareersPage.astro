@@ -1,0 +1,253 @@
+---
+import { ArrowUpRight, MapPin } from "@lucide/astro";
+import JsonLd from "@/lib/seo/JsonLd.astro";
+import { breadcrumbSchema } from "@/lib/seo";
+import PageHero from "@/components/shared/PageHero.astro";
+import Container from "@/components/shared/Container.astro";
+import SectionLabel from "@/components/shared/SectionLabel.astro";
+import FadeIn from "@/components/animations/FadeIn.astro";
+import CtaSection from "@/features/cta-section/components/CtaSection.astro";
+import { NAV_ROUTES } from "@/constants/site";
+
+/** Port of features/careers/index.tsx. */
+
+const ROLES = [
+  {
+    id: "ml-engineer",
+    title: "Senior ML Engineer",
+    location: "Remote / San Francisco",
+    type: "Full-time",
+    discipline: "Applied ML",
+    summary:
+      "Own model design, evaluation, and production deployment for client engagements across risk, forecasting, and document intelligence.",
+  },
+  {
+    id: "frontend",
+    title: "Staff Frontend Engineer",
+    location: "Remote / New York",
+    type: "Full-time",
+    discipline: "Product Engineering",
+    summary:
+      "Lead the interface layer on enterprise platforms — design systems, accessibility, and the performance budget that keeps them fast.",
+  },
+  {
+    id: "architect",
+    title: "AI Solutions Architect",
+    location: "Remote",
+    type: "Full-time",
+    discipline: "Architecture",
+    summary:
+      "Sit with clients in discovery, shape the technical approach, and stay accountable for it through delivery.",
+  },
+  {
+    id: "platform",
+    title: "Platform / DevOps Engineer",
+    location: "Remote / Bengaluru",
+    type: "Full-time",
+    discipline: "Infrastructure",
+    summary:
+      "Build the deployment, observability, and cost controls that let small teams run production systems for large clients.",
+  },
+];
+
+const WHAT_ITS_LIKE = [
+  {
+    id: "ownership",
+    title: "You own systems, not tickets",
+    description:
+      "Engineers here talk directly to the client, shape the approach, and stay with the system after launch. No layer of translation in between.",
+    art: "linear-gradient(135deg,#1e4fd8,#163db0)",
+  },
+  {
+    id: "variety",
+    title: "New domain every few quarters",
+    description:
+      "Services work means fintech risk one year and plant-floor vision the next. The engineering compounds; the boredom does not set in.",
+    art: "linear-gradient(135deg,#3f7bb0,#bfe3ff)",
+  },
+  {
+    id: "standards",
+    title: "Standards are not negotiable",
+    description:
+      "Tests, docs, and reviews are part of delivery. You will not be asked to ship something you would be embarrassed to hand over.",
+    art: "linear-gradient(135deg,#1a1a1c,#3a3a40)",
+  },
+];
+
+const BENEFITS = [
+  "Remote-first with optional hubs",
+  "Annual learning and conference budget",
+  "Hardware of your choice",
+  "Paid certification for cloud and ML tracks",
+  "Flexible hours across time zones",
+  "Health cover for you and dependents",
+];
+---
+
+<JsonLd
+  data={breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Careers", path: "/careers" },
+  ])}
+/>
+
+<PageHero
+  label="Careers"
+  title="Engineering for clients who actually put it into production"
+  description="Cognivac is a services company, which means our engineers ship into other people's businesses. It is harder than building for yourself, and you learn faster."
+  breadcrumbs={[{ label: "Careers" }]}
+  primaryCta={{ label: "See open roles", href: "#open-roles" }}
+  secondaryCta={{ label: "Ask us anything", href: NAV_ROUTES.contact }}
+  highlights={["Remote-first", "4 open roles", "No take-home marathons"]}
+/>
+
+{/* What it's like */}
+<section class="bg-background py-16 sm:py-20 lg:py-28">
+  <Container>
+    <FadeIn>
+      <div class="max-w-3xl">
+        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+          What It Is Like
+        </SectionLabel>
+        <h2 class="text-section mt-5 max-w-[24ch] text-primary">
+          Client work, without the agency compromises
+        </h2>
+      </div>
+    </FadeIn>
+
+    <div class="mt-10 grid gap-5 sm:mt-12 md:grid-cols-3 md:gap-6">
+      {
+        WHAT_ITS_LIKE.map((item, i) => (
+          <FadeIn delay={0.08 * (i + 1)}>
+            <div class="flex h-full flex-col overflow-hidden rounded-[18px] border border-border bg-card sm:rounded-[22px]">
+              <div
+                class="h-[120px] w-full sm:h-[140px]"
+                style={`background:${item.art}`}
+              />
+              <div class="flex flex-1 flex-col p-6 sm:p-7">
+                <h3 class="text-card-title text-primary">{item.title}</h3>
+                <p class="mt-3 text-[15px] leading-[1.65] text-muted sm:text-[16px]">
+                  {item.description}
+                </p>
+              </div>
+            </div>
+          </FadeIn>
+        ))
+      }
+    </div>
+  </Container>
+</section>
+
+{/* Open roles — dark band so it reads as the page's main event */}
+<section
+  id="open-roles"
+  class="relative scroll-mt-28 overflow-hidden bg-[#1a1a1c] py-16 text-white sm:py-20 lg:py-28"
+>
+  <div class="dot-grid pointer-events-none absolute inset-0 opacity-60"></div>
+  <Container class="relative z-10">
+    <FadeIn>
+      <div class="max-w-3xl">
+        <SectionLabel
+          tone="accent"
+          class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm"
+        >
+          Open Roles
+        </SectionLabel>
+        <h2
+          class="mt-5 text-[clamp(1.625rem,3.5vw+0.75rem,3.25rem)] font-bold leading-[1.1] tracking-[-0.02em] text-white"
+        >
+          Four roles open right now
+        </h2>
+        <p
+          class="mt-4 max-w-[52ch] text-[16px] leading-[1.6] text-white/75 sm:text-[18px]"
+        >
+          Two conversations and one paired working session. No unpaid take-home
+          projects, and we tell you where you stand either way.
+        </p>
+      </div>
+    </FadeIn>
+
+    <div class="mt-10 space-y-4 sm:mt-12">
+      {
+        ROLES.map((role, i) => (
+          <FadeIn delay={0.06 * (i + 1)}>
+            <a
+              href={NAV_ROUTES.contact}
+              class="group flex flex-col gap-5 rounded-[18px] border border-white/12 bg-white/[0.04] p-6 transition-colors duration-300 hover:border-accent/50 hover:bg-white/[0.07] sm:rounded-[22px] sm:p-8 lg:flex-row lg:items-center lg:justify-between"
+            >
+              <div class="min-w-0">
+                <p class="text-[12px] font-semibold uppercase tracking-[0.16em] text-teal">
+                  {role.discipline}
+                </p>
+                <h3 class="mt-2.5 text-[20px] font-bold leading-tight text-white sm:text-[23px]">
+                  {role.title}
+                </h3>
+                <p class="mt-2.5 max-w-[62ch] text-[14.5px] leading-[1.6] text-white/70 sm:text-[15.5px]">
+                  {role.summary}
+                </p>
+                <p class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[13.5px] text-white/55">
+                  <span class="flex items-center gap-1.5">
+                    <MapPin class="h-3.5 w-3.5" />
+                    {role.location}
+                  </span>
+                  <span>{role.type}</span>
+                </p>
+              </div>
+
+              <span class="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-white/25 px-5 py-2.5 text-[13.5px] font-semibold text-white transition-colors group-hover:border-accent group-hover:bg-accent">
+                Apply
+                <ArrowUpRight class="h-4 w-4" />
+              </span>
+            </a>
+          </FadeIn>
+        ))
+      }
+    </div>
+
+    <FadeIn delay={0.2}>
+      <p class="mt-10 text-[15px] text-white/60">
+        Nothing matching your skills?{" "}
+        <a
+          href={NAV_ROUTES.contact}
+          class="font-semibold text-white underline underline-offset-4 transition-colors hover:text-teal"
+        >
+          Send us a note anyway
+        </a>{" "}
+        — we open roles as engagements land.
+      </p>
+    </FadeIn>
+  </Container>
+</section>
+
+{/* Benefits */}
+<section class="border-b border-border bg-card py-16 sm:py-20 lg:py-24">
+  <Container>
+    <FadeIn>
+      <div class="max-w-3xl">
+        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+          The Practical Part
+        </SectionLabel>
+        <h2 class="text-section mt-5 max-w-[20ch] text-primary">
+          What we actually provide
+        </h2>
+      </div>
+    </FadeIn>
+
+    <div class="mt-10 grid gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        BENEFITS.map((benefit, i) => (
+          <FadeIn delay={0.04 * (i + 1)}>
+            <div class="flex gap-3 border-t border-border pt-4">
+              <span class="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+              <p class="text-[15.5px] leading-[1.6] text-primary/80">
+                {benefit}
+              </p>
+            </div>
+          </FadeIn>
+        ))
+      }
+    </div>
+  </Container>
+</section>
+
+<CtaSection />

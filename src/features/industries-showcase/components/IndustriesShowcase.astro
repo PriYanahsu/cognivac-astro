@@ -1,0 +1,82 @@
+---
+import { ArrowUpRight } from "@lucide/astro";
+import Container from "@/components/shared/Container.astro";
+import SectionLabel from "@/components/shared/SectionLabel.astro";
+import GhostButton from "@/components/shared/GhostButton.astro";
+import FadeIn from "@/components/animations/FadeIn.astro";
+import { INDUSTRIES } from "@/features/home/constants/content";
+import { INDUSTRIES_SHOWCASE_CONTENT, INDUSTRY_DETAILS } from "../constants";
+
+/** Port of features/industries-showcase/components/industries-showcase.tsx. */
+---
+
+<section class="bg-background py-16 sm:py-20 lg:py-28">
+  <Container>
+    <FadeIn>
+      <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+            {INDUSTRIES_SHOWCASE_CONTENT.label}
+          </SectionLabel>
+          <h2 class="text-section mt-5 max-w-[24ch] text-primary">
+            {INDUSTRIES_SHOWCASE_CONTENT.title}
+          </h2>
+          <p
+            class="mt-4 max-w-[52ch] text-[16px] leading-[1.6] text-muted sm:text-[18px]"
+          >
+            {INDUSTRIES_SHOWCASE_CONTENT.description}
+          </p>
+        </div>
+        <GhostButton
+          href={INDUSTRIES_SHOWCASE_CONTENT.cta.href}
+          class="shrink-0 self-start lg:self-end"
+        >
+          {INDUSTRIES_SHOWCASE_CONTENT.cta.label}
+        </GhostButton>
+      </div>
+    </FadeIn>
+
+    <div
+      class="mt-10 grid gap-5 sm:mt-12 sm:grid-cols-2 lg:mt-14 lg:grid-cols-4 lg:gap-6"
+    >
+      {
+        INDUSTRIES.map((industry, i) => (
+          <FadeIn delay={0.07 * (i + 1)}>
+            <a
+              href={industry.href}
+              class="group flex h-full flex-col overflow-hidden rounded-[18px] border border-border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-soft sm:rounded-[22px]"
+            >
+              <div class="relative aspect-16/10 w-full overflow-hidden bg-lavender">
+                <img
+                  src={industry.image}
+                  alt={industry.title}
+                  loading="lazy"
+                  decoding="async"
+                  class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                />
+              </div>
+
+              <div class="flex flex-1 flex-col p-6">
+                <h3 class="text-card-title text-primary">{industry.title}</h3>
+                <p class="mt-2.5 text-[14.5px] leading-[1.6] text-muted">
+                  {industry.description}
+                </p>
+
+                {INDUSTRY_DETAILS[industry.id] && (
+                  <p class="mt-4 border-t border-border pt-4 text-[13.5px] leading-[1.55] text-primary/70">
+                    {INDUSTRY_DETAILS[industry.id]}
+                  </p>
+                )}
+
+                <span class="mt-auto inline-flex items-center gap-1.5 pt-5 text-[13.5px] font-semibold text-primary transition-colors group-hover:text-accent">
+                  Explore
+                  <ArrowUpRight class="h-4 w-4" />
+                </span>
+              </div>
+            </a>
+          </FadeIn>
+        ))
+      }
+    </div>
+  </Container>
+</section>

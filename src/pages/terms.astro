@@ -1,0 +1,54 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import PageHero from "@/components/shared/PageHero.astro";
+import Container from "@/components/shared/Container.astro";
+import FadeIn from "@/components/animations/FadeIn.astro";
+import { createPageMetadata } from "@/lib/seo";
+import { SITE_CONFIG } from "@/constants/site";
+
+/** Port of app/terms/page.tsx. */
+const metadata = createPageMetadata({
+  title: "Terms and Conditions",
+  description:
+    "The terms that govern use of the Cognivac website and the framework under which our services are delivered.",
+  path: "/terms",
+});
+---
+
+<Layout metadata={metadata}>
+  <PageHero
+    label="Legal"
+    title="Terms and Conditions"
+    description="The terms that govern use of the Cognivac website and the framework under which our services are delivered."
+    breadcrumbs={[{ label: "Terms and Conditions" }]}
+  />
+
+  <section class="bg-background py-16 sm:py-20 lg:py-24">
+    <Container>
+      <FadeIn class="mx-auto max-w-3xl">
+        <div
+          class="rounded-[18px] border border-border bg-card p-6 sm:rounded-[22px] sm:p-10"
+        >
+          <p
+            class="text-[12px] font-semibold uppercase tracking-[0.14em] text-accent"
+          >
+            Placeholder
+          </p>
+          <p class="mt-4 text-[16px] leading-[1.7] text-muted sm:text-[17.5px]">
+            Full legal terms for the Cognivac website and services will be
+            published here before production launch. Engagement-specific terms —
+            including intellectual property ownership, which sits with the
+            client, confidentiality, and support commitments — are set out in the
+            master services agreement for each project.
+          </p>
+          <a
+            href={`mailto:${SITE_CONFIG.email}`}
+            class="mt-6 inline-block text-[15px] font-semibold text-primary underline underline-offset-4 transition-colors hover:text-accent"
+          >
+            {SITE_CONFIG.email}
+          </a>
+        </div>
+      </FadeIn>
+    </Container>
+  </section>
+</Layout>

@@ -1,0 +1,51 @@
+---
+import Container from "@/components/shared/Container.astro";
+import SectionLabel from "@/components/shared/SectionLabel.astro";
+import StatCounter from "@/components/shared/StatCounter.astro";
+import FadeIn from "@/components/animations/FadeIn.astro";
+import { STATS } from "@/features/home/constants/content";
+import { STATS_BAND_CONTENT, STATS_BAND_IDS } from "../constants";
+
+/** Port of features/stats-band/components/stats-band.tsx. */
+const BAND_STATS = STATS_BAND_IDS.map((id) =>
+  STATS.find((stat) => stat.id === id)
+).filter((stat): stat is (typeof STATS)[number] => Boolean(stat));
+---
+
+<section class="border-y border-border bg-card py-16 sm:py-20 lg:py-24">
+  <Container>
+    <FadeIn>
+      <div class="mx-auto max-w-3xl text-center">
+        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+          {STATS_BAND_CONTENT.label}
+        </SectionLabel>
+        <h2 class="text-section mt-5 text-primary">
+          {STATS_BAND_CONTENT.title}
+        </h2>
+        <p
+          class="mx-auto mt-4 max-w-[56ch] text-[16px] leading-[1.6] text-muted sm:text-[18px]"
+        >
+          {STATS_BAND_CONTENT.description}
+        </p>
+      </div>
+    </FadeIn>
+
+    <div
+      class="mt-12 grid grid-cols-2 gap-x-6 gap-y-10 sm:mt-14 lg:grid-cols-4 lg:gap-8"
+    >
+      {
+        BAND_STATS.map((stat, i) => (
+          <FadeIn delay={0.07 * (i + 1)}>
+            <StatCounter
+              value={stat.value}
+              suffix={stat.suffix}
+              prefix={stat.prefix}
+              decimals={stat.decimals}
+              label={stat.label}
+            />
+          </FadeIn>
+        ))
+      }
+    </div>
+  </Container>
+</section>

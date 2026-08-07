@@ -1,0 +1,43 @@
+---
+import type { NavChild } from "@/types";
+
+/**
+ * Port of components/layout/navbar/mega-menu.tsx.
+ * Open/close state lives on the parent [data-nav-item]; the enter/exit
+ * transition that AnimatePresence handled is now CSS (see globals.css).
+ */
+interface Props {
+  items: readonly NavChild[];
+}
+
+const { items } = Astro.props;
+---
+
+<div data-mega-menu class="absolute left-0 top-full z-50 min-w-[280px] pt-6">
+  <div
+    class="overflow-hidden rounded-2xl border border-white/10 bg-[#2f2f32] py-2 shadow-[0_16px_48px_rgba(0,0,0,0.45)]"
+  >
+    <ul role="menu">
+      {
+        items.map((item) => (
+          <li role="none">
+            <a
+              href={item.href}
+              role="menuitem"
+              class="block px-5 py-3 transition-colors hover:bg-white/10 focus-visible:bg-white/10"
+            >
+              <span class="block text-sm font-semibold text-white">
+                {item.label}
+              </span>
+              {item.description && (
+                <span class="mt-0.5 block text-xs text-white/50">
+                  {item.description}
+                </span>
+              )}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,246 @@
+---
+import { ArrowUpRight } from "@lucide/astro";
+import JsonLd from "@/lib/seo/JsonLd.astro";
+import { breadcrumbSchema } from "@/lib/seo";
+import PageHero from "@/components/shared/PageHero.astro";
+import Container from "@/components/shared/Container.astro";
+import SectionLabel from "@/components/shared/SectionLabel.astro";
+import FadeIn from "@/components/animations/FadeIn.astro";
+import { SERVICES } from "@/features/home/constants/content";
+import { PROCESS_STEPS } from "@/features/process-section/constants";
+import CtaSection from "@/features/cta-section/components/CtaSection.astro";
+import { NAV_ROUTES } from "@/constants/site";
+
+/** Port of features/services/index.tsx. */
+
+/** What each capability actually ships — vague scope is what stalls procurement. */
+const DELIVERABLES: Record<string, readonly string[]> = {
+  "ai-agents": [
+    "Agent architecture and tool design",
+    "Evaluation harness and guardrails",
+    "Human-in-the-loop escalation paths",
+  ],
+  "machine-learning": [
+    "Feature pipelines and training infrastructure",
+    "MLOps: versioning, rollback, monitoring",
+    "Drift detection and retraining cadence",
+  ],
+  "generative-ai": [
+    "RAG retrieval with permission scoping",
+    "Prompt and output governance",
+    "Grounding, citations, and audit trails",
+  ],
+  cloud: [
+    "Infrastructure as code and CI/CD",
+    "Multi-environment and cost controls",
+    "Observability and incident runbooks",
+  ],
+  automation: [
+    "Process mapping and exception design",
+    "Integration across ERP, CRM, and internal tools",
+    "Rollout with fallback to manual paths",
+  ],
+  apps: [
+    "Web, mobile, and internal platforms",
+    "Design system and accessibility",
+    "Auth, roles, and audit logging",
+  ],
+};
+
+const ENGAGEMENT_MODELS = [
+  {
+    id: "fixed",
+    title: "Fixed-scope project",
+    description:
+      "A defined outcome, milestone schedule, and fixed commercial envelope. Best when the problem is well understood.",
+    fit: "Clear brief, firm budget",
+  },
+  {
+    id: "pod",
+    title: "Dedicated pod",
+    description:
+      "A standing team of engineers plus a named PM working your roadmap sprint over sprint, with scope that can flex.",
+    fit: "Multi-quarter programs",
+  },
+  {
+    id: "augmentation",
+    title: "Team augmentation",
+    description:
+      "Senior engineers embedded into your existing squads, working your process, your board, your standards.",
+    fit: "Capacity or skill gap",
+  },
+];
+---
+
+<JsonLd
+  data={breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Services", path: "/services" },
+  ])}
+/>
+
+<PageHero
+  label="Services"
+  title="Software engineering, with AI built into the work"
+  description="We are a services company, not a product vendor. Cognivac designs, builds, integrates, and supports custom systems — and applies AI where it changes a number you already track."
+  breadcrumbs={[{ label: "Services" }]}
+  primaryCta={{ label: "Scope your project", href: NAV_ROUTES.contact }}
+  secondaryCta={{ label: "See the outcomes", href: NAV_ROUTES.caseStudies }}
+  highlights={[
+    "Discovery in 2 weeks",
+    "First milestone in 4–6",
+    "You own the code",
+  ]}
+/>
+
+{/* Capabilities — each with concrete deliverables, not adjectives */}
+<section class="bg-background py-16 sm:py-20 lg:py-28">
+  <Container>
+    <FadeIn>
+      <div class="max-w-3xl">
+        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+          What We Build
+        </SectionLabel>
+        <h2 class="text-section mt-5 max-w-[24ch] text-primary">
+          Six capabilities, and exactly what each one ships
+        </h2>
+        <p
+          class="mt-4 max-w-[54ch] text-[16px] leading-[1.6] text-muted sm:text-[18px]"
+        >
+          Most engagements combine two or three of these. We scope the
+          combination against your constraints, not a service catalogue.
+        </p>
+      </div>
+    </FadeIn>
+
+    <div class="mt-10 grid gap-5 sm:mt-12 md:grid-cols-2 md:gap-6 lg:mt-14">
+      {
+        SERVICES.map((service, i) => (
+          <FadeIn delay={0.06 * (i + 1)}>
+            <article
+              id={service.id}
+              class="flex h-full scroll-mt-32 flex-col rounded-[18px] border border-border bg-card p-6 transition-all duration-300 hover:border-accent/40 hover:shadow-soft sm:rounded-[22px] sm:p-8"
+            >
+              <h3 class="text-card-title text-primary">{service.title}</h3>
+              <p class="mt-3 text-[15px] leading-[1.65] text-muted sm:text-[16px]">
+                {service.description}
+              </p>
+
+              {DELIVERABLES[service.id] && (
+                <ul class="mt-5 space-y-2 border-t border-border pt-5">
+                  {DELIVERABLES[service.id].map((line) => (
+                    <li class="flex gap-2.5 text-[14.5px] leading-[1.55] text-primary/75">
+                      <span class="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                      {line}
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              <a
+                href={NAV_ROUTES.contact}
+                class="mt-auto inline-flex items-center gap-1.5 pt-6 text-[13.5px] font-semibold text-primary transition-colors hover:text-accent"
+              >
+                Discuss this capability
+                <ArrowUpRight class="h-4 w-4" />
+              </a>
+            </article>
+          </FadeIn>
+        ))
+      }
+    </div>
+  </Container>
+</section>
+
+{/* Delivery process — dark chapter break */}
+<section
+  class="relative overflow-hidden bg-[#1a1a1c] py-16 text-white sm:py-20 lg:py-28"
+>
+  <div class="dot-grid pointer-events-none absolute inset-0 opacity-60"></div>
+  <Container class="relative z-10">
+    <FadeIn>
+      <div class="mx-auto max-w-3xl text-center">
+        <SectionLabel
+          tone="accent"
+          class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm"
+        >
+          How Delivery Runs
+        </SectionLabel>
+        <h2
+          class="mt-5 text-[clamp(1.625rem,3.5vw+0.75rem,3.25rem)] font-bold leading-[1.08] tracking-[-0.02em] text-white"
+        >
+          The same five stages on every engagement
+        </h2>
+        <p
+          class="mx-auto mt-4 max-w-[600px] text-[16px] leading-[1.55] text-white/75 sm:text-[19px]"
+        >
+          No surprises about who owns what, or what ships next.
+        </p>
+      </div>
+    </FadeIn>
+
+    <div
+      class="mt-12 grid gap-5 sm:mt-14 sm:grid-cols-2 lg:grid-cols-5 lg:gap-4"
+    >
+      {
+        PROCESS_STEPS.map((step, i) => (
+          <FadeIn delay={0.06 * (i + 1)}>
+            <div class="h-full rounded-[18px] border border-white/12 bg-white/[0.04] p-5 sm:rounded-[22px] sm:p-6">
+              <span class="text-[12px] font-bold tracking-[0.16em] text-teal">
+                {step.index}
+              </span>
+              <h3 class="mt-3 text-[17px] font-bold leading-tight text-white">
+                {step.title}
+              </h3>
+              <p class="mt-2.5 text-[14px] leading-[1.6] text-white/70">
+                {step.description}
+              </p>
+            </div>
+          </FadeIn>
+        ))
+      }
+    </div>
+  </Container>
+</section>
+
+{/* Engagement models — the commercial question a CTO asks next */}
+<section class="border-y border-border bg-card py-16 sm:py-20 lg:py-28">
+  <Container>
+    <FadeIn>
+      <div class="max-w-3xl">
+        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+          Engagement Models
+        </SectionLabel>
+        <h2 class="text-section mt-5 max-w-[22ch] text-primary">
+          Three ways to work with us
+        </h2>
+        <p
+          class="mt-4 max-w-[52ch] text-[16px] leading-[1.6] text-muted sm:text-[18px]"
+        >
+          Teams often start fixed-scope and move to a pod once the roadmap
+          extends past the first release.
+        </p>
+      </div>
+    </FadeIn>
+
+    <div class="mt-10 grid gap-5 sm:mt-12 md:grid-cols-3 md:gap-6">
+      {
+        ENGAGEMENT_MODELS.map((model, i) => (
+          <FadeIn delay={0.08 * (i + 1)}>
+            <div class="flex h-full flex-col rounded-[18px] border border-border bg-background p-6 sm:rounded-[22px] sm:p-8">
+              <p class="text-[12px] font-semibold uppercase tracking-[0.14em] text-accent">
+                {model.fit}
+              </p>
+              <h3 class="text-card-title mt-4 text-primary">{model.title}</h3>
+              <p class="mt-3 text-[15px] leading-[1.65] text-muted sm:text-[16px]">
+                {model.description}
+              </p>
+            </div>
+          </FadeIn>
+        ))
+      }
+    </div>
+  </Container>
+</section>
+
+<CtaSection />

@@ -1,0 +1,51 @@
+---
+import { ArrowRight } from "@lucide/astro";
+import { cn } from "@/lib/utils";
+
+/** Port of components/shared/gradient-button.tsx. */
+interface Props {
+  href?: string;
+  class?: string;
+  showArrow?: boolean;
+  size?: "default" | "lg" | "sm";
+  type?: "button" | "submit";
+  ariaLabel?: string;
+  id?: string;
+}
+
+const SIZE_CLASSES = {
+  sm: "h-9 px-4 text-xs",
+  default: "h-11 px-6 text-sm",
+  lg: "h-14 px-8 text-base",
+} as const;
+
+const {
+  href,
+  class: className,
+  showArrow = true,
+  size = "default",
+  type = "button",
+  ariaLabel,
+  id,
+} = Astro.props;
+
+const classes = cn(
+  "group inline-flex items-center justify-center gap-2 rounded-full font-semibold text-white bg-accent shadow-glow transition-colors duration-300 hover:bg-[#1a1a1c] hover:text-white hover:shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2",
+  SIZE_CLASSES[size],
+  className
+);
+---
+
+{
+  href ? (
+    <a href={href} class={classes} aria-label={ariaLabel} id={id}>
+      <slot />
+      {showArrow && <ArrowRight class="h-4 w-4" />}
+    </a>
+  ) : (
+    <button type={type} class={classes} aria-label={ariaLabel} id={id}>
+      <slot />
+      {showArrow && <ArrowRight class="h-4 w-4" />}
+    </button>
+  )
+}

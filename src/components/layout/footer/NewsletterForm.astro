@@ -1,0 +1,89 @@
+---
+import Input from "@/components/ui/Input.astro";
+import GradientButton from "@/components/shared/GradientButton.astro";
+
+/**
+ * Port of components/layout/footer/newsletter-form.tsx.
+ * react-hook-form + zod are replaced by the same single rule enforced inline,
+ * so no validation library reaches the browser.
+ */
+---
+
+<form data-newsletter-form class="space-y-2.5 sm:space-y-3" novalidate>
+  <p
+    class="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-white/70 sm:text-[0.875rem] sm:tracking-[0.2em]"
+  >
+    Newsletter
+  </p>
+  <p class="text-xs text-white/60 sm:text-sm">
+    Get AI engineering insights delivered monthly.
+  </p>
+  <div class="flex flex-col gap-2 sm:flex-row">
+    <Input
+      type="email"
+      name="email"
+      placeholder="you@company.com"
+      aria-label="Email for newsletter"
+      class="h-10 border-white/20 bg-white/10 text-sm text-white placeholder:text-white/40 sm:h-11 sm:text-base"
+    />
+    <GradientButton
+      type="submit"
+      showArrow={false}
+      class="h-10 shrink-0 sm:h-11"
+      ariaLabel="Subscribe to newsletter"
+    >
+      <span data-newsletter-label>Subscribe</span>
+    </GradientButton>
+  </div>
+  <p data-newsletter-error class="hidden text-xs text-error" role="alert"></p>
+  <p data-newsletter-success class="hidden text-xs text-emerald-300" role="status">
+    Thanks — you&apos;re subscribed.
+  </p>
+</form>
+
+<script>
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function initNewsletter() {
+    document
+      .querySelectorAll<HTMLFormElement>("[data-newsletter-form]")
+      .forEach((form) => {
+        if (form.dataset.newsletterReady === "true") return;
+        form.dataset.newsletterReady = "true";
+
+        const input = form.querySelector<HTMLInputElement>(
+          'input[name="email"]'
+        );
+        const label = form.querySelector<HTMLElement>("[data-newsletter-label]");
+        const error = form.querySelector<HTMLElement>("[data-newsletter-error]");
+        const success = form.querySelector<HTMLElement>(
+          "[data-newsletter-success]"
+        );
+        if (!input || !label || !error || !success) return;
+
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          error.classList.add("hidden");
+          success.classList.add("hidden");
+
+          if (!EMAIL_RE.test(input.value.trim())) {
+            error.textContent = "Enter a valid email address";
+            error.classList.remove("hidden");
+            return;
+          }
+
+          label.textContent = "...";
+          // Same placeholder round-trip as the React version.
+          await new Promise((resolve) => setTimeout(resolve, 600));
+          label.textContent = "Subscribe";
+
+          form.reset();
+          success.classList.remove("hidden");
+        });
+      });
+  }
+
+  initNewsletter();
+  document.addEventListener("astro:page-load", initNewsletter);
+</script>

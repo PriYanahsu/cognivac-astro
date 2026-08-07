@@ -1,0 +1,550 @@
+@import "tailwindcss";
+
+:root {
+  /**
+   * next/font injected this variable in the Next build. Astro self-hosts the
+   * same family through @fontsource-variable, so the variable is declared here
+   * and every `var(--font-plus-jakarta)` reference below keeps working.
+   */
+  --font-plus-jakarta: "Plus Jakarta Sans Variable";
+
+  /* Palette: Graphite / Cobalt / Teal accent / Warm highlight / Soft Black */
+  --background: #f7f4ef;
+  --foreground: #22201c;
+  --primary: #22201c;
+  --secondary: #2b2b2e;
+  --accent: #1e4fd8;
+  --teal: #0ea5e9;
+  --warm: #f5a623;
+  --lavender: #efeae3;
+  --indigo: #163db0;
+  --muted: #6b6560;
+  --muted-light: #9a938a;
+  --border: #e5dfd6;
+  --card: #ffffff;
+  --dark: #2b2b2e;
+  --dark-mid: #3a3a3e;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-teal: var(--teal);
+  --color-warm: var(--warm);
+  --color-lavender: var(--lavender);
+  --color-indigo: var(--indigo);
+  --color-muted: var(--muted);
+  --color-muted-light: var(--muted-light);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-dark: var(--dark);
+  --color-dark-mid: var(--dark-mid);
+  --font-sans: var(--font-plus-jakarta), "Plus Jakarta Sans", ui-sans-serif,
+    system-ui, sans-serif;
+  --font-heading: var(--font-plus-jakarta), "Plus Jakarta Sans", ui-sans-serif,
+    system-ui, sans-serif;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+}
+
+/* Typography utilities — mobile mins scaled from desktop maxes */
+.text-hero {
+  font-size: clamp(1.875rem, 5vw + 0.5rem, 4.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+.text-section {
+  font-size: clamp(1.625rem, 3.5vw + 0.75rem, 3.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+.text-card-title {
+  font-size: clamp(1.25rem, 1vw + 0.75rem, 1.75rem);
+  line-height: 1.3;
+  font-weight: 700;
+}
+
+.text-body {
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.text-body-lg {
+  font-size: 1.0625rem;
+  line-height: 1.7;
+}
+
+@media (min-width: 768px) {
+  .text-body {
+    font-size: 1.125rem;
+  }
+
+  .text-body-lg {
+    font-size: 1.25rem;
+  }
+}
+
+.text-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+/* Brand utilities */
+.gradient-text {
+  background: linear-gradient(135deg, #1e4fd8 0%, #163db0 50%, #22201c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-brand {
+  background: #1e4fd8;
+}
+
+.gradient-brand-soft {
+  background: linear-gradient(135deg, #1e4fd8 0%, #163db0 60%, #2b2b2e 100%);
+}
+
+.gradient-dark {
+  background: radial-gradient(
+    ellipse at top center,
+    #3a3a3e 0%,
+    #2b2b2e 45%,
+    #1a1a1c 100%
+  );
+}
+
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #1e4fd8, #163db0, #2b2b2e);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.section-container {
+  width: 100%;
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .section-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+.section-padding {
+  padding-top: 7rem;
+  padding-bottom: 7rem;
+}
+
+/* Soft shadow */
+.shadow-soft {
+  box-shadow: 0 20px 50px rgba(34, 32, 28, 0.08);
+}
+
+.shadow-soft-lg {
+  box-shadow: 0 25px 60px rgba(34, 32, 28, 0.12);
+}
+
+.shadow-glow {
+  box-shadow: 0 8px 32px rgba(30, 79, 216, 0.35);
+}
+
+/* Focus */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 0.75rem 1.5rem;
+  background: var(--accent);
+  color: white;
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+}
+
+/* Dot grid background */
+.dot-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Selection — light surfaces keep graphite text; dark surfaces keep white */
+::selection {
+  background: rgba(30, 79, 216, 0.2);
+  color: var(--primary);
+}
+
+.text-white ::selection,
+.text-white::selection {
+  background: rgba(30, 79, 216, 0.45);
+  color: #fff;
+}
+
+.gradient-dark ::selection,
+.bg-\[\#1a1a1c\] ::selection {
+  background: rgba(30, 79, 216, 0.45);
+  color: #fff;
+}
+
+/* Hero AI network backdrop */
+@keyframes hero-flow-dash {
+  to {
+    stroke-dashoffset: -180;
+  }
+}
+
+@keyframes hero-node-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-halo-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.hero-flow {
+  stroke-dasharray: 8 14;
+  animation: hero-flow-dash 4.5s linear infinite;
+}
+
+.hero-flow-delay-1 {
+  animation-duration: 5.5s;
+  animation-delay: -1.2s;
+}
+
+.hero-flow-delay-2 {
+  animation-duration: 6.2s;
+  animation-delay: -2.4s;
+}
+
+.hero-flow-delay-3 {
+  animation-duration: 7s;
+  animation-delay: -0.8s;
+  stroke-dasharray: 4 18;
+}
+
+.hero-node {
+  animation: hero-node-breathe 5s ease-in-out infinite;
+}
+
+.hero-node-core {
+  animation: hero-node-breathe 3.8s ease-in-out infinite;
+}
+
+.hero-node-halo {
+  animation: hero-halo-pulse 3.8s ease-in-out infinite;
+}
+
+.hero-pulse-dot {
+  opacity: 0.85;
+}
+
+.hero-pulse-dot-delay {
+  opacity: 0.65;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-flow,
+  .hero-flow-delay-1,
+  .hero-flow-delay-2,
+  .hero-flow-delay-3,
+  .hero-node,
+  .hero-node-core,
+  .hero-node-halo {
+    animation: none;
+  }
+
+  .hero-pulse-dot,
+  .hero-pulse-dot-delay {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   Scroll-reveal primitives
+   Replaces framer-motion's `whileInView`. A single IntersectionObserver in
+   Layout.astro adds `.is-visible`; everything else is CSS, so no animation
+   library ships to the browser.
+   ========================================================================== */
+[data-reveal] {
+  opacity: 0;
+  transform: translate3d(var(--reveal-x, 0), var(--reveal-y, 40px), 0);
+  transition:
+    opacity var(--reveal-duration, 0.6s) cubic-bezier(0.22, 1, 0.36, 1)
+      var(--reveal-delay, 0s),
+    transform var(--reveal-duration, 0.6s) cubic-bezier(0.22, 1, 0.36, 1)
+      var(--reveal-delay, 0s);
+  will-change: opacity, transform;
+}
+
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Stagger container: children inherit an index-derived delay. */
+[data-reveal-item] {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-item-y, 32px), 0);
+  transition:
+    opacity var(--reveal-item-duration, 0.55s) cubic-bezier(0.22, 1, 0.36, 1)
+      var(--reveal-delay, 0s),
+    transform var(--reveal-item-duration, 0.55s) cubic-bezier(0.22, 1, 0.36, 1)
+      var(--reveal-delay, 0s);
+}
+
+[data-reveal-stagger].is-visible [data-reveal-item] {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Word-by-word headline reveal (was RevealText). */
+[data-reveal-word] > span {
+  display: inline-block;
+  overflow: hidden;
+}
+
+[data-reveal-word] > span > span {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(100%);
+  transition:
+    opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s),
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s);
+}
+
+[data-reveal-word].is-visible > span > span {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal],
+  [data-reveal-item],
+  [data-reveal-word] > span > span {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* ==========================================================================
+   Accordion (was Radix @radix-ui/react-accordion)
+   `grid-template-rows: 0fr -> 1fr` animates to content height without
+   measuring it in JS.
+   ========================================================================== */
+[data-accordion-content] {
+  display: grid;
+  grid-template-rows: 0fr;
+  overflow: hidden;
+  transition: grid-template-rows 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-accordion-content] > div {
+  min-height: 0;
+}
+
+[data-accordion-item][data-state="open"] > [data-accordion-content] {
+  grid-template-rows: 1fr;
+}
+
+[data-accordion-item][data-state="open"] [data-accordion-chevron] {
+  transform: rotate(180deg);
+}
+
+/* ==========================================================================
+   Overlays: mega menu, mobile sheet, search dialog
+   (was framer-motion AnimatePresence + Radix Dialog)
+   ========================================================================== */
+[data-mega-menu] {
+  opacity: 0;
+  transform: translateY(-8px);
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 0.2s;
+}
+
+[data-nav-item][data-state="open"] > [data-mega-menu] {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+[data-overlay] {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.25s ease,
+    visibility 0s linear 0.25s;
+}
+
+[data-overlay-root][data-state="open"] [data-overlay] {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+[data-sheet-panel] {
+  transform: translateX(100%);
+  visibility: hidden;
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 0.3s;
+}
+
+[data-overlay-root][data-state="open"] [data-sheet-panel] {
+  transform: translateX(0);
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+[data-dialog-panel] {
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, -50%) scale(0.96);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0s linear 0.2s;
+}
+
+[data-overlay-root][data-state="open"] [data-dialog-panel] {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1);
+  transition-delay: 0s;
+}
+
+/* Body scroll lock while a sheet or dialog is open. */
+body[data-scroll-locked] {
+  overflow: hidden;
+}
+
+/* Scroll progress bar (was framer-motion useScroll + useSpring). */
+[data-scroll-progress] {
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* PageHero cobalt bloom — was a framer-motion mount animation. */
+@keyframes page-hero-halo {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -33.333%) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -33.333%) scale(1);
+  }
+}
+
+.page-hero-halo {
+  transform: translate(-50%, -33.333%) scale(1);
+  animation: page-hero-halo 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-hero-halo {
+    animation: none;
+  }
+}

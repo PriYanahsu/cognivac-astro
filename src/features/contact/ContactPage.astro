@@ -1,0 +1,224 @@
+---
+import { Mail, MapPin, Phone, Clock, Check } from "@lucide/astro";
+import JsonLd from "@/lib/seo/JsonLd.astro";
+import { breadcrumbSchema } from "@/lib/seo";
+import PageHero from "@/components/shared/PageHero.astro";
+import Container from "@/components/shared/Container.astro";
+import SectionLabel from "@/components/shared/SectionLabel.astro";
+import FadeIn from "@/components/animations/FadeIn.astro";
+import { SITE_CONFIG } from "@/constants/site";
+import { FAQS } from "@/features/home/constants/content";
+import Accordion from "@/components/ui/Accordion.astro";
+import AccordionItem from "@/components/ui/AccordionItem.astro";
+import ContactForm from "./components/ContactForm.astro";
+
+/** Port of features/contact/index.tsx. */
+
+const WHAT_HAPPENS = [
+  {
+    id: "reply",
+    index: "01",
+    title: "We reply within one business day",
+    description:
+      "A real engineer reads your message — not a routing form. If it is not a fit, we will say so and point you somewhere better.",
+  },
+  {
+    id: "call",
+    index: "02",
+    title: "A 30-minute technical discussion",
+    description:
+      "No pitch deck. We ask about your systems, constraints, and what success would actually look like.",
+  },
+  {
+    id: "proposal",
+    index: "03",
+    title: "A scoped approach, in writing",
+    description:
+      "Within a week you get a written view of approach, milestones, team shape, and commercial envelope.",
+  },
+];
+
+const REASSURANCES = [
+  "NDA signed before discovery if you need one",
+  "You keep full ownership of everything we produce",
+  "No obligation after the first conversation",
+];
+
+const CONTACT_DETAILS = [
+  { id: "email", label: "Email", value: SITE_CONFIG.email, href: `mailto:${SITE_CONFIG.email}` },
+  {
+    id: "phone",
+    label: "Phone",
+    value: SITE_CONFIG.phone,
+    href: `tel:${SITE_CONFIG.phone.replace(/\s/g, "")}`,
+  },
+  { id: "location", label: "Location", value: SITE_CONFIG.address, href: null },
+  {
+    id: "response",
+    label: "Response time",
+    value: "Within one business day",
+    href: null,
+  },
+] as const;
+
+const DETAIL_ICONS = { email: Mail, phone: Phone, location: MapPin, response: Clock } as const;
+---
+
+<JsonLd
+  data={breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Contact", path: "/contact" },
+  ])}
+/>
+
+<PageHero
+  label="Contact"
+  title="Tell us what is not working yet"
+  description="Whether it is a stalled AI initiative, a legacy platform holding growth back, or a build you need a partner for — start with the problem and we will work backwards to the approach."
+  breadcrumbs={[{ label: "Contact" }]}
+  highlights={["Reply within 1 business day", "Talk to an engineer, not a rep"]}
+/>
+
+{/* Form + details */}
+<section class="bg-background py-16 sm:py-20 lg:py-28">
+  <Container>
+    <div class="grid gap-10 lg:grid-cols-12 lg:gap-14">
+      <FadeIn class="lg:col-span-5">
+        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+          Get In Touch
+        </SectionLabel>
+        <h2 class="text-section mt-5 max-w-[18ch] text-primary">
+          Reach us directly
+        </h2>
+
+        <ul class="mt-8 space-y-5">
+          {
+            CONTACT_DETAILS.map((detail) => {
+              const Icon = DETAIL_ICONS[detail.id];
+
+              return (
+                <li class="flex gap-4">
+                  <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-card text-accent ring-1 ring-border">
+                    <Icon class="h-5 w-5" />
+                  </span>
+                  <div class="min-w-0">
+                    <p class="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted">
+                      {detail.label}
+                    </p>
+                    {detail.href ? (
+                      <a
+                        href={detail.href}
+                        class="mt-1 block text-[16px] font-semibold text-primary transition-colors hover:text-accent"
+                      >
+                        {detail.value}
+                      </a>
+                    ) : (
+                      <p class="mt-1 text-[16px] font-semibold text-primary">
+                        {detail.value}
+                      </p>
+                    )}
+                  </div>
+                </li>
+              );
+            })
+          }
+        </ul>
+
+        <ul class="mt-9 space-y-3 border-t border-border pt-7">
+          {
+            REASSURANCES.map((item) => (
+              <li class="flex gap-2.5">
+                <Check class="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                <span class="text-[14.5px] leading-[1.55] text-primary/75">
+                  {item}
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+      </FadeIn>
+
+      <FadeIn delay={0.12} class="lg:col-span-7">
+        <ContactForm />
+      </FadeIn>
+    </div>
+  </Container>
+</section>
+
+{/* What happens next — dark band */}
+<section
+  class="relative overflow-hidden bg-[#1a1a1c] py-16 text-white sm:py-20 lg:py-24"
+>
+  <div class="dot-grid pointer-events-none absolute inset-0 opacity-60"></div>
+  <Container class="relative z-10">
+    <FadeIn>
+      <div class="mx-auto max-w-2xl text-center">
+        <SectionLabel
+          tone="accent"
+          class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm"
+        >
+          What Happens Next
+        </SectionLabel>
+        <h2
+          class="mt-5 text-[clamp(1.625rem,3.5vw+0.75rem,3rem)] font-bold leading-[1.1] tracking-[-0.02em] text-white"
+        >
+          Three steps, no black box
+        </h2>
+      </div>
+    </FadeIn>
+
+    <div class="mt-12 grid gap-5 sm:mt-14 md:grid-cols-3 md:gap-6">
+      {
+        WHAT_HAPPENS.map((step, i) => (
+          <FadeIn delay={0.08 * (i + 1)}>
+            <div class="h-full rounded-[18px] border border-white/12 bg-white/[0.04] p-6 sm:rounded-[22px] sm:p-7">
+              <span class="text-[12px] font-bold tracking-[0.16em] text-teal">
+                {step.index}
+              </span>
+              <h3 class="mt-3.5 text-[18px] font-bold leading-tight text-white sm:text-[20px]">
+                {step.title}
+              </h3>
+              <p class="mt-3 text-[14.5px] leading-[1.6] text-white/70">
+                {step.description}
+              </p>
+            </div>
+          </FadeIn>
+        ))
+      }
+    </div>
+  </Container>
+</section>
+
+{/* FAQ — answers the objections that stop people submitting */}
+<section class="bg-lavender/30 py-16 sm:py-20 lg:py-24">
+  <Container>
+    <div class="grid gap-8 lg:grid-cols-12 lg:gap-12">
+      <FadeIn class="lg:col-span-4">
+        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+          Before You Write
+        </SectionLabel>
+        <h2 class="text-section mt-5 text-primary">Questions teams ask first</h2>
+        <p class="mt-4 max-w-[38ch] text-[16px] leading-[1.6] text-muted">
+          Still unsure? Send the message anyway — a short reply is faster than
+          more reading.
+        </p>
+      </FadeIn>
+
+      <FadeIn delay={0.1} class="lg:col-span-8">
+        <Accordion>
+          {
+            FAQS.map((faq) => (
+              <AccordionItem
+                value={`contact-${faq.id}`}
+                question={faq.question}
+                answer={faq.answer}
+                triggerClass="py-4 text-[0.95rem] leading-snug sm:py-5 sm:text-lg sm:leading-normal"
+                contentClass="pb-4 text-[0.9375rem] leading-relaxed sm:pb-5 sm:text-base"
+              />
+            ))
+          }
+        </Accordion>
+      </FadeIn>
+    </div>
+  </Container>
+</section>

@@ -1,0 +1,100 @@
+---
+import { cn } from "@/lib/utils";
+
+/**
+ * Port of components/animations/magnetic-button.tsx.
+ * framer-motion's `useSpring({ stiffness: 300, damping: 20 })` is reproduced
+ * by integrating the same spring in a rAF loop.
+ */
+interface Props {
+  class?: string;
+  strength?: number;
+}
+
+const { class: className, strength = 0.3 } = Astro.props;
+---
+
+<div data-magnetic data-strength={strength} class={cn("inline-block", className)}>
+  <slot />
+</div>
+
+<script>
+  const STIFFNESS = 300;
+  const DAMPING = 20;
+
+  function initMagnetic() {
+    document
+      .querySelectorAll<HTMLElement>("[data-magnetic]")
+      .forEach((el) => {
+        if (el.dataset.magneticReady === "true") return;
+        el.dataset.magneticReady = "true";
+
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          return;
+        }
+
+        const strength = Number(el.dataset.strength ?? "0.3");
+        let targetX = 0;
+        let targetY = 0;
+        let x = 0;
+        let y = 0;
+        let vx = 0;
+        let vy = 0;
+        let frame = 0;
+        let last = 0;
+
+        const step = (now: number) => {
+          const dt = Math.min((now - last) / 1000, 1 / 30);
+          last = now;
+
+          // Standard damped-spring integration, matching framer's parameters.
+          vx += (-STIFFNESS * (x - targetX) - DAMPING * vx) * dt;
+          vy += (-STIFFNESS * (y - targetY) - DAMPING * vy) * dt;
+          x += vx * dt;
+          y += vy * dt;
+
+          el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+
+          const settled =
+            Math.abs(x - targetX) < 0.05 &&
+            Math.abs(y - targetY) < 0.05 &&
+            Math.abs(vx) < 0.05 &&
+            Math.abs(vy) < 0.05;
+
+          if (settled) {
+            x = targetX;
+            y = targetY;
+            vx = 0;
+            vy = 0;
+            el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+            frame = 0;
+            return;
+          }
+
+          frame = requestAnimationFrame(step);
+        };
+
+        const start = () => {
+          if (frame) return;
+          last = performance.now();
+          frame = requestAnimationFrame(step);
+        };
+
+        el.addEventListener("mousemove", (event) => {
+          const rect = el.getBoundingClientRect();
+          targetX = (event.clientX - (rect.left + rect.width / 2)) * strength;
+          targetY = (event.clientY - (rect.top + rect.height / 2)) * strength;
+          start();
+        });
+
+        el.addEventListener("mouseleave", () => {
+          targetX = 0;
+          targetY = 0;
+          start();
+        });
+      });
+  }
+
+  initMagnetic();
+  document.addEventListener("astro:page-load", initMagnetic);
+</script>

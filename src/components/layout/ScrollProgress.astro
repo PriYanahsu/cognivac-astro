@@ -1,0 +1,88 @@
+---
+/**
+ * Port of components/layout/scroll-progress.tsx.
+ * framer-motion's `useSpring(scrollYProgress, { stiffness: 100, damping: 30 })`
+ * is reproduced with the same spring constants in a rAF loop.
+ */
+---
+
+<div
+  data-scroll-progress
+  class="fixed left-0 right-0 top-0 z-[100] h-[3px] origin-left gradient-brand"
+  aria-hidden="true"
+>
+</div>
+
+<script>
+  const STIFFNESS = 100;
+  const DAMPING = 30;
+  const REST_DELTA = 0.001;
+
+  function initScrollProgress() {
+    const bar = document.querySelector<HTMLElement>("[data-scroll-progress]");
+    if (!bar || bar.dataset.progressReady === "true") return;
+    bar.dataset.progressReady = "true";
+
+    let target = 0;
+    let value = 0;
+    let velocity = 0;
+    let frame = 0;
+    let last = 0;
+
+    const readProgress = () => {
+      const scrollable =
+        document.documentElement.scrollHeight - window.innerHeight;
+      target = scrollable > 0 ? window.scrollY / scrollable : 0;
+    };
+
+    const step = (now: number) => {
+      const dt = Math.min((now - last) / 1000, 1 / 30);
+      last = now;
+
+      velocity += (-STIFFNESS * (value - target) - DAMPING * velocity) * dt;
+      value += velocity * dt;
+
+      bar.style.transform = `scaleX(${value})`;
+
+      if (
+        Math.abs(value - target) < REST_DELTA &&
+        Math.abs(velocity) < REST_DELTA
+      ) {
+        value = target;
+        velocity = 0;
+        bar.style.transform = `scaleX(${value})`;
+        frame = 0;
+        return;
+      }
+
+      frame = requestAnimationFrame(step);
+    };
+
+    const start = () => {
+      if (frame) return;
+      last = performance.now();
+      frame = requestAnimationFrame(step);
+    };
+
+    readProgress();
+    value = target;
+    bar.style.transform = `scaleX(${value})`;
+
+    window.addEventListener(
+      "scroll",
+      () => {
+        readProgress();
+        start();
+      },
+      { passive: true }
+    );
+
+    window.addEventListener("resize", () => {
+      readProgress();
+      start();
+    });
+  }
+
+  initScrollProgress();
+  document.addEventListener("astro:page-load", initScrollProgress);
+</script>

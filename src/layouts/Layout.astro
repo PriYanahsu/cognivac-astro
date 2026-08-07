@@ -1,0 +1,122 @@
+---
+import "@fontsource-variable/plus-jakarta-sans";
+import "@/styles/globals.css";
+
+import Navbar from "@/components/layout/navbar/Navbar.astro";
+import Footer from "@/components/layout/footer/Footer.astro";
+import ScrollProgress from "@/components/layout/ScrollProgress.astro";
+import { createPageMetadata, type PageMetadata } from "@/lib/seo";
+import { SITE_CONFIG } from "@/constants/site";
+
+/**
+ * Port of app/layout.tsx + app/providers.
+ *
+ * Differences from the Next build, all deliberate:
+ * - next/font/google is replaced by a self-hosted @fontsource-variable face,
+ *   so there is no third-party request on first paint.
+ * - MotionProvider is gone: it only ran `gsap.registerPlugin(ScrollTrigger)`
+ *   and then killed every trigger. No GSAP animation existed anywhere in the
+ *   codebase, so dropping it removes ~70 KB of JS with no visual change.
+ * - LenisProvider survives — Lenis is framework-agnostic and is imported below.
+ */
+interface Props {
+  metadata?: PageMetadata;
+}
+
+const fallbackMetadata = createPageMetadata({
+  title: `${SITE_CONFIG.name} | Enterprise AI & Software Development`,
+  description: SITE_CONFIG.description,
+  path: "/",
+});
+
+const { metadata = fallbackMetadata } = Astro.props;
+const ogImage = new URL(metadata.image, SITE_CONFIG.url).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{metadata.title}</title>
+    <meta name="description" content={metadata.description} />
+    <link rel="canonical" href={metadata.canonical} />
+
+    <meta
+      name="robots"
+      content={metadata.noIndex ? "noindex, nofollow" : "index, follow"}
+    />
+
+    <meta property="og:title" content={metadata.title} />
+    <meta property="og:description" content={metadata.description} />
+    <meta property="og:url" content={metadata.canonical} />
+    <meta property="og:site_name" content={metadata.siteName} />
+    <meta property="og:locale" content={metadata.locale} />
+    <meta property="og:type" content={metadata.type} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={metadata.title} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={metadata.title} />
+    <meta name="twitter:description" content={metadata.description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="icon" href="/icons/logo.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#2B0B59" />
+
+    <slot name="head" />
+  </head>
+
+  <body
+    class="min-h-screen bg-background font-sans text-foreground antialiased"
+  >
+    <a href="#main-content" class="skip-link">Skip to content</a>
+    <ScrollProgress />
+    <Navbar />
+    <main id="main-content">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      import { initReveal } from "@/lib/reveal";
+      import { initOverlays, bindOverlayKeyboard } from "@/lib/overlay";
+
+      function boot() {
+        initReveal();
+        initOverlays();
+        bindOverlayKeyboard();
+      }
+
+      boot();
+      document.addEventListener("astro:page-load", boot);
+    </script>
+
+    <script>
+      /**
+       * Port of providers/lenis-provider.tsx — identical options and the same
+       * bail-out when the visitor prefers reduced motion.
+       */
+      import Lenis from "lenis";
+
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        const lenis = new Lenis({
+          duration: 1.1,
+          easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          smoothWheel: true,
+          allowNestedScroll: true,
+        });
+
+        const raf = (time: number) => {
+          lenis.raf(time);
+          requestAnimationFrame(raf);
+        };
+
+        requestAnimationFrame(raf);
+      }
+    </script>
+  </body>
+</html>

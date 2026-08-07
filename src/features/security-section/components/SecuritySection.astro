@@ -1,0 +1,79 @@
+---
+import { Check, Database, KeyRound, ScrollText, ShieldCheck } from "@lucide/astro";
+import Container from "@/components/shared/Container.astro";
+import SectionLabel from "@/components/shared/SectionLabel.astro";
+import GhostButton from "@/components/shared/GhostButton.astro";
+import FadeIn from "@/components/animations/FadeIn.astro";
+import { SECURITY_CONTENT, SECURITY_PILLARS } from "../constants";
+
+/** Port of features/security-section/components/security-section.tsx. */
+const ICONS = { ShieldCheck, Database, KeyRound, ScrollText } as const;
+---
+
+<section
+  class="relative overflow-hidden bg-[#1a1a1c] py-16 text-white sm:py-20 lg:py-28"
+>
+  <Container class="relative z-10">
+    <FadeIn>
+      <div class="mx-auto max-w-3xl text-center">
+        <SectionLabel
+          tone="accent"
+          class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm"
+        >
+          {SECURITY_CONTENT.label}
+        </SectionLabel>
+        <h2
+          class="mt-5 text-[clamp(1.625rem,3.5vw+0.75rem,3.5rem)] font-bold leading-[1.08] tracking-[-0.02em] text-white"
+        >
+          {SECURITY_CONTENT.title}
+        </h2>
+        <p
+          class="mx-auto mt-4 max-w-[640px] text-[16px] leading-[1.55] text-white/75 sm:mt-6 sm:text-[19px] sm:leading-[1.6]"
+        >
+          {SECURITY_CONTENT.description}
+        </p>
+      </div>
+    </FadeIn>
+
+    <div
+      class="mt-10 grid gap-5 sm:mt-12 sm:grid-cols-2 lg:mt-14 lg:grid-cols-4 lg:gap-6"
+    >
+      {
+        SECURITY_PILLARS.map((pillar, i) => {
+          const Icon = ICONS[pillar.icon as keyof typeof ICONS] ?? ShieldCheck;
+
+          return (
+            <FadeIn delay={0.07 * (i + 1)}>
+              <div class="flex h-full flex-col rounded-[18px] border border-white/12 bg-white/[0.04] p-6 sm:rounded-[22px]">
+                <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-teal">
+                  <Icon class="h-5 w-5" />
+                </span>
+                <h3 class="mt-5 text-[18px] font-bold leading-tight text-white sm:text-[20px]">
+                  {pillar.title}
+                </h3>
+                <ul class="mt-4 space-y-3">
+                  {pillar.points.map((point) => (
+                    <li class="flex gap-2.5">
+                      <Check class="mt-0.5 h-4 w-4 shrink-0 text-teal" />
+                      <span class="text-[14px] leading-[1.55] text-white/70">
+                        {point}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </FadeIn>
+          );
+        })
+      }
+    </div>
+
+    <FadeIn delay={0.2}>
+      <div class="mt-10 text-center sm:mt-12">
+        <GhostButton tone="light" href={SECURITY_CONTENT.cta.href}>
+          {SECURITY_CONTENT.cta.label}
+        </GhostButton>
+      </div>
+    </FadeIn>
+  </Container>
+</section>

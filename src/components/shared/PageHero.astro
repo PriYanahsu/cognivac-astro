@@ -1,0 +1,170 @@
+---
+import { ChevronRight } from "@lucide/astro";
+import Container from "@/components/shared/Container.astro";
+import SectionLabel from "@/components/shared/SectionLabel.astro";
+import GradientButton from "@/components/shared/GradientButton.astro";
+import GhostButton from "@/components/shared/GhostButton.astro";
+import { cn } from "@/lib/utils";
+
+/**
+ * Port of components/shared/page-hero.tsx.
+ * The framer-motion stagger (0.09s between children, 0.05s lead-in) is now a
+ * `data-reveal-stagger` container; lib/reveal.ts assigns each child its delay.
+ */
+interface Crumb {
+  label: string;
+  href?: string;
+}
+
+interface HeroCta {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  label: string;
+  title: string;
+  description: string;
+  /** Trail after Home — e.g. [{ label: "Careers" }]. */
+  breadcrumbs?: Crumb[];
+  primaryCta?: HeroCta;
+  secondaryCta?: HeroCta;
+  /** Short proof chips under the CTAs — keep to three or fewer. */
+  highlights?: readonly string[];
+  class?: string;
+}
+
+const {
+  label,
+  title,
+  description,
+  breadcrumbs,
+  primaryCta,
+  secondaryCta,
+  highlights,
+  class: className,
+} = Astro.props;
+---
+
+<section
+  class={cn(
+    "relative overflow-hidden bg-[#1a1a1c] pb-16 pt-28 text-white sm:pb-20 sm:pt-32 lg:pb-24 lg:pt-38",
+    className
+  )}
+>
+  {/* On-theme backdrop: dot grid + a cobalt bloom behind the headline */}
+  <div class="dot-grid pointer-events-none absolute inset-0 opacity-70"></div>
+  <div
+    aria-hidden="true"
+    class="page-hero-halo pointer-events-none absolute left-1/2 top-0 h-[420px] w-[820px] rounded-full bg-accent/25 blur-[120px]"
+  >
+  </div>
+  <div
+    class="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent via-white/20 to-transparent"
+  >
+  </div>
+
+  <Container class="relative z-10">
+    <div
+      data-reveal-stagger
+      data-reveal-margin="-80px"
+      data-stagger="0.09"
+      data-delay-children="0.05"
+      style="--reveal-item-y:20px;--reveal-item-duration:0.6s"
+      class="mx-auto max-w-4xl text-center"
+    >
+      {
+        breadcrumbs && breadcrumbs.length > 0 && (
+          <nav
+            data-reveal-item
+            aria-label="Breadcrumb"
+            class="mb-7 flex flex-wrap items-center justify-center gap-1.5 text-[13px] text-white/50"
+          >
+            <a href="/" class="transition-colors hover:text-white">
+              Home
+            </a>
+            {breadcrumbs.map((crumb) => (
+              <span class="flex items-center gap-1.5">
+                <ChevronRight class="h-3.5 w-3.5 text-white/30" />
+                {crumb.href ? (
+                  <a href={crumb.href} class="transition-colors hover:text-white">
+                    {crumb.label}
+                  </a>
+                ) : (
+                  <span class="text-white/80">{crumb.label}</span>
+                )}
+              </span>
+            ))}
+          </nav>
+        )
+      }
+
+      <div data-reveal-item>
+        <SectionLabel
+          tone="accent"
+          class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm"
+        >
+          {label}
+        </SectionLabel>
+      </div>
+
+      <h1
+        data-reveal-item
+        class="mx-auto mt-5 max-w-[26ch] text-[clamp(1.875rem,4vw+0.65rem,3.75rem)] font-bold leading-[1.08] tracking-[-0.02em] text-white"
+      >
+        {title}
+      </h1>
+
+      <p
+        data-reveal-item
+        class="mx-auto mt-5 max-w-[62ch] text-[16px] leading-[1.6] text-white/75 sm:text-[19px] sm:leading-[1.65]"
+      >
+        {description}
+      </p>
+
+      {
+        (primaryCta || secondaryCta) && (
+          <div
+            data-reveal-item
+            class="mt-9 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:gap-4"
+          >
+            {primaryCta && (
+              <GradientButton
+                href={primaryCta.href}
+                size="lg"
+                class="w-full justify-center sm:w-auto"
+              >
+                {primaryCta.label}
+              </GradientButton>
+            )}
+            {secondaryCta && (
+              <GhostButton
+                href={secondaryCta.href}
+                tone="light"
+                size="lg"
+                class="w-full justify-center sm:w-auto"
+              >
+                {secondaryCta.label}
+              </GhostButton>
+            )}
+          </div>
+        )
+      }
+
+      {
+        highlights && highlights.length > 0 && (
+          <ul
+            data-reveal-item
+            class="mt-9 flex flex-wrap items-center justify-center gap-2.5"
+          >
+            {highlights.map((highlight) => (
+              <li class="rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-[13px] font-medium text-white/75">
+                {highlight}
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </Container>
+</section>

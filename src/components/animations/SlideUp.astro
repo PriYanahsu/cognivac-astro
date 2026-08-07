@@ -1,0 +1,40 @@
+---
+import { cn } from "@/lib/utils";
+
+/**
+ * Port of components/animations/slide-up.tsx.
+ * With `staggerChildren` set, children rendered as <SlideUpItem> receive an
+ * index-derived delay at init (see lib/reveal.ts) — the vanilla equivalent of
+ * framer-motion's variant staggering.
+ */
+interface Props {
+  class?: string;
+  delay?: number;
+  staggerChildren?: number;
+}
+
+const { class: className, delay = 0, staggerChildren } = Astro.props;
+---
+
+{
+  staggerChildren ? (
+    <div
+      data-reveal-stagger
+      data-reveal-margin="-60px"
+      data-stagger={staggerChildren}
+      data-delay-children={delay}
+      class={cn(className)}
+    >
+      <slot />
+    </div>
+  ) : (
+    <div
+      data-reveal
+      data-reveal-margin="-60px"
+      class={cn(className)}
+      style={`--reveal-x:0px;--reveal-y:48px;--reveal-duration:0.7s;--reveal-delay:${delay}s`}
+    >
+      <slot />
+    </div>
+  )
+}

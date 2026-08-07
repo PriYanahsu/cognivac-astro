@@ -1,0 +1,44 @@
+---
+import { cn } from "@/lib/utils";
+
+/**
+ * Port of components/animations/fade-in.tsx.
+ * Same offsets, easing, duration, and `-80px` viewport margin as the
+ * framer-motion original — driven by CSS + one shared IntersectionObserver.
+ */
+interface Props {
+  class?: string;
+  delay?: number;
+  direction?: "up" | "down" | "left" | "right" | "none";
+  duration?: number;
+  once?: boolean;
+}
+
+const DIRECTION_OFFSET = {
+  up: { y: "40px", x: "0px" },
+  down: { y: "-40px", x: "0px" },
+  left: { y: "0px", x: "40px" },
+  right: { y: "0px", x: "-40px" },
+  none: { y: "0px", x: "0px" },
+} as const;
+
+const {
+  class: className,
+  delay = 0,
+  direction = "up",
+  duration = 0.6,
+  once = true,
+} = Astro.props;
+
+const offset = DIRECTION_OFFSET[direction];
+---
+
+<div
+  data-reveal
+  data-reveal-margin="-80px"
+  data-reveal-once={once ? "true" : "false"}
+  class={cn(className)}
+  style={`--reveal-x:${offset.x};--reveal-y:${offset.y};--reveal-duration:${duration}s;--reveal-delay:${delay}s`}
+>
+  <slot />
+</div>

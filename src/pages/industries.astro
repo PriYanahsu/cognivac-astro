@@ -1,0 +1,11 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import IndustriesPage from "@/features/industries/IndustriesPage.astro";
+import { industriesMetadata } from "@/features/industries/metadata";
+
+/** Port of app/industries/page.tsx. */
+---
+
+<Layout metadata={industriesMetadata}>
+  <IndustriesPage />
+</Layout>

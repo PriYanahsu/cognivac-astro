@@ -1,0 +1,127 @@
+---
+/**
+ * Port of features/hero-section/components/hero-architecture.tsx.
+ * Pure SVG + SMIL + the CSS keyframes already in globals.css, so this renders
+ * fully server-side with no client JS at all. React's `useId` is replaced by a
+ * fixed gradient id — only one instance exists per page.
+ */
+const STAGES = [
+  { id: "discover", label: "Discover", detail: "Scope · Requirements", x: 80 },
+  { id: "design", label: "Design", detail: "Architecture · UX", x: 360 },
+  { id: "build", label: "Build", detail: "Frontend · Backend · AI", x: 640 },
+  { id: "deliver", label: "Deliver", detail: "Deploy · Support · Scale", x: 920 },
+] as const;
+
+const flowId = "hero-architecture-flow";
+---
+
+<div class="relative mx-auto mt-8 w-full max-w-5xl sm:mt-10" aria-hidden="true">
+  <svg viewBox="0 0 1000 156" class="h-auto w-full overflow-visible" fill="none">
+    <defs>
+      <linearGradient id={flowId} x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#22201c" stop-opacity="0"></stop>
+        <stop offset="30%" stop-color="#22201c" stop-opacity="0.55"></stop>
+        <stop offset="70%" stop-color="#22201c" stop-opacity="0.55"></stop>
+        <stop offset="100%" stop-color="#22201c" stop-opacity="0"></stop>
+      </linearGradient>
+    </defs>
+
+    <path
+      d="M 80 78 H 920"
+      stroke="rgba(34,32,28,0.14)"
+      stroke-width="1.75"
+      stroke-linecap="round"></path>
+    <path
+      d="M 80 78 H 920"
+      stroke={`url(#${flowId})`}
+      stroke-width="2.25"
+      stroke-linecap="round"
+      class="hero-flow"></path>
+    <path
+      d="M 80 78 H 920"
+      stroke="rgba(34,32,28,0.22)"
+      stroke-width="1.25"
+      stroke-linecap="round"
+      class="hero-flow hero-flow-delay-2"></path>
+
+    {
+      STAGES.map((stage, i) => {
+        const cx = stage.x;
+        const cy = 78;
+        const next = STAGES[i + 1];
+
+        return (
+          <g>
+            <circle
+              cx={cx}
+              cy={cy}
+              r="22"
+              class="hero-node-halo"
+              fill="rgba(34,32,28,0.06)"
+              style={`animation-delay:${i * 0.35}s`}
+            />
+            <circle
+              cx={cx}
+              cy={cy}
+              r="10"
+              class="hero-node-core"
+              fill="#FAFAFA"
+              stroke="#22201c"
+              stroke-width="2"
+              style={`animation-delay:${i * 0.35}s`}
+            />
+            <circle
+              cx={cx}
+              cy={cy}
+              r="4"
+              fill="#22201c"
+              class="hero-node"
+              style={`animation-delay:${i * 0.35}s`}
+            />
+
+            {next && (
+              <circle r="3" fill="#22201c" class="hero-pulse-dot">
+                <animateMotion
+                  dur={`${2.8 + i * 0.35}s`}
+                  repeatCount="indefinite"
+                  begin={`${i * 0.55}s`}
+                  path={`M ${cx} ${cy} L ${next.x} ${cy}`}
+                />
+                <animate
+                  attributeName="opacity"
+                  values="0;1;1;0"
+                  keyTimes="0;0.12;0.88;1"
+                  dur={`${2.8 + i * 0.35}s`}
+                  repeatCount="indefinite"
+                  begin={`${i * 0.55}s`}
+                />
+              </circle>
+            )}
+
+            <text
+              x={cx}
+              y={28}
+              text-anchor="middle"
+              fill="#22201c"
+              font-size="14"
+              font-weight="600"
+              style="font-family: var(--font-sans)"
+            >
+              {stage.label}
+            </text>
+            <text
+              x={cx}
+              y={128}
+              text-anchor="middle"
+              fill="#9a938a"
+              font-size="12"
+              style="font-family: var(--font-sans)"
+            >
+              {stage.detail}
+            </text>
+          </g>
+        );
+      })
+    }
+  </svg>
+</div>

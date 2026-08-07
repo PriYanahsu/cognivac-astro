@@ -1,0 +1,51 @@
+---
+import { ChevronDown } from "@lucide/astro";
+import { cn } from "@/lib/utils";
+
+interface Props {
+  value: string;
+  question: string;
+  answer: string;
+  triggerClass?: string;
+  contentClass?: string;
+}
+
+const { value, question, answer, triggerClass, contentClass } = Astro.props;
+
+const panelId = `accordion-panel-${value}`;
+const triggerId = `accordion-trigger-${value}`;
+---
+
+<div data-accordion-item data-state="closed" class="border-b border-border">
+  <h3 class="flex">
+    <button
+      type="button"
+      data-accordion-trigger
+      id={triggerId}
+      aria-controls={panelId}
+      aria-expanded="false"
+      class={cn(
+        "flex flex-1 items-center justify-between gap-3 py-5 text-left text-base font-semibold text-primary transition-all hover:text-accent sm:text-lg",
+        triggerClass
+      )}
+    >
+      {question}
+      <ChevronDown
+        data-accordion-chevron
+        class="h-4 w-4 shrink-0 text-muted transition-transform duration-300 sm:h-5 sm:w-5"
+      />
+    </button>
+  </h3>
+
+  <div
+    data-accordion-content
+    id={panelId}
+    role="region"
+    aria-labelledby={triggerId}
+    class="text-base"
+  >
+    <div>
+      <p class={cn("pb-5 pt-0 text-muted text-body", contentClass)}>{answer}</p>
+    </div>
+  </div>
+</div>

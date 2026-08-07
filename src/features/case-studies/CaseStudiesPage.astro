@@ -1,0 +1,222 @@
+---
+import { ArrowUpRight } from "@lucide/astro";
+import JsonLd from "@/lib/seo/JsonLd.astro";
+import { breadcrumbSchema } from "@/lib/seo";
+import PageHero from "@/components/shared/PageHero.astro";
+import Container from "@/components/shared/Container.astro";
+import SectionLabel from "@/components/shared/SectionLabel.astro";
+import StatCounter from "@/components/shared/StatCounter.astro";
+import FadeIn from "@/components/animations/FadeIn.astro";
+import { CASE_STUDIES, STATS } from "@/features/home/constants/content";
+import { CASE_METRICS } from "@/features/case-highlights/constants";
+import CtaSection from "@/features/cta-section/components/CtaSection.astro";
+import { NAV_ROUTES } from "@/constants/site";
+
+/** Port of features/case-studies/index.tsx. */
+
+/** Gradient art per study — mirrors the solutions deck treatment. */
+const STUDY_ART: Record<string, string> = {
+  "1": "linear-gradient(135deg,#1e4fd8,#163db0)",
+  "2": "linear-gradient(135deg,#3f7bb0,#bfe3ff)",
+  "3": "linear-gradient(135deg,#1a1a1c,#3a3a40)",
+};
+
+const STUDY_DETAIL: Record<
+  string,
+  { challenge: string; approach: string; stack: readonly string[] }
+> = {
+  "1": {
+    challenge:
+      "Twelve thousand engineers were searching six disconnected documentation systems, and answers were often out of date by the time they were found.",
+    approach:
+      "A governed RAG assistant with permission-scoped retrieval, citation-backed answers, and an evaluation harness that gates every release.",
+    stack: ["Python", "pgvector", "Azure", "LangGraph", "Next.js"],
+  },
+  "2": {
+    challenge:
+      "A rules-based payments risk engine was flagging too much legitimate traffic, and every tuning change took a quarter to ship safely.",
+    approach:
+      "A continuously trained model with explainable per-decision reasoning, shadow deployment, and one-click rollback for the risk team.",
+    stack: ["Python", "MLflow", "Kafka", "AWS", "Feature Store"],
+  },
+  "3": {
+    challenge:
+      "Warehouse exceptions were handled over email and phone across a global network, with no consistent record of what was decided or why.",
+    approach:
+      "An agentic operations layer that triages exceptions, drafts resolutions, and escalates to a human when confidence or value crosses a threshold.",
+    stack: ["TypeScript", "Temporal", "GCP", "Postgres", "React"],
+  },
+};
+
+const OUTCOME_STATS = STATS.filter((s) => ["1", "2", "3"].includes(s.id));
+---
+
+<JsonLd
+  data={breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Case Studies", path: "/case-studies" },
+  ])}
+/>
+
+<PageHero
+  label="Case Studies"
+  title="Proof that reached production"
+  description="Every engagement below is running under real load with real users. Each one lists the challenge, the approach, and the number that moved."
+  breadcrumbs={[{ label: "Case Studies" }]}
+  primaryCta={{ label: "Discuss a similar project", href: NAV_ROUTES.contact }}
+  secondaryCta={{ label: "See our services", href: NAV_ROUTES.services }}
+  highlights={["120+ systems shipped", "98% client retention"]}
+/>
+
+{/* Aggregate proof band, immediately under the hero */}
+<section class="border-b border-border bg-card py-14 sm:py-16">
+  <Container>
+    <div class="grid grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-8">
+      {
+        OUTCOME_STATS.map((stat, i) => (
+          <FadeIn delay={0.07 * (i + 1)}>
+            <StatCounter
+              value={stat.value}
+              suffix={stat.suffix}
+              prefix={stat.prefix}
+              decimals={stat.decimals}
+              label={stat.label}
+            />
+          </FadeIn>
+        ))
+      }
+    </div>
+  </Container>
+</section>
+
+{/* Full-width study rows — metric leads, detail follows */}
+<section class="bg-background py-16 sm:py-20 lg:py-28">
+  <Container>
+    <div class="grid gap-8 lg:gap-12">
+      {
+        CASE_STUDIES.map((study, i) => {
+          const metric = CASE_METRICS[study.id];
+          const detail = STUDY_DETAIL[study.id];
+
+          return (
+            <FadeIn delay={0.05 * (i + 1)}>
+              <article
+                id={study.id}
+                class="grid scroll-mt-32 overflow-hidden rounded-[18px] border border-border bg-card sm:rounded-[22px] lg:grid-cols-12"
+              >
+                {/* Art panel with the headline metric over it */}
+                <div
+                  class="relative flex min-h-[240px] flex-col justify-between p-6 text-white sm:p-8 lg:col-span-5 lg:p-10"
+                  style={`background:${STUDY_ART[study.id]}`}
+                >
+                  <div class="dot-grid pointer-events-none absolute inset-0 opacity-50" />
+                  <div class="relative z-10">
+                    <p class="text-[12px] font-semibold uppercase tracking-[0.16em] text-white/70">
+                      {study.category}
+                    </p>
+                  </div>
+
+                  {metric && (
+                    <div class="relative z-10 mt-10">
+                      <p class="text-[clamp(2.75rem,5vw,4rem)] font-bold leading-[1] tracking-[-0.02em] [font-variant-numeric:tabular-nums]">
+                        {metric.value}
+                      </p>
+                      <p class="mt-2.5 max-w-[26ch] text-[14.5px] font-medium leading-snug text-white/80">
+                        {metric.label}
+                      </p>
+                    </div>
+                  )}
+
+                  <div class="relative z-10 mt-8 overflow-hidden rounded-2xl">
+                    <div class="relative aspect-16/9">
+                      <img
+                        src={study.image}
+                        alt={study.title}
+                        loading="lazy"
+                        decoding="async"
+                        class="absolute inset-0 h-full w-full object-cover opacity-90"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex flex-col p-6 sm:p-8 lg:col-span-7 lg:p-10">
+                  <h2 class="text-[clamp(1.375rem,1.6vw+0.9rem,2rem)] font-bold leading-[1.15] tracking-[-0.01em] text-primary">
+                    {study.title}
+                  </h2>
+                  <p class="mt-3.5 max-w-[58ch] text-[16px] leading-[1.65] text-muted sm:text-[17px]">
+                    {study.description}
+                  </p>
+
+                  {detail && (
+                    <div class="mt-7 grid gap-6 border-t border-border pt-7 sm:grid-cols-2">
+                      <div>
+                        <p class="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted">
+                          The challenge
+                        </p>
+                        <p class="mt-2.5 text-[14.5px] leading-[1.6] text-primary/80">
+                          {detail.challenge}
+                        </p>
+                      </div>
+                      <div>
+                        <p class="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted">
+                          Our approach
+                        </p>
+                        <p class="mt-2.5 text-[14.5px] leading-[1.6] text-primary/80">
+                          {detail.approach}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {detail && (
+                    <div class="mt-7 flex flex-wrap items-center gap-2">
+                      {detail.stack.map((tech) => (
+                        <span class="rounded-full border border-border bg-background px-3 py-1.5 text-[12.5px] font-medium text-primary/70">
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <a
+                    href={NAV_ROUTES.contact}
+                    class="mt-auto inline-flex items-center gap-1.5 pt-8 text-[13.5px] font-semibold text-primary transition-colors hover:text-accent"
+                  >
+                    Talk about a project like this
+                    <ArrowUpRight class="h-4 w-4" />
+                  </a>
+                </div>
+              </article>
+            </FadeIn>
+          );
+        })
+      }
+    </div>
+  </Container>
+</section>
+
+{/* NDA note — pre-empts "where are the logos?" */}
+<section class="relative overflow-hidden bg-[#1a1a1c] py-14 text-white sm:py-16">
+  <div class="dot-grid pointer-events-none absolute inset-0 opacity-60"></div>
+  <Container class="relative z-10">
+    <FadeIn>
+      <div class="mx-auto max-w-2xl text-center">
+        <SectionLabel
+          tone="accent"
+          class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm"
+        >
+          A Note On Names
+        </SectionLabel>
+        <p class="mt-5 text-[17px] leading-[1.65] text-white/80 sm:text-[19px]">
+          Most of our work sits under NDA, so clients are described rather than
+          named here. On a call we can walk through the architecture in detail,
+          and arrange reference conversations where the client has agreed to
+          them.
+        </p>
+      </div>
+    </FadeIn>
+  </Container>
+</section>
+
+<CtaSection />

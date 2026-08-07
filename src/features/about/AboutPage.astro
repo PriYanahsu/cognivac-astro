@@ -1,0 +1,280 @@
+---
+import JsonLd from "@/lib/seo/JsonLd.astro";
+import { breadcrumbSchema } from "@/lib/seo";
+import PageHero from "@/components/shared/PageHero.astro";
+import Container from "@/components/shared/Container.astro";
+import SectionLabel from "@/components/shared/SectionLabel.astro";
+import FadeIn from "@/components/animations/FadeIn.astro";
+import { STATS } from "@/features/home/constants/content";
+import { PROCESS_STEPS } from "@/features/process-section/constants";
+import { WHY_ITEMS } from "@/features/why-cognivac/constants";
+import CtaSection from "@/features/cta-section/components/CtaSection.astro";
+import { NAV_ROUTES } from "@/constants/site";
+
+/** Port of features/about/index.tsx. */
+
+const POSITIONING = [
+  {
+    id: "not-a-product",
+    title: "We are not a product company",
+    description:
+      "There is no Cognivac platform you have to adopt. We build what your business needs, integrate it with the systems you already run, and hand it over documented.",
+  },
+  {
+    id: "ai-where-it-pays",
+    title: "AI where it changes a number",
+    description:
+      "We apply intelligence to cycle time, error rates, forecast accuracy, or customer experience — never because a technology is fashionable.",
+  },
+  {
+    id: "long-term",
+    title: "Built for the long engagement",
+    description:
+      "Most clients stay across multiple releases. That only works if what we ship stays maintainable by people who were not in the original room.",
+  },
+];
+
+const PRINCIPLES = [
+  {
+    id: "production",
+    title: "Production from day one",
+    description:
+      "Security, tests, documentation, and performance are part of delivery — never a hardening phase funded later.",
+    art: "linear-gradient(135deg,#1e4fd8,#163db0)",
+  },
+  {
+    id: "clarity",
+    title: "Clarity over ceremony",
+    description:
+      "You always know who owns the project, what is shipping next, and how progress maps to the outcome we agreed.",
+    art: "linear-gradient(135deg,#3f7bb0,#bfe3ff)",
+  },
+  {
+    id: "transfer",
+    title: "Knowledge transfer, always",
+    description:
+      "Runbooks, architecture decision records, and pairing — so your team can operate and extend the system without us.",
+    art: "linear-gradient(135deg,#1a1a1c,#3a3a40)",
+  },
+];
+---
+
+<JsonLd
+  data={breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "About", path: "/about" },
+  ])}
+/>
+
+<PageHero
+  label="About Cognivac"
+  title="A software partner for companies putting AI into real operations"
+  description="We are a service-based software development company with AI integration at the centre of how we work. Enterprises come to us when initiatives stall between ambition and production."
+  breadcrumbs={[{ label: "About" }]}
+  primaryCta={{ label: "Work with us", href: NAV_ROUTES.contact }}
+  secondaryCta={{ label: "See open roles", href: NAV_ROUTES.careers }}
+  highlights={["120+ systems in production", "25+ industries", "98% retention"]}
+/>
+
+{/* Mission + positioning */}
+<section class="bg-background py-16 sm:py-20 lg:py-28">
+  <Container>
+    <div class="grid gap-10 lg:grid-cols-12 lg:gap-16">
+      <FadeIn class="lg:col-span-5">
+        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+          Our Mission
+        </SectionLabel>
+        <h2 class="text-section mt-5 max-w-[20ch] text-primary">
+          Close the gap between AI ambition and production reality
+        </h2>
+        <p
+          class="mt-5 max-w-[46ch] text-[16px] leading-[1.65] text-muted sm:text-[18px]"
+        >
+          Help organizations turn AI and modern software into durable capability
+          — secure, maintainable systems that reduce manual work and support
+          clearer decisions, without the risk of demos that never reach
+          production.
+        </p>
+      </FadeIn>
+
+      <div class="divide-y divide-border lg:col-span-7">
+        {
+          POSITIONING.map((point, i) => (
+            <FadeIn delay={0.08 * (i + 1)}>
+              <div class="py-6 sm:py-8">
+                <h3 class="text-card-title text-primary">{point.title}</h3>
+                <p class="mt-2.5 max-w-[54ch] text-[15px] leading-[1.65] text-muted sm:text-[16.5px]">
+                  {point.description}
+                </p>
+              </div>
+            </FadeIn>
+          ))
+        }
+      </div>
+    </div>
+  </Container>
+</section>
+
+{/* Dark numbers band */}
+<section
+  class="relative overflow-hidden bg-[#1a1a1c] py-16 text-white sm:py-20 lg:py-24"
+>
+  <div class="dot-grid pointer-events-none absolute inset-0 opacity-60"></div>
+  <Container class="relative z-10">
+    <FadeIn>
+      <div class="mx-auto max-w-2xl text-center">
+        <SectionLabel
+          tone="accent"
+          class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm"
+        >
+          Track Record
+        </SectionLabel>
+        <h2
+          class="mt-5 text-[clamp(1.625rem,3.5vw+0.75rem,3rem)] font-bold leading-[1.1] tracking-[-0.02em] text-white"
+        >
+          Measured by what stayed running
+        </h2>
+      </div>
+    </FadeIn>
+
+    <div
+      class="mt-12 grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-5 lg:gap-8"
+    >
+      {
+        STATS.map((stat, i) => (
+          <FadeIn delay={0.06 * (i + 1)}>
+            <div class="text-center">
+              <p class="text-[clamp(2rem,3vw,3rem)] font-bold leading-none tracking-[-0.02em] text-white [font-variant-numeric:tabular-nums]">
+                {stat.prefix}
+                {stat.decimals ? stat.value.toFixed(stat.decimals) : stat.value}
+                {stat.suffix}
+              </p>
+              <p class="mx-auto mt-3 max-w-[20ch] text-[13.5px] leading-snug text-white/65">
+                {stat.label}
+              </p>
+            </div>
+          </FadeIn>
+        ))
+      }
+    </div>
+  </Container>
+</section>
+
+{/* Principles — gradient art cards, matching the solutions deck */}
+<section class="border-b border-border bg-card py-16 sm:py-20 lg:py-28">
+  <Container>
+    <FadeIn>
+      <div class="max-w-3xl">
+        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+          How We Engineer
+        </SectionLabel>
+        <h2 class="text-section mt-5 max-w-[22ch] text-primary">
+          Three principles that survive contact with a deadline
+        </h2>
+      </div>
+    </FadeIn>
+
+    <div class="mt-10 grid gap-5 sm:mt-12 md:grid-cols-3 md:gap-6">
+      {
+        PRINCIPLES.map((principle, i) => (
+          <FadeIn delay={0.08 * (i + 1)}>
+            <div class="flex h-full flex-col overflow-hidden rounded-[18px] border border-border bg-background sm:rounded-[22px]">
+              <div
+                class="h-[120px] w-full sm:h-[140px]"
+                style={`background:${principle.art}`}
+              />
+              <div class="flex flex-1 flex-col p-6 sm:p-7">
+                <h3 class="text-card-title text-primary">{principle.title}</h3>
+                <p class="mt-3 text-[15px] leading-[1.65] text-muted sm:text-[16px]">
+                  {principle.description}
+                </p>
+              </div>
+            </div>
+          </FadeIn>
+        ))
+      }
+    </div>
+  </Container>
+</section>
+
+{/* How we work — reuses the home process steps */}
+<section class="bg-background py-16 sm:py-20 lg:py-28">
+  <Container>
+    <FadeIn>
+      <div class="max-w-3xl">
+        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+          How We Work
+        </SectionLabel>
+        <h2 class="text-section mt-5 max-w-[24ch] text-primary">
+          Discovery first, always
+        </h2>
+        <p
+          class="mt-4 max-w-[54ch] text-[16px] leading-[1.6] text-muted sm:text-[18px]"
+        >
+          Engagements begin with business discovery — objectives, constraints,
+          existing systems, and the operational pain behind the request — not a
+          technology pitch.
+        </p>
+      </div>
+    </FadeIn>
+
+    <div
+      class="mt-10 grid gap-5 sm:mt-12 sm:grid-cols-2 lg:grid-cols-5 lg:gap-4"
+    >
+      {
+        PROCESS_STEPS.map((step, i) => (
+          <FadeIn delay={0.06 * (i + 1)}>
+            <div class="h-full rounded-[18px] border border-border bg-card p-5 sm:rounded-[22px] sm:p-6">
+              <span class="text-[12px] font-bold tracking-[0.16em] text-accent">
+                {step.index}
+              </span>
+              <h3 class="mt-3 text-[17px] font-bold leading-tight text-primary">
+                {step.title}
+              </h3>
+              <p class="mt-2.5 text-[14px] leading-[1.6] text-muted">
+                {step.description}
+              </p>
+            </div>
+          </FadeIn>
+        ))
+      }
+    </div>
+  </Container>
+</section>
+
+{/* Why clients trust us */}
+<section class="border-y border-border bg-card py-16 sm:py-20 lg:py-28">
+  <Container>
+    <FadeIn>
+      <div class="mx-auto max-w-2xl text-center">
+        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+          Why Clients Stay
+        </SectionLabel>
+        <h2 class="text-section mt-5 text-primary">
+          Trust comes from transparency and consistency
+        </h2>
+      </div>
+    </FadeIn>
+
+    <div class="mt-10 grid gap-5 sm:mt-12 md:grid-cols-3 md:gap-6">
+      {
+        WHY_ITEMS.map((item, i) => (
+          <FadeIn delay={0.08 * (i + 1)}>
+            <div class="flex h-full flex-col rounded-[18px] border border-border bg-background p-6 sm:rounded-[22px] sm:p-8">
+              <span
+                class="h-1 w-12 rounded-full"
+                style={`background:${item.accentColor}`}
+              />
+              <h3 class="text-card-title mt-6 text-primary">{item.title}</h3>
+              <p class="mt-3 text-[15px] leading-[1.65] text-muted sm:text-[16px]">
+                {item.description}
+              </p>
+            </div>
+          </FadeIn>
+        ))
+      }
+    </div>
+  </Container>
+</section>
+
+<CtaSection />

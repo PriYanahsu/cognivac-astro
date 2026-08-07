@@ -1,0 +1,11 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import ContactPage from "@/features/contact/ContactPage.astro";
+import { contactMetadata } from "@/features/contact/metadata";
+
+/** Port of app/contact/page.tsx. */
+---
+
+<Layout metadata={contactMetadata}>
+  <ContactPage />
+</Layout>

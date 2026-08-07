@@ -1,0 +1,87 @@
+---
+import HeroSection from "@/features/hero-section/components/HeroSection.astro";
+import ProofStrip from "@/features/hero-section/components/ProofStrip.astro";
+import ProblemSection from "@/features/problem-section/components/ProblemSection.astro";
+import TrustSections from "@/features/trust-sections/components/TrustSections.astro";
+import CaseHighlights from "@/features/case-highlights/components/CaseHighlights.astro";
+import StatsBand from "@/features/stats-band/components/StatsBand.astro";
+import PlatformSection from "@/features/platform-section/components/PlatformSection.astro";
+import WhyCognivac from "@/features/why-cognivac/components/WhyCognivac.astro";
+import ProcessSection from "@/features/process-section/components/ProcessSection.astro";
+import SecuritySection from "@/features/security-section/components/SecuritySection.astro";
+import IndustriesShowcase from "@/features/industries-showcase/components/IndustriesShowcase.astro";
+import TestimonialsSection from "@/features/testimonials-section/components/TestimonialsSection.astro";
+import CtaSection from "@/features/cta-section/components/CtaSection.astro";
+import FaqSection from "./components/FaqSection.astro";
+import JsonLd from "@/lib/seo/JsonLd.astro";
+import {
+  faqSchema,
+  organizationSchema,
+  websiteSchema,
+  serviceSchema,
+} from "@/lib/seo";
+import { FAQS, SERVICES } from "./constants/content";
+
+/**
+ * Port of features/home/index.tsx.
+ *
+ * Scroll order: clarity → comprehension → credibility → conversion, with the
+ * de-risk beats (process, security) placed after proof and before the ask.
+ *
+ * Background rhythm — no two adjacent sections share a surface, and the three
+ * dark bands land on every third section:
+ *   hero #FAFAFA · problem lavender · SOLUTIONS DARK · cases background
+ *   · stats card · PLATFORM DARK · why background · process card
+ *   · SECURITY DARK · industries background · testimonials card
+ *   · faq lavender · cta background (dark inset card) · footer gradient-dark
+ */
+---
+
+<JsonLd
+  data={[
+    organizationSchema(),
+    websiteSchema(),
+    faqSchema(FAQS.map((f) => ({ question: f.question, answer: f.answer }))),
+    serviceSchema(
+      SERVICES.map((s) => ({
+        name: s.title,
+        description: s.description,
+        url: s.href,
+      }))
+    ),
+  ]}
+/>
+
+{/* 1 · Clarity — what this is, who it is for, who already trusts it */}
+<HeroSection />
+<ProofStrip />
+
+{/* 2 · The pain, named before anything is sold */}
+<ProblemSection />
+
+{/* 3 · What we build (existing solutions deck — untouched) */}
+<TrustSections />
+
+{/* 4–5 · Credibility: specific proof, then aggregate proof */}
+<CaseHighlights />
+<StatsBand />
+
+{/* 6 · Technical credibility — how the stack fits together */}
+<PlatformSection />
+
+{/* 7 · Differentiation, only after proof has been earned */}
+<WhyCognivac />
+
+{/* 8–9 · De-risk: how an engagement runs, and how it clears review */}
+<ProcessSection />
+<SecuritySection />
+
+{/* 10–11 · Relevance confirmation, then human proof */}
+<IndustriesShowcase />
+<TestimonialsSection />
+
+{/* 12 · Objection handling immediately before the ask */}
+<FaqSection />
+
+{/* 13 · Conversion */}
+<CtaSection />

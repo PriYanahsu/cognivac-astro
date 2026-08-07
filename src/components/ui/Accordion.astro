@@ -1,0 +1,62 @@
+---
+import { cn } from "@/lib/utils";
+
+/**
+ * Port of components/ui/accordion.tsx (was @radix-ui/react-accordion).
+ *
+ * Behaves like Radix `type="single" collapsible`: at most one panel open, and
+ * clicking the open panel closes it. State lives in `data-state` on each item,
+ * exactly as Radix did, so the CSS in globals.css is a drop-in match.
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div data-accordion class={cn("w-full", className)}>
+  <slot />
+</div>
+
+<script>
+  function initAccordions() {
+    document
+      .querySelectorAll<HTMLElement>("[data-accordion]")
+      .forEach((root) => {
+        if (root.dataset.accordionReady === "true") return;
+        root.dataset.accordionReady = "true";
+
+        root.addEventListener("click", (event) => {
+          const trigger = (event.target as HTMLElement).closest<HTMLElement>(
+            "[data-accordion-trigger]"
+          );
+          if (!trigger || !root.contains(trigger)) return;
+
+          const item = trigger.closest<HTMLElement>("[data-accordion-item]");
+          if (!item) return;
+
+          const wasOpen = item.dataset.state === "open";
+
+          // `type="single"` — close every sibling before opening this one.
+          root
+            .querySelectorAll<HTMLElement>("[data-accordion-item]")
+            .forEach((sibling) => {
+              sibling.dataset.state = "closed";
+              sibling
+                .querySelector<HTMLElement>("[data-accordion-trigger]")
+                ?.setAttribute("aria-expanded", "false");
+            });
+
+          // `collapsible` — re-clicking the open item leaves everything closed.
+          if (!wasOpen) {
+            item.dataset.state = "open";
+            trigger.setAttribute("aria-expanded", "true");
+          }
+        });
+      });
+  }
+
+  initAccordions();
+  document.addEventListener("astro:page-load", initAccordions);
+</script>

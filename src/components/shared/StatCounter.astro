@@ -1,0 +1,107 @@
+---
+import { cn } from "@/lib/utils";
+
+/**
+ * Port of components/shared/stat-counter.tsx.
+ *
+ * One deliberate improvement over the React version: the final value is
+ * rendered into the HTML rather than a placeholder `0`, so crawlers and
+ * no-JS visitors read the real number. The count-up then starts from 0 on
+ * first intersection exactly as before.
+ */
+interface Props {
+  value: number;
+  suffix?: string;
+  prefix?: string;
+  decimals?: number;
+  label: string;
+  class?: string;
+  duration?: number;
+}
+
+const {
+  value,
+  suffix = "",
+  prefix = "",
+  decimals = 0,
+  label,
+  class: className,
+  duration = 2000,
+} = Astro.props;
+
+const formatted = decimals > 0 ? value.toFixed(decimals) : String(Math.floor(value));
+---
+
+<div
+  data-stat-counter
+  data-value={value}
+  data-decimals={decimals}
+  data-duration={duration}
+  class={cn("text-center", className)}
+>
+  <p class="gradient-text text-4xl font-bold md:text-5xl lg:text-6xl">
+    {prefix}<span data-stat-value>{formatted}</span>{suffix}
+  </p>
+  <p class="mt-3 text-sm text-muted md:text-base">{label}</p>
+</div>
+
+<script>
+  function initStatCounters() {
+    const counters = document.querySelectorAll<HTMLElement>(
+      "[data-stat-counter]"
+    );
+    if (counters.length === 0) return;
+
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+
+          const el = entry.target as HTMLElement;
+          obs.unobserve(el);
+
+          const output = el.querySelector<HTMLElement>("[data-stat-value]");
+          if (!output) continue;
+
+          const value = Number(el.dataset.value ?? "0");
+          const decimals = Number(el.dataset.decimals ?? "0");
+          const duration = Number(el.dataset.duration ?? "2000");
+
+          const format = (n: number) =>
+            decimals > 0 ? n.toFixed(decimals) : String(Math.floor(n));
+
+          if (prefersReduced) {
+            output.textContent = format(value);
+            continue;
+          }
+
+          const start = performance.now();
+          const tick = (now: number) => {
+            const progress = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            output.textContent = format(value * eased);
+            if (progress < 1) requestAnimationFrame(tick);
+            else output.textContent = format(value);
+          };
+
+          output.textContent = format(0);
+          requestAnimationFrame(tick);
+        }
+      },
+      { threshold: 0.4 }
+    );
+
+    counters.forEach((el) => {
+      if (el.dataset.counterReady === "true") return;
+      el.dataset.counterReady = "true";
+      observer.observe(el);
+    });
+  }
+
+  initStatCounters();
+  document.addEventListener("astro:page-load", initStatCounters);
+</script>

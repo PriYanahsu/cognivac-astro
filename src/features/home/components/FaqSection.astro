@@ -1,0 +1,39 @@
+---
+import Container from "@/components/shared/Container.astro";
+import SectionLabel from "@/components/shared/SectionLabel.astro";
+import FadeIn from "@/components/animations/FadeIn.astro";
+import Accordion from "@/components/ui/Accordion.astro";
+import AccordionItem from "@/components/ui/AccordionItem.astro";
+import { FAQS } from "@/features/home/constants/content";
+
+/** Port of features/home/components/faq-section.tsx. */
+---
+
+<section class="bg-lavender/30 py-12 sm:py-16 lg:py-28">
+  <Container>
+    <div class="grid gap-8 lg:grid-cols-12 lg:gap-12">
+      <FadeIn class="lg:col-span-4">
+        <SectionLabel>FAQ</SectionLabel>
+        <h2 class="text-section text-primary">
+          Questions teams ask before we start
+        </h2>
+      </FadeIn>
+
+      <FadeIn delay={0.1} class="lg:col-span-8">
+        <Accordion>
+          {
+            FAQS.map((faq) => (
+              <AccordionItem
+                value={`home-${faq.id}`}
+                question={faq.question}
+                answer={faq.answer}
+                triggerClass="py-4 text-[0.95rem] leading-snug sm:py-5 sm:text-lg sm:leading-normal"
+                contentClass="pb-4 text-[0.9375rem] leading-relaxed sm:pb-5 sm:text-base"
+              />
+            ))
+          }
+        </Accordion>
+      </FadeIn>
+    </div>
+  </Container>
+</section>

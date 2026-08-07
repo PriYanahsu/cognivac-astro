@@ -1,0 +1,132 @@
+---
+import { ChevronDown } from "@lucide/astro";
+import MegaMenu from "./MegaMenu.astro";
+import type { NavItem } from "@/types";
+
+/**
+ * Port of components/layout/navbar/nav-links.tsx + hooks/use-mega-menu.ts.
+ * Hover opens, mouse-leave closes, click toggles, Escape closes — the same
+ * behaviour the `useMegaMenu` hook provided.
+ */
+interface Props {
+  items: NavItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<ul data-nav-links class="hidden items-center gap-0.5 lg:flex">
+  {
+    items.map((item) => {
+      const hasChildren = Boolean(item.children?.length);
+
+      return (
+        <li
+          class="relative"
+          data-nav-item={hasChildren ? item.label : undefined}
+          data-state="closed"
+        >
+          {hasChildren ? (
+            <button
+              type="button"
+              data-nav-trigger
+              aria-expanded="false"
+              aria-haspopup="true"
+              class="group relative flex items-center gap-1 rounded-full px-3 py-2 text-sm font-medium text-white/80 transition-colors hover:text-white"
+            >
+              {item.label}
+              <ChevronDown
+                data-nav-chevron
+                class="h-3.5 w-3.5 transition-transform duration-200"
+              />
+            </button>
+          ) : (
+            <a
+              href={item.href}
+              class="group relative rounded-full px-3 py-2 text-sm font-medium text-white/80 transition-colors hover:text-white"
+            >
+              {item.label}
+            </a>
+          )}
+
+          {hasChildren && item.children && <MegaMenu items={item.children} />}
+        </li>
+      );
+    })
+  }
+</ul>
+
+<style>
+  /* Matches the React version's `isActive && "bg-white/10 text-white"`. */
+  [data-nav-item][data-state="open"] > [data-nav-trigger] {
+    background-color: rgb(255 255 255 / 0.1);
+    color: #fff;
+  }
+
+  [data-nav-item][data-state="open"] [data-nav-chevron] {
+    transform: rotate(180deg);
+  }
+</style>
+
+<script>
+  function initNavLinks() {
+    const root = document.querySelector<HTMLElement>("[data-nav-links]");
+    if (!root || root.dataset.navReady === "true") return;
+    root.dataset.navReady = "true";
+
+    const items = Array.from(
+      root.querySelectorAll<HTMLElement>("[data-nav-item]")
+    );
+
+    const closeAll = (except?: HTMLElement) => {
+      items.forEach((item) => {
+        if (item === except) return;
+        item.dataset.state = "closed";
+        item
+          .querySelector<HTMLElement>("[data-nav-trigger]")
+          ?.setAttribute("aria-expanded", "false");
+      });
+    };
+
+    const open = (item: HTMLElement) => {
+      closeAll(item);
+      item.dataset.state = "open";
+      item
+        .querySelector<HTMLElement>("[data-nav-trigger]")
+        ?.setAttribute("aria-expanded", "true");
+    };
+
+    const close = (item: HTMLElement) => {
+      item.dataset.state = "closed";
+      item
+        .querySelector<HTMLElement>("[data-nav-trigger]")
+        ?.setAttribute("aria-expanded", "false");
+    };
+
+    items.forEach((item) => {
+      item.addEventListener("mouseenter", () => open(item));
+      item.addEventListener("mouseleave", () => close(item));
+
+      item
+        .querySelector<HTMLElement>("[data-nav-trigger]")
+        ?.addEventListener("click", () => {
+          if (item.dataset.state === "open") close(item);
+          else open(item);
+        });
+
+      // Keyboard users get the same panel via focus.
+      item.addEventListener("focusin", () => open(item));
+      item.addEventListener("focusout", (event) => {
+        const next = (event as FocusEvent).relatedTarget as Node | null;
+        if (!next || !item.contains(next)) close(item);
+      });
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeAll();
+    });
+  }
+
+  initNavLinks();
+  document.addEventListener("astro:page-load", initNavLinks);
+</script>

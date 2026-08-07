@@ -1,0 +1,55 @@
+---
+import { X } from "@lucide/astro";
+import { cn } from "@/lib/utils";
+
+/**
+ * Port of components/ui/dialog.tsx (was @radix-ui/react-dialog).
+ * Slots: `trigger` renders in place; the default slot fills the panel.
+ */
+interface Props {
+  title: string;
+  class?: string;
+}
+
+const { title, class: className } = Astro.props;
+const titleId = `dialog-title-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+---
+
+<div data-overlay-root data-state="closed" class="contents">
+  <slot name="trigger" />
+
+  <div
+    data-overlay
+    class="fixed inset-0 z-50 bg-primary/60 backdrop-blur-sm"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div
+    data-overlay-panel
+    data-dialog-panel
+    data-lenis-prevent
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby={titleId}
+    class={cn(
+      "fixed left-1/2 top-1/2 z-50 w-full max-w-lg rounded-2xl bg-white p-6 shadow-soft-lg",
+      className
+    )}
+  >
+    <div class="flex flex-col space-y-2 text-left">
+      <h2 id={titleId} class="text-xl font-bold text-primary">{title}</h2>
+    </div>
+
+    <slot />
+
+    <button
+      type="button"
+      data-overlay-close
+      class="absolute right-4 top-4 rounded-full p-1 text-muted opacity-70 transition-opacity hover:opacity-100"
+    >
+      <X class="h-5 w-5" />
+      <span class="sr-only">Close</span>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,144 @@
+---
+import Input from "@/components/ui/Input.astro";
+import Label from "@/components/ui/Label.astro";
+import GradientButton from "@/components/shared/GradientButton.astro";
+
+/**
+ * Port of features/contact/components/contact-form.tsx.
+ * react-hook-form + zod are replaced by the same four rules enforced inline,
+ * with identical messages. The POST target and response handling are unchanged.
+ */
+---
+
+<form
+  data-contact-form
+  class="space-y-5 rounded-[18px] border border-border bg-card p-6 shadow-soft sm:rounded-[22px] sm:p-8"
+  novalidate
+>
+  <div class="space-y-2">
+    <Label for="name">Full name</Label>
+    <Input id="name" name="name" autocomplete="name" />
+    <p data-error-for="name" class="hidden text-xs text-error" role="alert"></p>
+  </div>
+
+  <div class="space-y-2">
+    <Label for="email">Work email</Label>
+    <Input id="email" name="email" type="email" autocomplete="email" />
+    <p data-error-for="email" class="hidden text-xs text-error" role="alert"></p>
+  </div>
+
+  <div class="space-y-2">
+    <Label for="company">Company</Label>
+    <Input id="company" name="company" autocomplete="organization" />
+    <p data-error-for="company" class="hidden text-xs text-error" role="alert">
+    </p>
+  </div>
+
+  <div class="space-y-2">
+    <Label for="message">How can we help?</Label>
+    <textarea
+      id="message"
+      name="message"
+      rows="5"
+      class="flex w-full rounded-xl border border-border bg-white px-4 py-3 text-base text-primary placeholder:text-muted-light focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30"
+    ></textarea>
+    <p data-error-for="message" class="hidden text-xs text-error" role="alert">
+    </p>
+  </div>
+
+  <GradientButton type="submit" class="w-full">
+    <span data-submit-label>Send message</span>
+  </GradientButton>
+
+  <p data-contact-success class="hidden text-sm text-emerald-600" role="status">
+    Thanks — we&apos;ll be in touch shortly.
+  </p>
+  <p data-contact-error class="hidden text-sm text-error" role="alert">
+    Something went wrong. Please try again or email hello@cognivac.com.
+  </p>
+</form>
+
+<script>
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  /** Same constraints and copy as the zod schema in the Next build. */
+  const RULES: Record<string, (value: string) => string | null> = {
+    name: (v) => (v.trim().length >= 2 ? null : "Name is required"),
+    email: (v) => (EMAIL_RE.test(v.trim()) ? null : "Enter a valid email"),
+    company: (v) => (v.trim().length >= 1 ? null : "Company is required"),
+    message: (v) =>
+      v.trim().length >= 10 ? null : "Please share a bit more detail",
+  };
+
+  function initContactForm() {
+    document
+      .querySelectorAll<HTMLFormElement>("[data-contact-form]")
+      .forEach((form) => {
+        if (form.dataset.contactReady === "true") return;
+        form.dataset.contactReady = "true";
+
+        const label = form.querySelector<HTMLElement>("[data-submit-label]");
+        const success = form.querySelector<HTMLElement>(
+          "[data-contact-success]"
+        );
+        const failure = form.querySelector<HTMLElement>("[data-contact-error]");
+
+        const showError = (field: string, message: string | null) => {
+          const node = form.querySelector<HTMLElement>(
+            `[data-error-for="${field}"]`
+          );
+          if (!node) return;
+          if (message) {
+            node.textContent = message;
+            node.classList.remove("hidden");
+          } else {
+            node.textContent = "";
+            node.classList.add("hidden");
+          }
+        };
+
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          success?.classList.add("hidden");
+          failure?.classList.add("hidden");
+
+          const data = new FormData(form);
+          const payload: Record<string, string> = {};
+          let valid = true;
+
+          for (const [field, rule] of Object.entries(RULES)) {
+            const value = String(data.get(field) ?? "");
+            payload[field] = value;
+
+            const message = rule(value);
+            showError(field, message);
+            if (message) valid = false;
+          }
+
+          if (!valid) return;
+
+          if (label) label.textContent = "Sending...";
+
+          try {
+            const res = await fetch("/api/contact", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+            if (!res.ok) throw new Error("Failed");
+
+            form.reset();
+            success?.classList.remove("hidden");
+          } catch {
+            failure?.classList.remove("hidden");
+          } finally {
+            if (label) label.textContent = "Send message";
+          }
+        });
+      });
+  }
+
+  initContactForm();
+  document.addEventListener("astro:page-load", initContactForm);
+</script>

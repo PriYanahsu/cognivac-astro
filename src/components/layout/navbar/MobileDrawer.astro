@@ -1,0 +1,147 @@
+---
+import { Menu, X, ChevronDown } from "@lucide/astro";
+import Sheet from "@/components/ui/Sheet.astro";
+import GradientButton from "@/components/shared/GradientButton.astro";
+import GhostButton from "@/components/shared/GhostButton.astro";
+import { NAV_ITEMS } from "@/constants/navigation";
+import { NAV_ROUTES } from "@/constants/site";
+
+/** Port of components/layout/navbar/mobile-drawer.tsx. */
+---
+
+<Sheet side="right" class="overflow-y-auto">
+  <button
+    slot="trigger"
+    type="button"
+    data-overlay-trigger
+    aria-label="Open menu"
+    aria-expanded="false"
+    class="flex h-10 w-10 items-center justify-center rounded-full text-white/75 hover:bg-white/10 hover:text-white lg:hidden"
+  >
+    <Menu class="h-5 w-5" />
+  </button>
+
+  <div class="mb-6 flex flex-row items-center justify-between gap-2">
+    <p class="text-xl font-bold text-primary">Menu</p>
+    <button
+      type="button"
+      data-overlay-close
+      aria-label="Close menu"
+      class="rounded-full p-2 hover:bg-lavender"
+    >
+      <X class="h-5 w-5" />
+    </button>
+  </div>
+
+  <nav aria-label="Mobile navigation">
+    <ul data-drawer-nav class="flex flex-col gap-1">
+      {
+        NAV_ITEMS.map((item) => {
+          const hasChildren = Boolean(item.children?.length);
+
+          return (
+            <li data-drawer-item data-state="closed">
+              {hasChildren ? (
+                <>
+                  <button
+                    type="button"
+                    data-drawer-trigger
+                    aria-expanded="false"
+                    class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-base font-semibold text-primary hover:bg-lavender"
+                  >
+                    {item.label}
+                    <ChevronDown
+                      data-drawer-chevron
+                      class="h-4 w-4 transition-transform"
+                    />
+                  </button>
+                  <ul
+                    data-drawer-panel
+                    class="mb-2 ml-3 hidden border-l border-border pl-3"
+                  >
+                    {item.children!.map((child) => (
+                      <li>
+                        <a
+                          href={child.href}
+                          data-overlay-close
+                          class="block rounded-lg px-3 py-2.5 text-sm text-muted hover:bg-lavender hover:text-primary"
+                        >
+                          {child.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                <a
+                  href={item.href}
+                  data-overlay-close
+                  class="block rounded-xl px-3 py-3 text-base font-semibold text-primary hover:bg-lavender"
+                >
+                  {item.label}
+                </a>
+              )}
+            </li>
+          );
+        })
+      }
+    </ul>
+  </nav>
+
+  <div class="mt-8 flex flex-col gap-3">
+    <GhostButton href={NAV_ROUTES.contact} class="w-full">
+      Contact us
+    </GhostButton>
+    <GradientButton href={NAV_ROUTES.services} class="w-full">
+      Explore Solutions
+    </GradientButton>
+  </div>
+</Sheet>
+
+<style>
+  [data-drawer-item][data-state="open"] [data-drawer-panel] {
+    display: block;
+  }
+
+  [data-drawer-item][data-state="open"] [data-drawer-chevron] {
+    transform: rotate(180deg);
+  }
+</style>
+
+<script>
+  function initDrawerNav() {
+    const nav = document.querySelector<HTMLElement>("[data-drawer-nav]");
+    if (!nav || nav.dataset.drawerReady === "true") return;
+    nav.dataset.drawerReady = "true";
+
+    nav.addEventListener("click", (event) => {
+      const trigger = (event.target as HTMLElement).closest<HTMLElement>(
+        "[data-drawer-trigger]"
+      );
+      if (!trigger) return;
+
+      const item = trigger.closest<HTMLElement>("[data-drawer-item]");
+      if (!item) return;
+
+      const wasOpen = item.dataset.state === "open";
+
+      // Single-expanded, matching the React `expanded` state.
+      nav
+        .querySelectorAll<HTMLElement>("[data-drawer-item]")
+        .forEach((sibling) => {
+          sibling.dataset.state = "closed";
+          sibling
+            .querySelector<HTMLElement>("[data-drawer-trigger]")
+            ?.setAttribute("aria-expanded", "false");
+        });
+
+      if (!wasOpen) {
+        item.dataset.state = "open";
+        trigger.setAttribute("aria-expanded", "true");
+      }
+    });
+  }
+
+  initDrawerNav();
+  document.addEventListener("astro:page-load", initDrawerNav);
+</script>

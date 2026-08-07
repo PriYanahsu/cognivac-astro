@@ -1,0 +1,85 @@
+---
+import { Plus } from "@lucide/astro";
+import Container from "@/components/shared/Container.astro";
+import SectionLabel from "@/components/shared/SectionLabel.astro";
+import GradientButton from "@/components/shared/GradientButton.astro";
+import GhostButton from "@/components/shared/GhostButton.astro";
+import FadeIn from "@/components/animations/FadeIn.astro";
+import { HERO_CONTENT } from "@/features/hero-section/constants";
+import HeroNetworkBg from "./HeroNetworkBg.astro";
+import HeroArchitecture from "./HeroArchitecture.astro";
+
+/** Port of features/hero-section/components/hero-section.tsx. */
+---
+
+<section
+  class="relative overflow-hidden bg-[#FAFAFA] pb-10 pt-[5.5rem] sm:pb-12 sm:pt-[6rem] lg:pb-14 lg:pt-[8rem]"
+>
+  <HeroNetworkBg />
+
+  <div class="relative z-10">
+    <Container>
+      <div class="mx-auto max-w-6xl text-center">
+        <FadeIn>
+          <SectionLabel
+            tone="primary"
+            class="mb-2 block pl-0 text-[12px] font-semibold uppercase tracking-[0.22em] text-primary sm:text-[14px] sm:tracking-[0.28em]"
+          >
+            {HERO_CONTENT.label}
+          </SectionLabel>
+          <h1
+            class="mx-auto max-w-[36ch] text-[clamp(1.75rem,4.5vw+0.65rem,4rem)] font-bold leading-[1.12] tracking-[-0.02em] text-primary"
+          >
+            {HERO_CONTENT.title}
+          </h1>
+          <p
+            class="mx-auto mt-4 max-w-2xl text-[0.95rem] leading-relaxed text-muted sm:mt-5 sm:text-[1.05rem] md:text-[1.1rem]"
+          >
+            {HERO_CONTENT.description}
+          </p>
+          <div
+            class="mt-6 flex w-full flex-col items-stretch justify-center gap-3 sm:mt-7 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4"
+          >
+            <GradientButton
+              href={HERO_CONTENT.primaryCta.href}
+              size="lg"
+              class="w-full justify-center sm:w-auto"
+            >
+              {HERO_CONTENT.primaryCta.label}
+            </GradientButton>
+            <GhostButton
+              href={HERO_CONTENT.secondaryCta.href}
+              size="lg"
+              class="w-full justify-center sm:w-auto"
+            >
+              {HERO_CONTENT.secondaryCta.label}
+            </GhostButton>
+          </div>
+          <div
+            class="mt-6 flex flex-col items-center justify-center gap-3 text-sm font-medium text-primary/80 sm:mt-7 sm:flex-row sm:flex-wrap sm:gap-4"
+          >
+            <div class="flex -space-x-2">
+              {
+                HERO_CONTENT.trustedAvatars.map((avatar) => (
+                  <span class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-linear-to-br from-[#c5d4f5] via-[#e8e2d9] to-[#f7f4ef] text-[11px] font-semibold text-primary shadow-sm sm:h-10 sm:w-10 sm:text-xs">
+                    {avatar}
+                  </span>
+                ))
+              }
+              <span
+                class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-white text-primary shadow-sm sm:h-10 sm:w-10"
+              >
+                <Plus class="h-4 w-4" />
+              </span>
+            </div>
+            <p class="text-center">{HERO_CONTENT.trustedText}</p>
+          </div>
+        </FadeIn>
+      </div>
+
+      <FadeIn delay={0.15}>
+        <HeroArchitecture />
+      </FadeIn>
+    </Container>
+  </div>
+</section>

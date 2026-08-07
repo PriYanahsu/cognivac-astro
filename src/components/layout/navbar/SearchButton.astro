@@ -1,0 +1,48 @@
+---
+import { Search } from "@lucide/astro";
+import Dialog from "@/components/ui/Dialog.astro";
+import Input from "@/components/ui/Input.astro";
+
+/** Port of components/layout/navbar/search-button.tsx. */
+---
+
+<Dialog title="Search Cognivac">
+  <button
+    slot="trigger"
+    type="button"
+    data-overlay-trigger
+    aria-label="Search"
+    aria-expanded="false"
+    class="flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition-colors hover:bg-white/10 hover:text-white"
+  >
+    <Search class="h-5 w-5" />
+  </button>
+
+  <form data-search-form class="mt-2">
+    <Input
+      type="search"
+      placeholder="Search solutions, case studies, articles..."
+      aria-label="Search query"
+      data-autofocus
+    />
+    <p class="mt-3 text-sm text-muted">
+      Press Enter to search. Full search coming soon.
+    </p>
+  </form>
+</Dialog>
+
+<script>
+  function initSearchForm() {
+    document
+      .querySelectorAll<HTMLFormElement>("[data-search-form]")
+      .forEach((form) => {
+        if (form.dataset.searchReady === "true") return;
+        form.dataset.searchReady = "true";
+        // Matches the React handler: submit is swallowed until search ships.
+        form.addEventListener("submit", (event) => event.preventDefault());
+      });
+  }
+
+  initSearchForm();
+  document.addEventListener("astro:page-load", initSearchForm);
+</script>

@@ -1,0 +1,302 @@
+---
+import Container from "@/components/shared/Container.astro";
+import SectionLabel from "@/components/shared/SectionLabel.astro";
+import FadeIn from "@/components/animations/FadeIn.astro";
+import { cn } from "@/lib/utils";
+import { PROBLEM_CONTENT, PROBLEM_POINTS } from "../constants";
+
+/**
+ * Port of features/problem-section/components/problem-section.tsx.
+ *
+ * Two framer-motion behaviours are reproduced by hand in the script below:
+ * - `useScroll({ offset: ["start 65%", "end 80%"] })` + `useSpring` drives the
+ *   rail fill and the counter bar.
+ * - `useInView(ref, { margin: "-48% 0px -48% 0px" })` per row drives which row
+ *   reads as active, so the rail tracks whatever is in the middle band.
+ */
+const total = String(PROBLEM_POINTS.length).padStart(2, "0");
+---
+
+<section class="relative bg-lavender/30 py-16 sm:py-20 lg:py-28">
+  <Container>
+    <div class="grid items-start gap-10 lg:grid-cols-12 lg:gap-16">
+      <FadeIn class="lg:sticky lg:top-28 lg:col-span-5 lg:self-start">
+        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+          {PROBLEM_CONTENT.label}
+        </SectionLabel>
+        <h2 class="text-section mt-5 max-w-[22ch] text-primary">
+          {PROBLEM_CONTENT.title}
+        </h2>
+        <p
+          class="mt-5 max-w-[46ch] text-[16px] leading-[1.6] text-muted sm:text-[18px]"
+        >
+          {PROBLEM_CONTENT.description}
+        </p>
+        <p
+          class="mt-6 max-w-[40ch] border-l-2 border-accent pl-4 text-[16px] font-semibold leading-snug text-primary sm:text-[18px]"
+        >
+          {PROBLEM_CONTENT.pivot}
+        </p>
+
+        {/* Reading position — mirrors the rail on the right */}
+        <div class="mt-8 hidden items-center gap-4 lg:flex">
+          <span
+            data-problem-counter
+            class="text-[13px] font-bold tabular-nums tracking-[0.08em] text-accent"
+          >
+            {PROBLEM_POINTS[0].index}
+          </span>
+          <div class="relative h-px w-32 bg-border">
+            <div
+              data-problem-bar
+              class="absolute inset-0 origin-left bg-accent"
+              style="transform: scaleX(0)"
+            >
+            </div>
+          </div>
+          <span
+            class="text-[13px] font-bold tabular-nums tracking-[0.08em] text-muted-light"
+          >
+            {total}
+          </span>
+        </div>
+      </FadeIn>
+
+      <div data-problem-list class="relative lg:col-span-7">
+        {/* Rail: static track with a scroll-driven accent fill */}
+        <div
+          class="absolute left-[15px] top-8 bottom-8 w-0.5 bg-border/80"
+          aria-hidden="true"
+        >
+          <div
+            data-problem-rail
+            class="absolute inset-0 origin-top bg-accent"
+            style="transform: scaleY(0)"
+          >
+          </div>
+        </div>
+
+        {
+          PROBLEM_POINTS.map((point, i) => (
+            <div
+              data-problem-point
+              data-index={i}
+              data-active={i === 0 ? "true" : "false"}
+              data-reveal
+              data-reveal-margin="-10% 0px -10% 0px"
+              style="--reveal-x:0px;--reveal-y:32px;--reveal-duration:0.65s"
+              class={cn(
+                "group relative pl-12 sm:pl-16",
+                i > 0 && "border-t border-border"
+              )}
+            >
+              {/* Numbered marker sitting on the rail */}
+              <span
+                data-problem-marker
+                class="absolute left-0 top-7 z-10 flex h-8 w-8 items-center justify-center rounded-full border text-[11px] font-bold tabular-nums tracking-[0.06em] transition-all duration-500 ease-out sm:top-9"
+                aria-hidden="true"
+              >
+                {point.index}
+              </span>
+
+              <div
+                data-problem-body
+                class="py-7 transition-transform duration-500 ease-out sm:py-9"
+              >
+                <span
+                  data-problem-tag
+                  class="block text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors duration-500"
+                >
+                  {point.tag}
+                </span>
+                <h3
+                  data-problem-title
+                  class="text-card-title mt-2 transition-colors duration-500"
+                >
+                  {point.title}
+                </h3>
+                <p
+                  data-problem-desc
+                  class="mt-2.5 max-w-[52ch] text-[15px] leading-[1.65] transition-colors duration-500 sm:text-[16.5px]"
+                >
+                  {point.description}
+                </p>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </Container>
+</section>
+
+<style>
+  /* Active / inactive treatment — was `cn(...)` on each element in React. */
+  [data-problem-marker] {
+    border-color: var(--border);
+    background-color: var(--background);
+    color: var(--muted-light);
+  }
+
+  [data-problem-point][data-active="true"] [data-problem-marker] {
+    border-color: var(--accent);
+    background-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 0 5px rgba(30, 79, 216, 0.12);
+  }
+
+  [data-problem-tag] {
+    color: var(--muted-light);
+  }
+
+  [data-problem-point][data-active="true"] [data-problem-tag] {
+    color: var(--accent);
+  }
+
+  [data-problem-title] {
+    color: color-mix(in srgb, var(--primary) 60%, transparent);
+  }
+
+  [data-problem-point][data-active="true"] [data-problem-title] {
+    color: var(--primary);
+  }
+
+  [data-problem-desc] {
+    color: color-mix(in srgb, var(--muted) 60%, transparent);
+  }
+
+  [data-problem-point][data-active="true"] [data-problem-desc] {
+    color: var(--muted);
+  }
+
+  @media (min-width: 1024px) {
+    [data-problem-point][data-active="true"] [data-problem-body] {
+      transform: translateX(0.25rem);
+    }
+  }
+</style>
+
+<script>
+  const STIFFNESS = 90;
+  const DAMPING = 28;
+  const REST_DELTA = 0.001;
+
+  function initProblemSection() {
+    const list = document.querySelector<HTMLElement>("[data-problem-list]");
+    if (!list || list.dataset.problemReady === "true") return;
+    list.dataset.problemReady = "true";
+
+    const rail = list.querySelector<HTMLElement>("[data-problem-rail]");
+    const bar = document.querySelector<HTMLElement>("[data-problem-bar]");
+    const counter = document.querySelector<HTMLElement>(
+      "[data-problem-counter]"
+    );
+    const points = Array.from(
+      list.querySelectorAll<HTMLElement>("[data-problem-point]")
+    );
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* ---- active row: framer's useInView with a -48% band ---- */
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+
+          const el = entry.target as HTMLElement;
+          points.forEach((point) => {
+            point.dataset.active = point === el ? "true" : "false";
+          });
+
+          if (counter) {
+            const index = Number(el.dataset.index ?? "0");
+            counter.textContent = String(index + 1).padStart(2, "0");
+          }
+        }
+      },
+      { rootMargin: "-48% 0px -48% 0px" }
+    );
+
+    points.forEach((point) => observer.observe(point));
+
+    /* ---- rail fill: useScroll offset ["start 65%", "end 80%"] ---- */
+    if (!rail && !bar) return;
+
+    if (reduced) {
+      rail?.style.setProperty("transform", "scaleY(1)");
+      bar?.style.setProperty("transform", "scaleX(1)");
+      return;
+    }
+
+    let target = 0;
+    let value = 0;
+    let velocity = 0;
+    let frame = 0;
+    let last = 0;
+
+    const readProgress = () => {
+      const rect = list.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // 0 when the list top reaches 65% of the viewport;
+      // 1 when the list bottom reaches 80% of it.
+      const span = rect.height - 0.15 * vh;
+      if (span <= 0) {
+        target = 1;
+        return;
+      }
+      target = Math.min(Math.max((0.65 * vh - rect.top) / span, 0), 1);
+    };
+
+    const step = (now: number) => {
+      const dt = Math.min((now - last) / 1000, 1 / 30);
+      last = now;
+
+      velocity += (-STIFFNESS * (value - target) - DAMPING * velocity) * dt;
+      value += velocity * dt;
+
+      rail?.style.setProperty("transform", `scaleY(${value})`);
+      bar?.style.setProperty("transform", `scaleX(${value})`);
+
+      if (
+        Math.abs(value - target) < REST_DELTA &&
+        Math.abs(velocity) < REST_DELTA
+      ) {
+        value = target;
+        velocity = 0;
+        rail?.style.setProperty("transform", `scaleY(${value})`);
+        bar?.style.setProperty("transform", `scaleX(${value})`);
+        frame = 0;
+        return;
+      }
+
+      frame = requestAnimationFrame(step);
+    };
+
+    const start = () => {
+      if (frame) return;
+      last = performance.now();
+      frame = requestAnimationFrame(step);
+    };
+
+    readProgress();
+    value = target;
+    rail?.style.setProperty("transform", `scaleY(${value})`);
+    bar?.style.setProperty("transform", `scaleX(${value})`);
+
+    window.addEventListener(
+      "scroll",
+      () => {
+        readProgress();
+        start();
+      },
+      { passive: true }
+    );
+    window.addEventListener("resize", () => {
+      readProgress();
+      start();
+    });
+  }
+
+  initProblemSection();
+  document.addEventListener("astro:page-load", initProblemSection);
+</script>

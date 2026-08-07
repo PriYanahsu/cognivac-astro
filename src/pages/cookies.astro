@@ -1,0 +1,81 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import PageHero from "@/components/shared/PageHero.astro";
+import Container from "@/components/shared/Container.astro";
+import FadeIn from "@/components/animations/FadeIn.astro";
+import { createPageMetadata } from "@/lib/seo";
+import { SITE_CONFIG } from "@/constants/site";
+
+/** Port of app/cookies/page.tsx. */
+const metadata = createPageMetadata({
+  title: "Cookie Settings",
+  description:
+    "What Cognivac stores in your browser, why, and how to change it.",
+  path: "/cookies",
+});
+
+const COOKIE_TYPES = [
+  {
+    id: "essential",
+    title: "Essential",
+    description:
+      "Required for the site to function — routing, security, and form submission. These cannot be switched off.",
+  },
+  {
+    id: "analytics",
+    title: "Analytics",
+    description:
+      "Aggregate, non-identifying data on which pages are read and how far people scroll, used to improve the site.",
+  },
+  {
+    id: "preferences",
+    title: "Preferences",
+    description:
+      "Remembers choices such as theme and dismissed notices so you are not asked twice.",
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <PageHero
+    label="Legal"
+    title="Cookie Settings"
+    description="What we store in your browser, why, and how to change it."
+    breadcrumbs={[{ label: "Cookie Settings" }]}
+  />
+
+  <section class="bg-background py-16 sm:py-20 lg:py-24">
+    <Container>
+      <div class="mx-auto max-w-3xl">
+        <div class="grid gap-5">
+          {
+            COOKIE_TYPES.map((type, i) => (
+              <FadeIn delay={0.07 * (i + 1)}>
+                <div class="rounded-[18px] border border-border bg-card p-6 sm:rounded-[22px] sm:p-8">
+                  <h2 class="text-card-title text-primary">{type.title}</h2>
+                  <p class="mt-3 text-[15.5px] leading-[1.65] text-muted sm:text-[16.5px]">
+                    {type.description}
+                  </p>
+                </div>
+              </FadeIn>
+            ))
+          }
+        </div>
+
+        <FadeIn delay={0.28}>
+          <p class="mt-8 text-[15px] leading-[1.7] text-muted">
+            Granular cookie controls will be available here in a future release.
+            Until then, you can manage cookies through your browser settings, or
+            contact us for a full list of what is set.{" "}
+            <a
+              href={`mailto:${SITE_CONFIG.email}`}
+              class="font-semibold text-primary underline underline-offset-4 transition-colors hover:text-accent"
+            >
+              {SITE_CONFIG.email}
+            </a>
+          </p>
+        </FadeIn>
+      </div>
+    </Container>
+  </section>
+</Layout>

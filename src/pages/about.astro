@@ -1,0 +1,11 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import AboutPage from "@/features/about/AboutPage.astro";
+import { aboutMetadata } from "@/features/about/metadata";
+
+/** Port of app/about/page.tsx. */
+---
+
+<Layout metadata={aboutMetadata}>
+  <AboutPage />
+</Layout>

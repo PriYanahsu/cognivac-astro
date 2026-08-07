@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450" viewBox="0 0 600 450" fill="none">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#261A5A"/>
+      <stop offset="100%" stop-color="#6366F1"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="450" fill="url(#g)"/>
+  <circle cx="420.0" cy="135.0" r="112.5" fill="white" fill-opacity="0.08"/>
+  <circle cx="120.0" cy="337.5" r="67.5" fill="white" fill-opacity="0.06"/>
+  <text x="50%" y="50%" text-anchor="middle" fill="white" fill-opacity="0.5" font-family="system-ui,sans-serif" font-size="24" font-weight="600">FinTech</text>
+</svg>

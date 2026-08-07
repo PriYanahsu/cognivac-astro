@@ -1,0 +1,11 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import ServicesPage from "@/features/services/ServicesPage.astro";
+import { servicesMetadata } from "@/features/services/metadata";
+
+/** Port of app/services/page.tsx. */
+---
+
+<Layout metadata={servicesMetadata}>
+  <ServicesPage />
+</Layout>

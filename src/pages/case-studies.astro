@@ -1,0 +1,11 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import CaseStudiesPage from "@/features/case-studies/CaseStudiesPage.astro";
+import { caseStudiesMetadata } from "@/features/case-studies/metadata";
+
+/** Port of app/case-studies/page.tsx. */
+---
+
+<Layout metadata={caseStudiesMetadata}>
+  <CaseStudiesPage />
+</Layout>

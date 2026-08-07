@@ -1,0 +1,11 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import CareersPage from "@/features/careers/CareersPage.astro";
+import { careersMetadata } from "@/features/careers/metadata";
+
+/** Port of app/careers/page.tsx. */
+---
+
+<Layout metadata={careersMetadata}>
+  <CareersPage />
+</Layout>

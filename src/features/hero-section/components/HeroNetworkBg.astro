@@ -1,0 +1,267 @@
+---
+/**
+ * Port of features/hero-section/components/hero-network-bg.tsx.
+ * The canvas draw loop, node/edge tables, pointer parallax, diagonal-based
+ * edge culling, and reduced-motion handling are carried over unchanged — only
+ * the React effect wrapper is gone.
+ */
+---
+
+<div data-hero-network class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+  <div class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-90"></div>
+  {/*
+    The backdrop is landscape, so covering a tall phone viewport crops to
+    its plain cream centre and discards the blue corners entirely. This
+    puts that accent back on small screens only — from md up the image's
+    own corners are in frame and a second glow would double them.
+  */}
+  <div
+    class="absolute inset-0 bg-[radial-gradient(ellipse_95%_30%_at_100%_0%,rgba(56,160,235,0.34)_0%,rgba(56,160,235,0.1)_45%,transparent_75%),radial-gradient(ellipse_90%_28%_at_0%_100%,rgba(30,120,230,0.34)_0%,rgba(30,120,230,0.1)_45%,transparent_75%)] md:hidden"
+  >
+  </div>
+  <canvas data-hero-canvas class="absolute inset-0 h-full w-full"></canvas>
+  {/*
+    Scrim over the network canvas: strongest behind the headline, easing
+    off toward the edges so the backdrop image's colour still reads there.
+    It no longer has to wash all the way to #FAFAFA at the border — the
+    image covers what used to be a hard cut.
+  */}
+  <div
+    class="absolute inset-0 bg-[radial-gradient(ellipse_58%_48%_at_50%_34%,rgba(250,250,250,0.76)_0%,rgba(250,250,250,0.38)_48%,rgba(250,250,250,0.16)_100%)]"
+  >
+  </div>
+</div>
+
+<script>
+  type Node = {
+    x: number;
+    y: number;
+    r: number;
+    phase: number;
+    speed: number;
+    accent: boolean;
+  };
+
+  type Edge = { a: number; b: number };
+
+  const NODES: Node[] = [
+    { x: 0.06, y: 0.18, r: 2.6, phase: 0.2, speed: 0.55, accent: false },
+    { x: 0.14, y: 0.42, r: 3.4, phase: 1.1, speed: 0.7, accent: true },
+    { x: 0.09, y: 0.68, r: 2.4, phase: 2.4, speed: 0.65, accent: false },
+    { x: 0.18, y: 0.88, r: 2.8, phase: 0.9, speed: 0.8, accent: false },
+    { x: 0.26, y: 0.14, r: 2.8, phase: 0.8, speed: 0.75, accent: false },
+    { x: 0.3, y: 0.5, r: 4, phase: 1.7, speed: 0.5, accent: true },
+    { x: 0.28, y: 0.78, r: 2.6, phase: 3.1, speed: 0.7, accent: false },
+    { x: 0.42, y: 0.22, r: 3, phase: 0.4, speed: 0.6, accent: false },
+    { x: 0.48, y: 0.58, r: 4.4, phase: 2.0, speed: 0.45, accent: true },
+    { x: 0.4, y: 0.86, r: 2.6, phase: 1.3, speed: 0.75, accent: false },
+    { x: 0.58, y: 0.1, r: 2.4, phase: 1.5, speed: 0.85, accent: false },
+    { x: 0.62, y: 0.36, r: 3.2, phase: 2.6, speed: 0.6, accent: false },
+    { x: 0.68, y: 0.64, r: 4.2, phase: 0.6, speed: 0.5, accent: true },
+    { x: 0.6, y: 0.9, r: 2.8, phase: 1.9, speed: 0.7, accent: false },
+    { x: 0.78, y: 0.2, r: 2.8, phase: 2.8, speed: 0.65, accent: false },
+    { x: 0.84, y: 0.46, r: 3.8, phase: 0.3, speed: 0.55, accent: true },
+    { x: 0.8, y: 0.74, r: 2.8, phase: 2.2, speed: 0.7, accent: false },
+    { x: 0.92, y: 0.28, r: 2.6, phase: 3.4, speed: 0.7, accent: false },
+    { x: 0.94, y: 0.58, r: 3.4, phase: 1.0, speed: 0.55, accent: true },
+    { x: 0.9, y: 0.86, r: 2.4, phase: 0.5, speed: 0.8, accent: false },
+  ];
+
+  const EDGES: Edge[] = [
+    { a: 0, b: 1 },
+    { a: 0, b: 4 },
+    { a: 1, b: 2 },
+    { a: 1, b: 5 },
+    { a: 2, b: 3 },
+    { a: 2, b: 5 },
+    { a: 2, b: 6 },
+    { a: 3, b: 6 },
+    { a: 4, b: 5 },
+    { a: 4, b: 7 },
+    { a: 5, b: 7 },
+    { a: 5, b: 8 },
+    { a: 5, b: 6 },
+    { a: 6, b: 8 },
+    { a: 6, b: 9 },
+    { a: 7, b: 8 },
+    { a: 7, b: 10 },
+    { a: 7, b: 11 },
+    { a: 8, b: 11 },
+    { a: 8, b: 12 },
+    { a: 8, b: 9 },
+    { a: 9, b: 12 },
+    { a: 9, b: 13 },
+    { a: 10, b: 11 },
+    { a: 10, b: 14 },
+    { a: 11, b: 12 },
+    { a: 11, b: 14 },
+    { a: 11, b: 15 },
+    { a: 12, b: 15 },
+    { a: 12, b: 16 },
+    { a: 12, b: 13 },
+    { a: 13, b: 16 },
+    { a: 14, b: 15 },
+    { a: 14, b: 17 },
+    { a: 15, b: 17 },
+    { a: 15, b: 18 },
+    { a: 15, b: 16 },
+    { a: 16, b: 18 },
+    { a: 16, b: 19 },
+    { a: 17, b: 18 },
+    { a: 18, b: 19 },
+  ];
+
+  function initHeroNetwork() {
+    const root = document.querySelector<HTMLElement>("[data-hero-network]");
+    if (!root || root.dataset.networkReady === "true") return;
+    root.dataset.networkReady = "true";
+
+    const canvas = root.querySelector<HTMLCanvasElement>("[data-hero-canvas]");
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const section = root.parentElement;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let reduced = mq.matches;
+    mq.addEventListener("change", () => {
+      reduced = mq.matches;
+    });
+
+    const mouse = { x: 0.5, y: 0.5, tx: 0.5, ty: 0.5 };
+
+    let raf = 0;
+    let w = 0;
+    let h = 0;
+    let dpr = 1;
+    const t0 = performance.now();
+
+    const resize = () => {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = root.clientWidth;
+      h = root.clientHeight;
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    const onMove = (event: PointerEvent) => {
+      const rect = root.getBoundingClientRect();
+      mouse.tx = (event.clientX - rect.left) / rect.width;
+      mouse.ty = (event.clientY - rect.top) / rect.height;
+    };
+
+    const onLeave = () => {
+      mouse.tx = 0.5;
+      mouse.ty = 0.5;
+    };
+
+    const pos = (n: Node, time: number) => {
+      const driftX = Math.sin(time * n.speed + n.phase) * 10;
+      const driftY = Math.cos(time * n.speed * 0.85 + n.phase) * 8;
+      const pullX = (mouse.x - 0.5) * 28 * (n.accent ? 1.6 : 0.9);
+      const pullY = (mouse.y - 0.5) * 22 * (n.accent ? 1.6 : 0.9);
+      return {
+        x: n.x * w + driftX + pullX,
+        y: n.y * h + driftY + pullY,
+      };
+    };
+
+    const draw = (now: number) => {
+      const time = (now - t0) / 1000;
+      mouse.x += (mouse.tx - mouse.x) * 0.06;
+      mouse.y += (mouse.ty - mouse.y) * 0.06;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const points = NODES.map((n) => pos(n, reduced ? 0 : time));
+
+      /**
+       * Thresholds key off the diagonal, not the width. On a narrow, tall
+       * phone viewport the gaps between nodes are mostly vertical, so a
+       * width-based cull dropped nearly every edge and left the mesh as
+       * disconnected specks.
+       */
+      const diag = Math.hypot(w, h);
+
+      for (const edge of EDGES) {
+        const a = points[edge.a];
+        const b = points[edge.b];
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist > diag * 0.37) continue;
+
+        const accent = NODES[edge.a].accent || NODES[edge.b].accent;
+        const alpha = Math.max(
+          0.045,
+          (accent ? 0.145 : 0.108) - dist / (diag * 2.4)
+        );
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = `rgba(34, 32, 28, ${alpha})`;
+        ctx.lineWidth = accent ? 1.25 : 0.9;
+        ctx.stroke();
+
+        if (!reduced && dist < diag * 0.3) {
+          const pulse = (time * 0.32 + edge.a * 0.11) % 1;
+          const px = a.x + dx * pulse;
+          const py = a.y + dy * pulse;
+          ctx.beginPath();
+          ctx.arc(px, py, accent ? 2.2 : 1.6, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(34, 32, 28, ${accent ? 0.25 - pulse * 0.13 : 0.21 - pulse * 0.12})`;
+          ctx.fill();
+        }
+      }
+
+      for (let i = 0; i < NODES.length; i++) {
+        const n = NODES[i];
+        const p = points[i];
+        const breathe = reduced
+          ? 1
+          : 0.78 + 0.22 * Math.sin(time * n.speed + n.phase);
+
+        if (n.accent) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, n.r * 3.8 * breathe, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(34, 32, 28, ${0.032 * breathe})`;
+          ctx.fill();
+        }
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, n.r * breathe, 0, Math.PI * 2);
+        ctx.fillStyle = n.accent
+          ? `rgba(34, 32, 28, ${0.21 + 0.11 * breathe})`
+          : `rgba(34, 32, 28, ${0.14 + 0.09 * breathe})`;
+        ctx.fill();
+      }
+
+      raf = requestAnimationFrame(draw);
+    };
+
+    resize();
+    draw(performance.now());
+
+    window.addEventListener("resize", resize);
+    section?.addEventListener("pointermove", onMove as EventListener);
+    section?.addEventListener("pointerleave", onLeave);
+
+    // Stop painting while the hero is scrolled out of view.
+    const visibility = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        if (!raf) raf = requestAnimationFrame(draw);
+      } else if (raf) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+    });
+    visibility.observe(root);
+  }
+
+  initHeroNetwork();
+  document.addEventListener("astro:page-load", initHeroNetwork);
+</script>
