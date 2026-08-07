@@ -1,0 +1,46 @@
+---
+import { cn } from "@/lib/utils";
+import { SITE_CONFIG } from "@/constants/site";
+
+interface Props {
+  /** light = cream ink for dark chrome; dark = graphite for light surfaces */
+  variant?: "light" | "dark";
+  class?: string;
+  /** fetchpriority=high for above-the-fold nav mark */
+  priority?: boolean;
+}
+
+const {
+  variant = "light",
+  class: className,
+  priority = variant === "light",
+} = Astro.props;
+
+const SRC = {
+  light: "/icons/cognivac-logo-nav.png",
+  dark: "/icons/cognivac.png",
+} as const;
+---
+
+{
+  priority ? (
+    <img
+      src={SRC[variant]}
+      alt={SITE_CONFIG.name}
+      width="440"
+      height="80"
+      fetchpriority="high"
+      decoding="async"
+      class={cn("w-auto object-contain object-left", className)}
+    />
+  ) : (
+    <img
+      src={SRC[variant]}
+      alt={SITE_CONFIG.name}
+      width="440"
+      height="80"
+      decoding="async"
+      class={cn("w-auto object-contain object-left", className)}
+    />
+  )
+}

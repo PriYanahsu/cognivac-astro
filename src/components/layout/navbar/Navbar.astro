@@ -1,6 +1,7 @@
 ---
 import { NAV_ITEMS } from "@/constants/navigation";
 import { NAV_ROUTES, SITE_CONFIG } from "@/constants/site";
+import CognivacLogo from "@/components/shared/CognivacLogo.astro";
 import GradientButton from "@/components/shared/GradientButton.astro";
 import NavLinks from "./NavLinks.astro";
 import SearchButton from "./SearchButton.astro";
@@ -22,17 +23,12 @@ import MobileDrawer from "./MobileDrawer.astro";
   >
     <a
       href={NAV_ROUTES.home}
-      class="min-w-0 shrink-0"
+      class="flex min-w-0 shrink-0 items-center"
       aria-label={`${SITE_CONFIG.name} home`}
     >
-      <img
-        src="/icons/cognivac.png"
-        alt={SITE_CONFIG.name}
-        width="200"
-        height="56"
-        fetchpriority="high"
-        decoding="async"
-        class="h-6 w-auto max-w-[7.5rem] object-contain brightness-0 invert sm:h-7 sm:max-w-none lg:h-8"
+      <CognivacLogo
+        variant="light"
+        class="h-9 w-auto transition-[height] duration-300 sm:h-10 lg:h-12"
       />
     </a>
 
@@ -63,15 +59,27 @@ import MobileDrawer from "./MobileDrawer.astro";
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
   }
 
+  [data-navbar][data-scrolled="true"] :global(a img) {
+    height: 2rem;
+  }
+
   @media (min-width: 640px) {
     [data-navbar][data-scrolled="true"] {
       height: 3.25rem;
+    }
+
+    [data-navbar][data-scrolled="true"] :global(a img) {
+      height: 2.25rem;
     }
   }
 
   @media (min-width: 1024px) {
     [data-navbar][data-scrolled="true"] {
       height: 3.5rem;
+    }
+
+    [data-navbar][data-scrolled="true"] :global(a img) {
+      height: 2.5rem;
     }
   }
 </style>

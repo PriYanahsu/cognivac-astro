@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="160" viewBox="0 0 880 160">
+  <defs>
+    <linearGradient id="g" x1="24" y1="16" x2="136" y2="144" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#163DB0"/>
+      <stop offset="0.4" stop-color="#1E4FD8"/>
+      <stop offset="1" stop-color="#0EA5E9"/>
+    </linearGradient>
+    <style>@font-face{font-family:LogoSans;src:url('file:///usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf');font-weight:700}</style>
+  </defs>
+  <!-- Astro C mark -->
+  <path d="M126 42A56.8 56.8 0 1 0 126 118" fill="none" stroke="url(#g)" stroke-width="19" stroke-linecap="round"/>
+  <ellipse cx="80" cy="80" rx="28.8" ry="17.6" transform="rotate(-38 80 80)" fill="none" stroke="rgba(247,244,239,0.4)" stroke-width="4.6" stroke-dasharray="8.8 9.6"/>
+  <path d="M52.8 108.8 L107.2 51.2" stroke="#F7F4EF" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="52.8" cy="108.8" r="8.6" fill="#0EA5E9"/>
+  <circle cx="80" cy="80" r="9.4" fill="#22201C" stroke="#3B82F6" stroke-width="6"/>
+  <circle cx="107.2" cy="51.2" r="8.6" fill="#1E4FD8"/>
+  <circle cx="132.8" cy="58" r="3.6" fill="#0EA5E9"/>
+  <text x="184" y="104" font-family="LogoSans, DejaVu Sans, sans-serif" font-size="72" font-weight="700" letter-spacing="8" fill="#F7F4EF">COGNIVAC</text>
+</svg>

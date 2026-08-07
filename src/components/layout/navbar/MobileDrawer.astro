@@ -1,10 +1,11 @@
 ---
 import { X, ChevronDown } from "@lucide/astro";
 import Sheet from "@/components/ui/Sheet.astro";
+import CognivacLogo from "@/components/shared/CognivacLogo.astro";
 import GradientButton from "@/components/shared/GradientButton.astro";
 import GhostButton from "@/components/shared/GhostButton.astro";
 import { NAV_ITEMS } from "@/constants/navigation";
-import { SITE_CONFIG, NAV_ROUTES } from "@/constants/site";
+import { NAV_ROUTES } from "@/constants/site";
 
 /** Port of components/layout/navbar/mobile-drawer.tsx — animated mobile menu. */
 ---
@@ -30,14 +31,7 @@ import { SITE_CONFIG, NAV_ROUTES } from "@/constants/site";
   </button>
 
   <div class="mb-0 flex flex-row items-center justify-between border-b border-border/70 px-5 py-4">
-    <img
-      src="/icons/cognivac.png"
-      alt={SITE_CONFIG.name}
-      width="120"
-      height="34"
-      class="h-6 w-auto"
-      decoding="async"
-    />
+    <CognivacLogo variant="dark" class="h-9 w-auto" />
     <button
       type="button"
       data-overlay-close
