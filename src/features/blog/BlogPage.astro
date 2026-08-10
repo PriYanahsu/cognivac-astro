@@ -92,12 +92,12 @@ const [featured, ...rest] = POSTS;
 />
 
 {/* Featured post — wide split card */}
-<section class="bg-background py-16 sm:py-20 lg:py-24">
+<section class="bg-background section-padding">
   <Container>
     <FadeIn>
       <article
         id={featured.id}
-        class="grid scroll-mt-32 overflow-hidden rounded-[18px] border border-border bg-card sm:rounded-[22px] lg:grid-cols-12"
+        class="grid scroll-mt-32 overflow-hidden rounded-md border border-border bg-card sm:rounded-md lg:grid-cols-12"
       >
         <div class="relative aspect-16/9 lg:col-span-6 lg:aspect-auto lg:min-h-[380px]">
           <img
@@ -124,7 +124,7 @@ const [featured, ...rest] = POSTS;
           </div>
 
           <h2
-            class="mt-5 text-[clamp(1.5rem,2vw+0.9rem,2.375rem)] font-bold leading-[1.15] tracking-[-0.015em] text-primary"
+            class="mt-5 text-[clamp(1.5rem,2vw+0.9rem,2.375rem)] font-bold leading-[1.15] tracking-[-0.015em] text-foreground"
           >
             {featured.title}
           </h2>
@@ -144,7 +144,7 @@ const [featured, ...rest] = POSTS;
 
           <a
             href={`/blog#${featured.id}`}
-            class="mt-7 inline-flex w-fit items-center gap-1.5 text-[14px] font-semibold text-primary transition-colors hover:text-accent"
+            class="mt-7 inline-flex w-fit items-center gap-1.5 text-[14px] font-semibold text-foreground transition-colors hover:text-accent"
           >
             Read the article
             <ArrowUpRight class="h-4 w-4" />
@@ -156,25 +156,25 @@ const [featured, ...rest] = POSTS;
 </section>
 
 {/* Remaining posts */}
-<section class="border-y border-border bg-card py-16 sm:py-20 lg:py-24">
+<section class="border-y border-border bg-card section-padding">
   <Container>
     <FadeIn>
       <div class="max-w-3xl">
-        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+        <SectionLabel class="mb-0">
           More Reading
         </SectionLabel>
-        <h2 class="text-section mt-5 text-primary">Recent articles</h2>
+        <h2 class="text-section stack-sm text-foreground">Recent articles</h2>
       </div>
     </FadeIn>
 
-    <div class="mt-10 grid gap-5 sm:mt-12 md:grid-cols-2 md:gap-6">
+    <div class="card-grid md:grid-cols-2">
       {
         rest.map((post, i) => (
           <FadeIn delay={0.08 * (i + 1)}>
             <a
               href={`/blog#${post.id}`}
               id={post.id}
-              class="group flex h-full scroll-mt-32 flex-col overflow-hidden rounded-[18px] border border-border bg-background transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-soft sm:rounded-[22px]"
+              class="group flex h-full scroll-mt-32 flex-col overflow-hidden rounded-md border border-border bg-background transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-soft sm:rounded-md"
             >
               <div class="relative aspect-16/9 overflow-hidden">
                 <img
@@ -190,10 +190,10 @@ const [featured, ...rest] = POSTS;
                 <p class="text-[12px] font-semibold uppercase tracking-[0.14em] text-accent">
                   {post.category}
                 </p>
-                <h3 class="mt-2.5 text-[19px] font-bold leading-snug text-primary sm:text-[21px]">
+                <h3 class="mt-2.5 text-[19px] font-bold leading-snug text-foreground sm:text-[21px]">
                   {post.title}
                 </h3>
-                <p class="mt-3 text-[15px] leading-[1.6] text-muted">
+                <p class="mt-3 copy-md">
                   {post.excerpt}
                 </p>
 
@@ -219,7 +219,7 @@ const [featured, ...rest] = POSTS;
       <div class="mx-auto max-w-2xl text-center">
         <SectionLabel
           tone="accent"
-          class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm"
+          class="mb-0"
         >
           What We Write About
         </SectionLabel>

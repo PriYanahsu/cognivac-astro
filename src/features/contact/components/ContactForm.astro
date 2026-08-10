@@ -12,7 +12,7 @@ import GradientButton from "@/components/shared/GradientButton.astro";
 
 <form
   data-contact-form
-  class="space-y-5 rounded-[18px] border border-border bg-card p-6 shadow-soft sm:rounded-[22px] sm:p-8"
+  class="space-y-5 surface-card p-6 shadow-soft sm:p-8"
   novalidate
 >
   <div class="space-y-2">
@@ -40,7 +40,7 @@ import GradientButton from "@/components/shared/GradientButton.astro";
       id="message"
       name="message"
       rows="5"
-      class="flex w-full rounded-xl border border-border bg-white px-4 py-3 text-base text-primary placeholder:text-muted-light focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30"
+      class="text-input flex w-full"
     ></textarea>
     <p data-error-for="message" class="hidden text-xs text-error" role="alert">
     </p>

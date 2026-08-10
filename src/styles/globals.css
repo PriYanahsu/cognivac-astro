@@ -8,12 +8,14 @@
    */
   --font-plus-jakarta: "Plus Jakarta Sans Variable";
 
-  /* Palette: Graphite / Cobalt / Teal accent / Warm highlight / Soft Black */
+  /* Cognivac brand — primary is cobalt blue; ink carries dark text */
+  --primary: #1e4fd8;
+  --on-primary: #ffffff;
+  --ink: #22201c;
   --background: #f7f4ef;
   --foreground: #22201c;
-  --primary: #22201c;
   --secondary: #2b2b2e;
-  --accent: #1e4fd8;
+  --accent: var(--primary);
   --teal: #0ea5e9;
   --warm: #f5a623;
   --lavender: #efeae3;
@@ -24,12 +26,106 @@
   --card: #ffffff;
   --dark: #2b2b2e;
   --dark-mid: #3a3a3e;
+
+  /* DESIGN-vercel.md — tokens not already on site */
+  --body: #4d4d4d;
+  --mute: #8f8f8f;
+  --faint: #a1a1a1;
+  --hairline: #ebebeb;
+  --hairline-soft: #f2f2f2;
+  --canvas: var(--background);
+  --canvas-elevated: var(--card);
+  --link: #0070f3;
+  --link-deep: #0761d1;
+  --link-soft: #d3e5ff;
+  --error: #ee0000;
+  --error-deep: #c50000;
+  --warning-soft: #ffefcf;
+  --warning-deep: #ab570a;
+  --violet: #7928ca;
+  --violet-soft: #d8ccf1;
+  --cyan: #50e3c2;
+  --cyan-soft: #aaffec;
+  --pink: #ff0080;
+  --magenta: #eb367f;
+  --gradient-develop-start: #007cf0;
+  --gradient-develop-end: #00dfd8;
+  --gradient-preview-start: #7928ca;
+  --gradient-preview-end: #ff0080;
+  --gradient-ship-start: #ff4d4d;
+  --gradient-ship-end: #f9cb28;
+
+  /* typography — DESIGN-vercel.md */
+  --font-display-xl-size: 48px;
+  --font-display-xl-line-height: 48px;
+  --font-display-xl-weight: 600;
+  --font-display-xl-tracking: -2.4px;
+  --font-heading-lg-size: 32px;
+  --font-heading-lg-line-height: 40px;
+  --font-heading-lg-weight: 600;
+  --font-heading-lg-tracking: -1.28px;
+  --font-heading-md-size: 20px;
+  --font-heading-md-line-height: 28px;
+  --font-heading-md-weight: 600;
+  --font-heading-md-tracking: -0.4px;
+  --font-label-sm-size: 14px;
+  --font-label-sm-line-height: 20px;
+  --font-label-sm-weight: 500;
+  --font-label-sm-tracking: -0.28px;
+  --font-mono-eyebrow-size: 12px;
+  --font-mono-eyebrow-line-height: 16px;
+  --font-mono-eyebrow-weight: 500;
+  --font-mono-eyebrow-tracking: 0px;
+  --font-body-lg-size: 16px;
+  --font-body-lg-line-height: 24px;
+  --font-body-lg-weight: 400;
+  --font-body-md-size: 14px;
+  --font-body-md-line-height: 20px;
+  --font-body-md-weight: 400;
+  --font-body-sm-size: 12px;
+  --font-body-sm-line-height: 16px;
+  --font-body-sm-weight: 400;
+  --font-button-lg-size: 16px;
+  --font-button-lg-line-height: 20px;
+  --font-button-lg-weight: 500;
+  --font-button-md-size: 14px;
+  --font-button-md-line-height: 20px;
+  --font-button-md-weight: 500;
+  --font-code-size: 14px;
+  --font-code-line-height: 20px;
+  --font-code-weight: 400;
+
+  /* rounded — DESIGN-vercel.md */
+  --rounded-none: 0px;
+  --rounded-sm: 6px;
+  --rounded-md: 12px;
+  --rounded-lg: 16px;
+  --rounded-pill-category: 64px;
+  --rounded-pill: 100px;
+  --rounded-full: 9999px;
+  /* legacy aliases — used in existing components */
+  --rounded-xl: 24px;
+  --rounded-2xl: 24px;
+
+  /* spacing — DESIGN-vercel.md (prefixed to avoid Tailwind scale collisions) */
+  --space-xxs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 40px;
+  --space-3xl: 64px;
+  --space-4xl: 96px;
+  --space-section: 128px;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-ink: var(--ink);
   --color-secondary: var(--secondary);
   --color-accent: var(--accent);
   --color-teal: var(--teal);
@@ -42,16 +138,49 @@
   --color-card: var(--card);
   --color-dark: var(--dark);
   --color-dark-mid: var(--dark-mid);
+  --color-body: var(--body);
+  --color-mute: var(--mute);
+  --color-faint: var(--faint);
+  --color-hairline: var(--hairline);
+  --color-hairline-soft: var(--hairline-soft);
+  --color-canvas: var(--canvas);
+  --color-canvas-elevated: var(--canvas-elevated);
+  --color-link: var(--link);
+  --color-link-deep: var(--link-deep);
+  --color-link-soft: var(--link-soft);
+  --color-error: var(--error);
+  --color-error-deep: var(--error-deep);
+  --color-warning-soft: var(--warning-soft);
+  --color-warning-deep: var(--warning-deep);
+  --color-violet: var(--violet);
+  --color-violet-soft: var(--violet-soft);
+  --color-cyan: var(--cyan);
+  --color-cyan-soft: var(--cyan-soft);
+  --color-pink: var(--pink);
+  --color-magenta: var(--magenta);
+  --color-gradient-develop-start: var(--gradient-develop-start);
+  --color-gradient-develop-end: var(--gradient-develop-end);
+  --color-gradient-preview-start: var(--gradient-preview-start);
+  --color-gradient-preview-end: var(--gradient-preview-end);
+  --color-gradient-ship-start: var(--gradient-ship-start);
+  --color-gradient-ship-end: var(--gradient-ship-end);
   --font-sans: var(--font-plus-jakarta), "Plus Jakarta Sans", ui-sans-serif,
     system-ui, sans-serif;
   --font-heading: var(--font-plus-jakarta), "Plus Jakarta Sans", ui-sans-serif,
     system-ui, sans-serif;
-  --radius-sm: 0.5rem;
-  --radius-md: 0.75rem;
-  --radius-lg: 1rem;
-  --radius-xl: 1.5rem;
-  --radius-2xl: 1.5rem;
-  --radius-full: 9999px;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  --radius-none: var(--rounded-none);
+  --radius-sm: var(--rounded-sm);
+  --radius-md: var(--rounded-md);
+  --radius-lg: var(--rounded-lg);
+  --radius-pill-category: var(--rounded-pill-category);
+  --radius-pill: var(--rounded-pill);
+  --radius-full: var(--rounded-full);
+  --radius-xl: var(--rounded-xl);
+  --radius-2xl: var(--rounded-2xl);
+  /* Only custom spacing name — do NOT override sm/md/lg/xl/2xl (breaks max-w-*) */
+  --spacing-section: var(--space-section);
 }
 
 html {
@@ -75,54 +204,385 @@ h6 {
   font-family: var(--font-heading);
 }
 
-/* Typography utilities — mobile mins scaled from desktop maxes.
-   The heading utilities are declared with @utility (not plain classes) so
-   responsive variants such as `sm:text-card-title` actually get generated. */
+/* typography — DESIGN-vercel.md utilities */
+@utility text-display-xl {
+  font-family: var(--font-sans);
+  font-size: var(--font-display-xl-size);
+  line-height: var(--font-display-xl-line-height);
+  font-weight: var(--font-display-xl-weight);
+  letter-spacing: var(--font-display-xl-tracking);
+}
+
+@utility text-heading-lg {
+  font-family: var(--font-heading);
+  font-size: var(--font-heading-lg-size);
+  line-height: var(--font-heading-lg-line-height);
+  font-weight: var(--font-heading-lg-weight);
+  letter-spacing: var(--font-heading-lg-tracking);
+}
+
+@utility text-heading-md {
+  font-family: var(--font-heading);
+  font-size: var(--font-heading-md-size);
+  line-height: var(--font-heading-md-line-height);
+  font-weight: var(--font-heading-md-weight);
+  letter-spacing: var(--font-heading-md-tracking);
+}
+
+@utility text-label-sm {
+  font-family: var(--font-sans);
+  font-size: var(--font-label-sm-size);
+  line-height: var(--font-label-sm-line-height);
+  font-weight: var(--font-label-sm-weight);
+  letter-spacing: var(--font-label-sm-tracking);
+}
+
+@utility text-mono-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--font-mono-eyebrow-size);
+  line-height: var(--font-mono-eyebrow-line-height);
+  font-weight: var(--font-mono-eyebrow-weight);
+  letter-spacing: var(--font-mono-eyebrow-tracking);
+  text-transform: uppercase;
+}
+
+@utility text-body-lg {
+  font-family: var(--font-sans);
+  font-size: var(--font-body-lg-size);
+  line-height: var(--font-body-lg-line-height);
+  font-weight: var(--font-body-lg-weight);
+}
+
+@utility text-body-md {
+  font-family: var(--font-sans);
+  font-size: var(--font-body-md-size);
+  line-height: var(--font-body-md-line-height);
+  font-weight: var(--font-body-md-weight);
+}
+
+@utility text-body-sm {
+  font-family: var(--font-sans);
+  font-size: var(--font-body-sm-size);
+  line-height: var(--font-body-sm-line-height);
+  font-weight: var(--font-body-sm-weight);
+}
+
+@utility text-button-lg {
+  font-family: var(--font-sans);
+  font-size: var(--font-button-lg-size);
+  line-height: var(--font-button-lg-line-height);
+  font-weight: var(--font-button-lg-weight);
+}
+
+@utility text-button-md {
+  font-family: var(--font-sans);
+  font-size: var(--font-button-md-size);
+  line-height: var(--font-button-md-line-height);
+  font-weight: var(--font-button-md-weight);
+}
+
+@utility text-code {
+  font-family: var(--font-mono);
+  font-size: var(--font-code-size);
+  line-height: var(--font-code-line-height);
+  font-weight: var(--font-code-weight);
+}
+
+/* Legacy responsive headings — aligned to MD weights (600) */
 @utility text-hero {
-  font-size: clamp(1.875rem, 5vw + 0.5rem, 4.5rem);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  font-weight: 700;
+  font-family: var(--font-heading);
+  font-size: clamp(1.875rem, 5vw + 0.5rem, 3rem);
+  line-height: 1.08;
+  letter-spacing: -0.05em;
+  font-weight: 600;
 }
 
 @utility text-section {
-  font-size: clamp(1.625rem, 3.5vw + 0.75rem, 3.5rem);
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  font-weight: 700;
+  font-family: var(--font-heading);
+  font-size: clamp(1.625rem, 3.5vw + 0.75rem, 2rem);
+  line-height: 1.25;
+  letter-spacing: -0.04em;
+  font-weight: 600;
 }
 
 @utility text-card-title {
-  font-size: clamp(1.25rem, 1vw + 0.75rem, 1.75rem);
-  line-height: 1.3;
-  font-weight: 700;
+  font-family: var(--font-heading);
+  font-size: clamp(1.125rem, 1vw + 0.75rem, 1.25rem);
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  font-weight: 600;
 }
 
 .text-body {
-  font-size: 1rem;
-  line-height: 1.7;
-}
-
-.text-body-lg {
-  font-size: 1.0625rem;
-  line-height: 1.7;
+  font-size: var(--font-body-lg-size);
+  line-height: var(--font-body-lg-line-height);
 }
 
 @media (min-width: 768px) {
   .text-body {
-    font-size: 1.125rem;
-  }
-
-  .text-body-lg {
-    font-size: 1.25rem;
+    font-size: var(--font-body-lg-size);
   }
 }
 
 .text-label {
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: var(--font-mono-eyebrow-size);
+  font-weight: var(--font-mono-eyebrow-weight);
+  line-height: var(--font-mono-eyebrow-line-height);
   text-transform: uppercase;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.08em;
+}
+
+/* layout rhythm — DESIGN-vercel.md spacing */
+.stack-xs {
+  margin-top: var(--space-xs);
+}
+
+.stack-sm {
+  margin-top: var(--space-sm);
+}
+
+.stack-md {
+  margin-top: var(--space-md);
+}
+
+.stack-lg {
+  margin-top: var(--space-lg);
+}
+
+.stack-xl {
+  margin-top: var(--space-xl);
+}
+
+.stack-2xl {
+  margin-top: var(--space-2xl);
+}
+
+.lede {
+  font-size: var(--font-body-lg-size);
+  line-height: var(--font-body-lg-line-height);
+  color: var(--muted);
+}
+
+.copy-md {
+  font-size: var(--font-body-md-size);
+  line-height: var(--font-body-md-line-height);
+  color: var(--muted);
+}
+
+.card-grid {
+  display: grid;
+  margin-top: var(--space-xl);
+  gap: var(--space-lg);
+}
+
+@media (min-width: 1024px) {
+  .card-grid {
+    margin-top: var(--space-2xl);
+    gap: var(--space-xl);
+  }
+}
+
+/* components — DESIGN-vercel.md */
+@layer components {
+  .nav-bar {
+    background-color: var(--canvas);
+    color: var(--body);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    border-color: var(--hairline);
+    padding: var(--space-sm) var(--space-lg);
+  }
+
+  .nav-link {
+    color: var(--body);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    border-radius: var(--rounded-full);
+    padding: var(--space-xs) var(--space-sm);
+  }
+
+  .button-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: var(--primary);
+    color: var(--on-primary);
+    font-size: var(--font-button-lg-size);
+    line-height: var(--font-button-lg-line-height);
+    font-weight: var(--font-button-lg-weight);
+    border-radius: var(--rounded-pill);
+    padding: 0 14px;
+    min-height: 44px;
+    border: none;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .button-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: var(--canvas-elevated);
+    color: var(--ink);
+    font-size: var(--font-button-lg-size);
+    line-height: var(--font-button-lg-line-height);
+    font-weight: var(--font-button-lg-weight);
+    border-radius: var(--rounded-pill);
+    padding: 0 14px;
+    min-height: 44px;
+    border: 1px solid var(--hairline);
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  }
+
+  .button-primary-sm {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary);
+    color: var(--on-primary);
+    font-size: var(--font-button-md-size);
+    line-height: var(--font-button-md-line-height);
+    font-weight: var(--font-button-md-weight);
+    border-radius: var(--rounded-sm);
+    padding: 0 6px;
+    min-height: 36px;
+    border: none;
+    transition: background-color 0.3s ease;
+  }
+
+  .button-ghost-sm {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--canvas-elevated);
+    color: var(--ink);
+    border: 1px solid var(--hairline);
+    font-size: var(--font-button-md-size);
+    line-height: var(--font-button-md-line-height);
+    font-weight: var(--font-button-md-weight);
+    border-radius: var(--rounded-sm);
+    padding: 0 6px;
+    min-height: 36px;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  }
+
+  .button-category-pill {
+    background-color: var(--canvas-elevated);
+    color: var(--ink);
+    font-size: var(--font-button-md-size);
+    line-height: var(--font-button-md-line-height);
+    font-weight: var(--font-button-md-weight);
+    border-radius: var(--rounded-pill-category);
+    padding: 0 16px;
+  }
+
+  .button-icon-circular {
+    background-color: var(--canvas-elevated);
+    color: var(--ink);
+    border: 1px solid var(--hairline);
+    font-size: var(--font-body-lg-size);
+    line-height: var(--font-body-lg-line-height);
+    border-radius: var(--rounded-full);
+    padding: 0;
+  }
+
+  .text-input {
+    background-color: var(--canvas-elevated);
+    color: var(--ink);
+    border: 1px solid var(--hairline);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    border-radius: var(--rounded-sm);
+    padding: var(--space-xs) var(--space-sm);
+  }
+
+  .feature-card {
+    background-color: var(--canvas-elevated);
+    color: var(--ink);
+    border: 1px solid var(--hairline);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    border-radius: var(--rounded-md);
+    padding: var(--space-lg);
+  }
+
+  .surface-card {
+    border-radius: var(--rounded-md);
+    border: 1px solid var(--hairline);
+    background-color: var(--canvas-elevated);
+    padding: var(--space-lg);
+  }
+
+  .feature-card-elevated {
+    background-color: var(--canvas-elevated);
+    color: var(--ink);
+    border: 1px solid var(--hairline);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    border-radius: var(--rounded-md);
+    padding: var(--space-lg);
+    box-shadow: 0 20px 50px rgba(34, 32, 28, 0.08);
+  }
+
+  .pricing-card {
+    background-color: var(--canvas-elevated);
+    color: var(--ink);
+    border: 1px solid var(--hairline);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    border-radius: var(--rounded-lg);
+    padding: var(--space-xl);
+  }
+
+  .code-block {
+    background-color: var(--canvas-elevated);
+    color: var(--ink);
+    border: 1px solid var(--hairline);
+    font-family: var(--font-mono);
+    font-size: var(--font-code-size);
+    line-height: var(--font-code-line-height);
+    border-radius: var(--rounded-md);
+    padding: var(--space-md);
+  }
+
+  .logo-strip {
+    background-color: var(--canvas);
+    color: var(--mute);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    padding: var(--space-xl) var(--space-lg);
+  }
+
+  .hero-band {
+    background-color: var(--canvas);
+    color: var(--ink);
+    font-size: var(--font-display-xl-size);
+    line-height: var(--font-display-xl-line-height);
+    font-weight: var(--font-display-xl-weight);
+    letter-spacing: var(--font-display-xl-tracking);
+    padding: var(--space-section) var(--space-lg);
+  }
+
+  .cta-band {
+    background-color: var(--canvas);
+    color: var(--ink);
+    font-size: var(--font-display-xl-size);
+    line-height: var(--font-display-xl-line-height);
+    font-weight: var(--font-display-xl-weight);
+    letter-spacing: var(--font-display-xl-tracking);
+    padding: var(--space-4xl) var(--space-lg);
+  }
+
+  .site-footer-band {
+    background-color: var(--canvas);
+    color: var(--body);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    border-color: var(--hairline);
+    padding: var(--space-3xl) var(--space-lg);
+  }
 }
 
 /* Brand utilities */
@@ -196,8 +656,8 @@ h6 {
 }
 
 .section-padding {
-  padding-top: 7rem;
-  padding-bottom: 7rem;
+  padding-top: clamp(4rem, 8vw, var(--space-section));
+  padding-bottom: clamp(4rem, 8vw, var(--space-section));
 }
 
 /* Soft shadow */
@@ -257,7 +717,7 @@ h6 {
 /* Selection — light surfaces keep graphite text; dark surfaces keep white */
 ::selection {
   background: rgba(30, 79, 216, 0.2);
-  color: var(--primary);
+  color: var(--foreground);
 }
 
 .text-white ::selection,

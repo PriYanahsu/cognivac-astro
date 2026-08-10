@@ -1,40 +1,45 @@
 ---
+import { ArrowRight } from "@lucide/astro";
 import Input from "@/components/ui/Input.astro";
-import GradientButton from "@/components/shared/GradientButton.astro";
 
 /**
  * Port of components/layout/footer/newsletter-form.tsx.
- * react-hook-form + zod are replaced by the same single rule enforced inline,
- * so no validation library reaches the browser.
+ * react-hook-form + zod are replaced by the same single rule enforced inline.
  */
 ---
 
-<form data-newsletter-form class="space-y-2.5 sm:space-y-3" novalidate>
-  <p
-    class="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-white/70 sm:text-[0.875rem] sm:tracking-[0.2em]"
+<form data-newsletter-form class="space-y-3" novalidate>
+  <div>
+    <p class="text-mono-eyebrow uppercase tracking-[0.12em] text-white/55">
+      Newsletter
+    </p>
+    <p class="mt-2 text-body-md text-white/70">
+      Monthly AI engineering notes — no spam, unsubscribe anytime.
+    </p>
+  </div>
+
+  <div
+    class="flex overflow-hidden rounded-full border border-white/15 bg-white/6 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] focus-within:border-accent/50 focus-within:bg-white/8"
   >
-    Newsletter
-  </p>
-  <p class="text-xs text-white/60 sm:text-sm">
-    Get AI engineering insights delivered monthly.
-  </p>
-  <div class="flex flex-col gap-2 sm:flex-row">
     <Input
       type="email"
       name="email"
       placeholder="you@company.com"
       aria-label="Email for newsletter"
-      class="h-10 border-white/20 bg-white/10 text-sm text-white placeholder:text-white/40 sm:h-11 sm:text-base"
+      class="h-10 flex-1 border-0 bg-transparent px-3.5 text-body-md text-white shadow-none placeholder:text-white/40 focus-visible:border-transparent focus-visible:ring-0"
     />
-    <GradientButton
+    <button
       type="submit"
-      showArrow={false}
-      class="h-10 shrink-0 sm:h-11"
-      ariaLabel="Subscribe to newsletter"
+      aria-label="Subscribe to newsletter"
+      class="group inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-accent px-4 text-button-md font-semibold text-white transition-[background-color,box-shadow,transform] duration-300 hover:bg-indigo hover:shadow-glow active:scale-[0.98] disabled:opacity-70"
     >
       <span data-newsletter-label>Subscribe</span>
-    </GradientButton>
+      <ArrowRight
+        class="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
+      />
+    </button>
   </div>
+
   <p data-newsletter-error class="hidden text-xs text-error" role="alert"></p>
   <p data-newsletter-success class="hidden text-xs text-emerald-300" role="status">
     Thanks — you&apos;re subscribed.
@@ -52,14 +57,17 @@ import GradientButton from "@/components/shared/GradientButton.astro";
         form.dataset.newsletterReady = "true";
 
         const input = form.querySelector<HTMLInputElement>(
-          'input[name="email"]'
+          'input[name="email"]',
         );
         const label = form.querySelector<HTMLElement>("[data-newsletter-label]");
+        const submitBtn = form.querySelector<HTMLButtonElement>(
+          'button[type="submit"]',
+        );
         const error = form.querySelector<HTMLElement>("[data-newsletter-error]");
         const success = form.querySelector<HTMLElement>(
-          "[data-newsletter-success]"
+          "[data-newsletter-success]",
         );
-        if (!input || !label || !error || !success) return;
+        if (!input || !label || !submitBtn || !error || !success) return;
 
         form.addEventListener("submit", async (event) => {
           event.preventDefault();
@@ -73,10 +81,11 @@ import GradientButton from "@/components/shared/GradientButton.astro";
             return;
           }
 
-          label.textContent = "...";
-          // Same placeholder round-trip as the React version.
+          submitBtn.disabled = true;
+          label.textContent = "…";
           await new Promise((resolve) => setTimeout(resolve, 600));
           label.textContent = "Subscribe";
+          submitBtn.disabled = false;
 
           form.reset();
           success.classList.remove("hidden");

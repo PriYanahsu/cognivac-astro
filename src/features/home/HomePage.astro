@@ -1,6 +1,5 @@
 ---
 import HeroSection from "@/features/hero-section/components/HeroSection.astro";
-import ProofStrip from "@/features/hero-section/components/ProofStrip.astro";
 import ProblemSection from "@/features/problem-section/components/ProblemSection.astro";
 import TrustSections from "@/features/trust-sections/components/TrustSections.astro";
 import CaseHighlights from "@/features/case-highlights/components/CaseHighlights.astro";
@@ -52,9 +51,9 @@ import { FAQS, SERVICES } from "./constants/content";
   ]}
 />
 
-{/* 1 · Clarity — what this is, who it is for, who already trusts it */}
+{/* 1 · Clarity — what this is, who it is for, who already trusts it.
+     ProofStrip lives inside HeroSection (flush to the hero floor). */}
 <HeroSection />
-<ProofStrip />
 
 {/* 2 · The pain, named before anything is sold */}
 <ProblemSection />

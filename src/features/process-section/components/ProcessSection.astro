@@ -13,32 +13,30 @@ import {
 /** Port of features/process-section/components/process-section.tsx. */
 ---
 
-<section class="border-y border-border bg-card py-16 sm:py-20 lg:py-28">
+<section class="border-y border-border bg-card section-padding">
   <Container>
     <FadeIn>
       <div class="max-w-3xl">
-        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+        <SectionLabel class="mb-0">
           {PROCESS_CONTENT.label}
         </SectionLabel>
-        <h2 class="text-section mt-5 max-w-[24ch] text-primary">
+        <h2 class="text-section stack-sm max-w-[24ch] text-foreground">
           {PROCESS_CONTENT.title}
         </h2>
-        <p
-          class="mt-4 max-w-[54ch] text-[16px] leading-[1.6] text-muted sm:text-[18px]"
-        >
+        <p class="stack-md lede max-w-[54ch]">
           {PROCESS_CONTENT.description}
         </p>
       </div>
     </FadeIn>
 
     {/* Five steps: connected rail on desktop, stacked rail on mobile */}
-    <div class="relative mt-12 sm:mt-14 lg:mt-16">
+    <div class="stack-2xl relative">
       <div
         class="pointer-events-none absolute left-[15px] top-2 bottom-2 w-px bg-border lg:left-0 lg:right-0 lg:top-[15px] lg:bottom-auto lg:h-px lg:w-auto"
       >
       </div>
 
-      <div class="grid gap-8 lg:grid-cols-5 lg:gap-6">
+      <div class="grid gap-6 lg:grid-cols-5 lg:gap-8">
         {
           PROCESS_STEPS.map((step, i) => (
             <FadeIn delay={0.06 * (i + 1)}>
@@ -47,10 +45,10 @@ import {
                   {step.index}
                 </span>
                 <div class="min-w-0 lg:mt-6 lg:pr-4">
-                  <h3 class="text-[17px] font-bold leading-snug text-primary sm:text-[19px]">
+                  <h3 class="text-heading-md text-foreground">
                     {step.title}
                   </h3>
-                  <p class="mt-2.5 text-[14.5px] leading-[1.6] text-muted sm:text-[15.5px]">
+                  <p class="stack-xs copy-md">
                     {step.description}
                   </p>
                 </div>
@@ -62,9 +60,7 @@ import {
     </div>
 
     <FadeIn delay={0.15}>
-      <div
-        class="mt-12 rounded-[18px] border border-border bg-background p-6 sm:mt-14 sm:rounded-[22px] sm:p-8"
-      >
+      <div class="surface-card stack-2xl">
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
           {
             ENGAGEMENT_FACTS.map((fact) => (
@@ -72,7 +68,7 @@ import {
                 <p class="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted">
                   {fact.label}
                 </p>
-                <p class="mt-2 text-[16px] font-bold leading-snug text-primary sm:text-[17px]">
+                <p class="mt-2 text-[16px] font-bold leading-snug text-foreground sm:text-[17px]">
                   {fact.value}
                 </p>
               </div>

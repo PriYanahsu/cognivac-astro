@@ -15,6 +15,10 @@ export default defineConfig({
   output: 'static',
   adapter: vercel(),
 
+  // Floating Menu/Inspect/Audit bar sits over the page bottom in dev —
+  // disable so it doesn't read as a second site banner.
+  devToolbar: { enabled: false },
+
   vite: {
     plugins: [tailwindcss()],
   },

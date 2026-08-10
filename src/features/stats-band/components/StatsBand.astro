@@ -12,14 +12,14 @@ const BAND_STATS = STATS_BAND_IDS.map((id) =>
 ).filter((stat): stat is (typeof STATS)[number] => Boolean(stat));
 ---
 
-<section class="border-y border-border bg-card py-16 sm:py-20 lg:py-24">
+<section class="border-y border-border bg-card section-padding">
   <Container>
     <FadeIn>
       <div class="mx-auto max-w-3xl text-center">
-        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+        <SectionLabel class="mb-0">
           {STATS_BAND_CONTENT.label}
         </SectionLabel>
-        <h2 class="text-section mt-5 text-primary">
+        <h2 class="text-section stack-sm text-foreground">
           {STATS_BAND_CONTENT.title}
         </h2>
         <p

@@ -77,19 +77,17 @@ const PRINCIPLES = [
 />
 
 {/* Mission + positioning */}
-<section class="bg-background py-16 sm:py-20 lg:py-28">
+<section class="bg-background section-padding">
   <Container>
     <div class="grid gap-10 lg:grid-cols-12 lg:gap-16">
       <FadeIn class="lg:col-span-5">
-        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+        <SectionLabel class="mb-0">
           Our Mission
         </SectionLabel>
-        <h2 class="text-section mt-5 max-w-[20ch] text-primary">
+        <h2 class="text-section stack-sm max-w-[20ch] text-foreground">
           Close the gap between AI ambition and production reality
         </h2>
-        <p
-          class="mt-5 max-w-[46ch] text-[16px] leading-[1.65] text-muted sm:text-[18px]"
-        >
+        <p class="stack-md lede max-w-[46ch]">
           Help organizations turn AI and modern software into durable capability
           — secure, maintainable systems that reduce manual work and support
           clearer decisions, without the risk of demos that never reach
@@ -102,7 +100,7 @@ const PRINCIPLES = [
           POSITIONING.map((point, i) => (
             <FadeIn delay={0.08 * (i + 1)}>
               <div class="py-6 sm:py-8">
-                <h3 class="text-card-title text-primary">{point.title}</h3>
+                <h3 class="text-heading-md text-foreground">{point.title}</h3>
                 <p class="mt-2.5 max-w-[54ch] text-[15px] leading-[1.65] text-muted sm:text-[16.5px]">
                   {point.description}
                 </p>
@@ -117,7 +115,7 @@ const PRINCIPLES = [
 
 {/* Dark numbers band */}
 <section
-  class="relative overflow-hidden bg-[#1a1a1c] py-16 text-white sm:py-20 lg:py-24"
+  class="relative overflow-hidden bg-[#1a1a1c] section-padding text-white"
 >
   <div class="dot-grid pointer-events-none absolute inset-0 opacity-60"></div>
   <Container class="relative z-10">
@@ -125,7 +123,7 @@ const PRINCIPLES = [
       <div class="mx-auto max-w-2xl text-center">
         <SectionLabel
           tone="accent"
-          class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm"
+          class="mb-0"
         >
           Track Record
         </SectionLabel>
@@ -161,31 +159,31 @@ const PRINCIPLES = [
 </section>
 
 {/* Principles — gradient art cards, matching the solutions deck */}
-<section class="border-b border-border bg-card py-16 sm:py-20 lg:py-28">
+<section class="border-b border-border bg-card section-padding">
   <Container>
     <FadeIn>
       <div class="max-w-3xl">
-        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+        <SectionLabel class="mb-0">
           How We Engineer
         </SectionLabel>
-        <h2 class="text-section mt-5 max-w-[22ch] text-primary">
+        <h2 class="text-section stack-sm max-w-[22ch] text-foreground">
           Three principles that survive contact with a deadline
         </h2>
       </div>
     </FadeIn>
 
-    <div class="mt-10 grid gap-5 sm:mt-12 md:grid-cols-3 md:gap-6">
+    <div class="card-grid md:grid-cols-3">
       {
         PRINCIPLES.map((principle, i) => (
           <FadeIn delay={0.08 * (i + 1)}>
-            <div class="flex h-full flex-col overflow-hidden rounded-[18px] border border-border bg-background sm:rounded-[22px]">
+            <div class="flex h-full flex-col overflow-hidden rounded-md border border-border bg-background sm:rounded-md">
               <div
                 class="h-[120px] w-full sm:h-[140px]"
                 style={`background:${principle.art}`}
               />
               <div class="flex flex-1 flex-col p-6 sm:p-7">
-                <h3 class="text-card-title text-primary">{principle.title}</h3>
-                <p class="mt-3 text-[15px] leading-[1.65] text-muted sm:text-[16px]">
+                <h3 class="text-heading-md text-foreground">{principle.title}</h3>
+                <p class="stack-sm copy-md">
                   {principle.description}
                 </p>
               </div>
@@ -198,19 +196,17 @@ const PRINCIPLES = [
 </section>
 
 {/* How we work — reuses the home process steps */}
-<section class="bg-background py-16 sm:py-20 lg:py-28">
+<section class="bg-background section-padding">
   <Container>
     <FadeIn>
       <div class="max-w-3xl">
-        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+        <SectionLabel class="mb-0">
           How We Work
         </SectionLabel>
-        <h2 class="text-section mt-5 max-w-[24ch] text-primary">
+        <h2 class="text-section stack-sm max-w-[24ch] text-foreground">
           Discovery first, always
         </h2>
-        <p
-          class="mt-4 max-w-[54ch] text-[16px] leading-[1.6] text-muted sm:text-[18px]"
-        >
+        <p class="stack-md lede max-w-[54ch]">
           Engagements begin with business discovery — objectives, constraints,
           existing systems, and the operational pain behind the request — not a
           technology pitch.
@@ -218,20 +214,18 @@ const PRINCIPLES = [
       </div>
     </FadeIn>
 
-    <div
-      class="mt-10 grid gap-5 sm:mt-12 sm:grid-cols-2 lg:grid-cols-5 lg:gap-4"
-    >
+    <div class="card-grid sm:grid-cols-2 lg:grid-cols-5 lg:gap-4">
       {
         PROCESS_STEPS.map((step, i) => (
           <FadeIn delay={0.06 * (i + 1)}>
-            <div class="h-full rounded-[18px] border border-border bg-card p-5 sm:rounded-[22px] sm:p-6">
+            <div class="h-full rounded-md border border-border bg-card p-5 sm:rounded-md sm:p-6">
               <span class="text-[12px] font-bold tracking-[0.16em] text-accent">
                 {step.index}
               </span>
-              <h3 class="mt-3 text-[17px] font-bold leading-tight text-primary">
+              <h3 class="mt-3 text-heading-md text-foreground">
                 {step.title}
               </h3>
-              <p class="mt-2.5 text-[14px] leading-[1.6] text-muted">
+              <p class="mt-2.5 copy-md">
                 {step.description}
               </p>
             </div>
@@ -243,30 +237,30 @@ const PRINCIPLES = [
 </section>
 
 {/* Why clients trust us */}
-<section class="border-y border-border bg-card py-16 sm:py-20 lg:py-28">
+<section class="border-y border-border bg-card section-padding">
   <Container>
     <FadeIn>
       <div class="mx-auto max-w-2xl text-center">
-        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+        <SectionLabel class="mb-0">
           Why Clients Stay
         </SectionLabel>
-        <h2 class="text-section mt-5 text-primary">
+        <h2 class="text-section stack-sm text-foreground">
           Trust comes from transparency and consistency
         </h2>
       </div>
     </FadeIn>
 
-    <div class="mt-10 grid gap-5 sm:mt-12 md:grid-cols-3 md:gap-6">
+    <div class="card-grid md:grid-cols-3">
       {
         WHY_ITEMS.map((item, i) => (
           <FadeIn delay={0.08 * (i + 1)}>
-            <div class="flex h-full flex-col rounded-[18px] border border-border bg-background p-6 sm:rounded-[22px] sm:p-8">
+            <div class="flex h-full flex-col surface-card">
               <span
                 class="h-1 w-12 rounded-full"
                 style={`background:${item.accentColor}`}
               />
-              <h3 class="text-card-title mt-6 text-primary">{item.title}</h3>
-              <p class="mt-3 text-[15px] leading-[1.65] text-muted sm:text-[16px]">
+              <h3 class="text-card-title stack-lg text-foreground">{item.title}</h3>
+              <p class="stack-sm copy-md">
                 {item.description}
               </p>
             </div>

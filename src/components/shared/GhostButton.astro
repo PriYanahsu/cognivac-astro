@@ -11,9 +11,9 @@ interface Props {
 }
 
 const SIZE_CLASSES = {
-  sm: "h-9 px-4 text-xs",
-  default: "h-11 px-6 text-sm",
-  lg: "h-14 px-8 text-base",
+  sm: "h-9 min-h-9 px-1.5 text-button-md",
+  default: "h-11 min-h-11 px-[14px] text-button-lg",
+  lg: "h-14 min-h-14 px-8 text-button-lg",
 } as const;
 
 const {
@@ -24,14 +24,20 @@ const {
   type = "button",
 } = Astro.props;
 
+const isSm = size === "sm";
+
 const classes = cn(
-  "inline-flex items-center justify-center gap-2 rounded-full border font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2",
+  "inline-flex items-center justify-center gap-2 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2",
   SIZE_CLASSES[size],
   tone === "dark" &&
-    "border-primary/30 bg-transparent text-primary hover:border-accent hover:bg-accent hover:text-white",
+    (isSm
+      ? "button-ghost-sm text-ink hover:border-accent hover:bg-accent hover:text-on-primary"
+      : "button-secondary rounded-pill text-ink hover:border-accent hover:bg-accent hover:text-on-primary"),
   tone === "light" &&
-    "border-white/40 text-white hover:border-accent hover:bg-accent hover:text-white",
-  className
+    (isSm
+      ? "button-ghost-sm border-white/40 bg-transparent text-white hover:border-accent hover:bg-accent hover:text-on-primary"
+      : "rounded-pill border border-white/40 bg-transparent text-button-lg text-white hover:border-accent hover:bg-accent hover:text-on-primary"),
+  className,
 );
 ---
 

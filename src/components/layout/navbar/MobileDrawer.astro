@@ -36,7 +36,7 @@ import { NAV_ROUTES } from "@/constants/site";
       type="button"
       data-overlay-close
       aria-label="Close menu"
-      class="flex h-9 w-9 items-center justify-center rounded-full text-primary/70 transition-colors hover:bg-lavender hover:text-primary active:scale-95"
+      class="flex h-9 w-9 items-center justify-center rounded-full text-foreground/70 transition-colors hover:bg-lavender hover:text-foreground active:scale-95"
     >
       <X class="h-5 w-5" />
     </button>
@@ -61,7 +61,7 @@ import { NAV_ROUTES } from "@/constants/site";
                     type="button"
                     data-drawer-trigger
                     aria-expanded="false"
-                    class="flex w-full items-center justify-between px-4 py-3.5 text-left text-[15px] font-semibold text-primary"
+                    class="flex w-full items-center justify-between px-4 py-3.5 text-left text-[15px] font-semibold text-foreground"
                   >
                     {item.label}
                     <ChevronDown
@@ -76,9 +76,9 @@ import { NAV_ROUTES } from "@/constants/site";
                           <a
                             href={child.href}
                             data-overlay-close
-                            class="block px-4 py-3 pl-5 text-sm text-muted transition-colors hover:bg-white/70 hover:text-primary"
+                            class="block px-4 py-3 pl-5 text-sm text-muted transition-colors hover:bg-white/70 hover:text-foreground"
                           >
-                            <span class="font-medium text-primary/90">
+                            <span class="font-medium text-foreground/90">
                               {child.label}
                             </span>
                             {child.description ? (
@@ -96,7 +96,7 @@ import { NAV_ROUTES } from "@/constants/site";
                 <a
                   href={item.href}
                   data-overlay-close
-                  class="block rounded-2xl px-4 py-3.5 text-[15px] font-semibold text-primary transition-colors hover:bg-lavender/60"
+                  class="block rounded-2xl px-4 py-3.5 text-[15px] font-semibold text-foreground transition-colors hover:bg-lavender/60"
                 >
                   {item.label}
                 </a>

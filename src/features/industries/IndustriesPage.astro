@@ -68,7 +68,7 @@ const ALSO_SERVED = [
   highlights={["25+ industries served", "Regulated-sector experience"]}
 />
 
-<section class="bg-background py-16 sm:py-20 lg:py-28">
+<section class="bg-background section-padding">
   <Container>
     <div class="grid gap-6 sm:gap-8 lg:gap-10">
       {
@@ -76,7 +76,7 @@ const ALSO_SERVED = [
           <FadeIn delay={0.06 * (i + 1)}>
             <article
               id={industry.id}
-              class="grid scroll-mt-32 overflow-hidden rounded-[18px] border border-border bg-card sm:rounded-[22px] lg:grid-cols-12"
+              class="grid scroll-mt-32 overflow-hidden rounded-md border border-border bg-card sm:rounded-md lg:grid-cols-12"
             >
               <div class="relative aspect-16/9 lg:col-span-5 lg:aspect-auto lg:min-h-[320px]">
                 <img
@@ -89,7 +89,7 @@ const ALSO_SERVED = [
               </div>
 
               <div class="flex flex-col p-6 sm:p-8 lg:col-span-7 lg:p-10">
-                <h2 class="text-section text-primary">{industry.title}</h2>
+                <h2 class="text-section text-foreground">{industry.title}</h2>
                 <p class="mt-4 max-w-[54ch] text-[16px] leading-[1.65] text-muted sm:text-[17.5px]">
                   {industry.description}
                 </p>
@@ -107,7 +107,7 @@ const ALSO_SERVED = [
                     </p>
                     <ul class="mt-3.5 grid gap-2.5 sm:grid-cols-2">
                       {SECTOR_WORK[industry.id].map((line) => (
-                        <li class="flex gap-2.5 text-[14.5px] leading-[1.55] text-primary/75">
+                        <li class="flex gap-2.5 text-[14.5px] leading-[1.55] text-foreground/75">
                           <span class="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
                           {line}
                         </li>
@@ -118,7 +118,7 @@ const ALSO_SERVED = [
 
                 <a
                   href={NAV_ROUTES.contact}
-                  class="mt-auto inline-flex items-center gap-1.5 pt-7 text-[13.5px] font-semibold text-primary transition-colors hover:text-accent"
+                  class="mt-auto inline-flex items-center gap-1.5 pt-7 text-[13.5px] font-semibold text-foreground transition-colors hover:text-accent"
                 >
                   Discuss {industry.title.toLowerCase()} work
                   <ArrowUpRight class="h-4 w-4" />
@@ -133,7 +133,7 @@ const ALSO_SERVED = [
 </section>
 
 <section
-  class="relative overflow-hidden bg-[#1a1a1c] py-16 text-white sm:py-20 lg:py-24"
+  class="relative overflow-hidden bg-[#1a1a1c] section-padding text-white"
 >
   <div class="dot-grid pointer-events-none absolute inset-0 opacity-60"></div>
   <Container class="relative z-10">
@@ -141,7 +141,7 @@ const ALSO_SERVED = [
       <div class="mx-auto max-w-3xl text-center">
         <SectionLabel
           tone="accent"
-          class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm"
+          class="mb-0"
         >
           Also Delivered In
         </SectionLabel>

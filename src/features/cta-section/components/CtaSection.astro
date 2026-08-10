@@ -10,18 +10,18 @@ import { CTA_CONTENT } from "../constants";
 /** Port of features/cta-section/components/cta-section.tsx. */
 ---
 
-<section class="bg-background py-16 sm:py-20 lg:py-28">
+<section class="bg-background section-padding">
   <Container>
     <FadeIn>
       {/* Inset dark card rather than a full-bleed band — keeps this
           distinct from the gradient-dark footer directly below. */}
       <div
-        class="dot-grid relative overflow-hidden rounded-[22px] bg-[#1a1a1c] px-6 py-12 text-center sm:rounded-[28px] sm:px-10 sm:py-16 lg:px-16 lg:py-20"
+        class="dot-grid relative overflow-hidden rounded-lg bg-[#1a1a1c] px-6 py-12 text-center sm:px-10 sm:py-16 lg:px-16 lg:py-20"
       >
         <div class="relative z-10 mx-auto max-w-3xl">
           <SectionLabel
             tone="accent"
-            class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm"
+            class="mb-0"
           >
             {CTA_CONTENT.label}
           </SectionLabel>

@@ -28,11 +28,11 @@ const metadata = createPageMetadata({
     breadcrumbs={[{ label: "Privacy Policy" }]}
   />
 
-  <section class="bg-background py-16 sm:py-20 lg:py-24">
+  <section class="bg-background section-padding">
     <Container>
       <FadeIn class="mx-auto max-w-3xl">
         <div
-          class="rounded-[18px] border border-border bg-card p-6 sm:rounded-[22px] sm:p-10"
+          class="rounded-md border border-border bg-card p-6 sm:rounded-md sm:p-10"
         >
           <p
             class="text-[12px] font-semibold uppercase tracking-[0.14em] text-accent"
@@ -48,7 +48,7 @@ const metadata = createPageMetadata({
           </p>
           <a
             href={`mailto:${SITE_CONFIG.email}`}
-            class="mt-6 inline-block text-[15px] font-semibold text-primary underline underline-offset-4 transition-colors hover:text-accent"
+            class="mt-6 inline-block text-[15px] font-semibold text-foreground underline underline-offset-4 transition-colors hover:text-accent"
           >
             {SITE_CONFIG.email}
           </a>

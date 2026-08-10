@@ -1,0 +1,53 @@
+---
+import { ArrowRight, Search } from "@lucide/astro";
+import { NAV_ROUTES } from "@/constants/site";
+import { cn } from "@/lib/utils";
+
+/** Port of components/layout/navbar/nav-actions.tsx. */
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div
+  class={cn(
+    "hidden items-center rounded-full border border-white/12 bg-white/[0.06] p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md lg:flex",
+    className,
+  )}
+>
+  <button
+    type="button"
+    data-search-trigger="pill"
+    aria-label="Search"
+    class="group flex h-9 items-center gap-2 rounded-full px-3 text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+  >
+    <Search class="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
+    <span class="text-[13px] font-medium tracking-[-0.01em]">Search</span>
+    <kbd
+      class="hidden h-5 min-w-5 items-center justify-center rounded-md border border-white/12 bg-white/[0.06] px-1.5 text-[10px] font-medium tracking-wide text-white/45 xl:inline-flex"
+    >
+      ⌘K
+    </kbd>
+  </button>
+  <div
+    aria-hidden="true"
+    class="mx-1 h-6 w-px shrink-0 bg-gradient-to-b from-transparent via-white/20 to-transparent"
+  >
+  </div>
+  <a
+    href={NAV_ROUTES.contact}
+    class="group relative flex h-9 items-center gap-1.5 overflow-hidden rounded-full bg-accent px-4 text-button-md font-semibold text-white transition-[background-color,box-shadow,transform] duration-300 hover:bg-indigo hover:shadow-glow active:scale-[0.98]"
+  >
+    <span class="relative z-10">Contact us</span>
+    <ArrowRight
+      class="relative z-10 h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
+    />
+    <span
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full"
+    >
+    </span>
+  </a>
+</div>

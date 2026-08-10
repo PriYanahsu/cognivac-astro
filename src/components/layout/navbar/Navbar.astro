@@ -2,20 +2,22 @@
 import { NAV_ITEMS } from "@/constants/navigation";
 import { NAV_ROUTES, SITE_CONFIG } from "@/constants/site";
 import CognivacLogo from "@/components/shared/CognivacLogo.astro";
-import GradientButton from "@/components/shared/GradientButton.astro";
 import NavLinks from "./NavLinks.astro";
 import SearchButton from "./SearchButton.astro";
+import SearchTrigger from "./SearchTrigger.astro";
+import NavActions from "./NavActions.astro";
 import MobileDrawer from "./MobileDrawer.astro";
 
 /**
  * Port of components/layout/navbar/index.tsx.
- * `useScrolled(16)` becomes a passive scroll listener toggling `data-scrolled`.
  */
 ---
 
 <header
   class="pointer-events-none fixed inset-x-0 top-0 z-50 w-full bg-transparent px-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-4"
 >
+  <SearchButton />
+
   <div
     data-navbar
     data-scrolled="false"
@@ -37,22 +39,14 @@ import MobileDrawer from "./MobileDrawer.astro";
     </nav>
 
     <div class="flex shrink-0 items-center gap-0.5 sm:gap-1.5">
-      <SearchButton />
-      <GradientButton
-        href={NAV_ROUTES.contact}
-        size="sm"
-        showArrow={false}
-        class="hidden lg:inline-flex"
-      >
-        Contact us
-      </GradientButton>
+      <SearchTrigger />
+      <NavActions />
       <MobileDrawer />
     </div>
   </div>
 </header>
 
 <style>
-  /* Matches `scrolled && "bg-[#2b2b2e]/95 shadow-[...]"` in the React version. */
   [data-navbar][data-scrolled="true"] {
     height: 2.75rem;
     background-color: rgb(43 43 46 / 0.95);

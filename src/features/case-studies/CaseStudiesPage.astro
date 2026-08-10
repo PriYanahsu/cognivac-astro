@@ -90,7 +90,7 @@ const OUTCOME_STATS = STATS.filter((s) => ["1", "2", "3"].includes(s.id));
 </section>
 
 {/* Full-width study rows — metric leads, detail follows */}
-<section class="bg-background py-16 sm:py-20 lg:py-28">
+<section class="bg-background section-padding">
   <Container>
     <div class="grid gap-8 lg:gap-12">
       {
@@ -102,7 +102,7 @@ const OUTCOME_STATS = STATS.filter((s) => ["1", "2", "3"].includes(s.id));
             <FadeIn delay={0.05 * (i + 1)}>
               <article
                 id={study.id}
-                class="grid scroll-mt-32 overflow-hidden rounded-[18px] border border-border bg-card sm:rounded-[22px] lg:grid-cols-12"
+                class="grid scroll-mt-32 overflow-hidden rounded-md border border-border bg-card sm:rounded-md lg:grid-cols-12"
               >
                 {/* Art panel with the headline metric over it */}
                 <div
@@ -141,7 +141,7 @@ const OUTCOME_STATS = STATS.filter((s) => ["1", "2", "3"].includes(s.id));
                 </div>
 
                 <div class="flex flex-col p-6 sm:p-8 lg:col-span-7 lg:p-10">
-                  <h2 class="text-[clamp(1.375rem,1.6vw+0.9rem,2rem)] font-bold leading-[1.15] tracking-[-0.01em] text-primary">
+                  <h2 class="text-[clamp(1.375rem,1.6vw+0.9rem,2rem)] font-bold leading-[1.15] tracking-[-0.01em] text-foreground">
                     {study.title}
                   </h2>
                   <p class="mt-3.5 max-w-[58ch] text-[16px] leading-[1.65] text-muted sm:text-[17px]">
@@ -154,7 +154,7 @@ const OUTCOME_STATS = STATS.filter((s) => ["1", "2", "3"].includes(s.id));
                         <p class="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted">
                           The challenge
                         </p>
-                        <p class="mt-2.5 text-[14.5px] leading-[1.6] text-primary/80">
+                        <p class="mt-2.5 text-[14.5px] leading-[1.6] text-foreground/80">
                           {detail.challenge}
                         </p>
                       </div>
@@ -162,7 +162,7 @@ const OUTCOME_STATS = STATS.filter((s) => ["1", "2", "3"].includes(s.id));
                         <p class="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted">
                           Our approach
                         </p>
-                        <p class="mt-2.5 text-[14.5px] leading-[1.6] text-primary/80">
+                        <p class="mt-2.5 text-[14.5px] leading-[1.6] text-foreground/80">
                           {detail.approach}
                         </p>
                       </div>
@@ -172,7 +172,7 @@ const OUTCOME_STATS = STATS.filter((s) => ["1", "2", "3"].includes(s.id));
                   {detail && (
                     <div class="mt-7 flex flex-wrap items-center gap-2">
                       {detail.stack.map((tech) => (
-                        <span class="rounded-full border border-border bg-background px-3 py-1.5 text-[12.5px] font-medium text-primary/70">
+                        <span class="rounded-full border border-border bg-background px-3 py-1.5 text-[12.5px] font-medium text-foreground/70">
                           {tech}
                         </span>
                       ))}
@@ -181,7 +181,7 @@ const OUTCOME_STATS = STATS.filter((s) => ["1", "2", "3"].includes(s.id));
 
                   <a
                     href={NAV_ROUTES.contact}
-                    class="mt-auto inline-flex items-center gap-1.5 pt-8 text-[13.5px] font-semibold text-primary transition-colors hover:text-accent"
+                    class="mt-auto inline-flex items-center gap-1.5 pt-8 text-[13.5px] font-semibold text-foreground transition-colors hover:text-accent"
                   >
                     Talk about a project like this
                     <ArrowUpRight class="h-4 w-4" />
@@ -204,7 +204,7 @@ const OUTCOME_STATS = STATS.filter((s) => ["1", "2", "3"].includes(s.id));
       <div class="mx-auto max-w-2xl text-center">
         <SectionLabel
           tone="accent"
-          class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm"
+          class="mb-0"
         >
           A Note On Names
         </SectionLabel>

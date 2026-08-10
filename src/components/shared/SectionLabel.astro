@@ -12,11 +12,11 @@ const { class: className, tone = "accent" } = Astro.props;
 
 <p
   class={cn(
-    "text-label mb-4",
+    "text-mono-eyebrow mb-0",
     tone === "accent" && "text-accent",
-    tone === "primary" && "text-primary",
+    tone === "primary" && "text-foreground",
     tone === "white" && "text-white/80",
-    className
+    className,
   )}
 >
   <slot />

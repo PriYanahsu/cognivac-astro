@@ -3,7 +3,7 @@ import { Search } from "@lucide/astro";
 import Dialog from "@/components/ui/Dialog.astro";
 import Input from "@/components/ui/Input.astro";
 
-/** Port of components/layout/navbar/search-button.tsx. */
+/** Search dialog — triggers live in Navbar / NavActions via data-search-trigger. */
 ---
 
 <Dialog title="Search Cognivac">
@@ -11,9 +11,10 @@ import Input from "@/components/ui/Input.astro";
     slot="trigger"
     type="button"
     data-overlay-trigger
+    data-search-trigger="hidden"
     aria-label="Search"
     aria-expanded="false"
-    class="flex h-9 w-9 items-center justify-center rounded-full text-white/75 transition-colors hover:bg-white/10 hover:text-white sm:h-10 sm:w-10"
+    class="hidden"
   >
     <Search class="h-5 w-5" />
   </button>
@@ -32,17 +33,50 @@ import Input from "@/components/ui/Input.astro";
 </Dialog>
 
 <script>
-  function initSearchForm() {
+  import { openOverlay } from "@/lib/overlay";
+
+  function initSearch() {
+    const dialogRoot = document
+      .querySelector<HTMLElement>("[data-search-form]")
+      ?.closest<HTMLElement>("[data-overlay-root]");
+    if (!dialogRoot || dialogRoot.dataset.searchReady === "true") return;
+    dialogRoot.dataset.searchReady = "true";
+
+    const openSearch = (trigger?: HTMLElement) => {
+      openOverlay(dialogRoot, trigger);
+    };
+
+    const bindTriggers = () => {
+      document.querySelectorAll<HTMLElement>("[data-search-trigger]").forEach(
+        (trigger) => {
+          if (trigger.dataset.searchTriggerBound === "true") return;
+          if (trigger.dataset.searchTrigger === "hidden") return;
+          trigger.dataset.searchTriggerBound = "true";
+          trigger.addEventListener("click", () => openSearch(trigger));
+        },
+      );
+    };
+
+    bindTriggers();
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        openSearch();
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+
     document
       .querySelectorAll<HTMLFormElement>("[data-search-form]")
       .forEach((form) => {
-        if (form.dataset.searchReady === "true") return;
-        form.dataset.searchReady = "true";
-        // Matches the React handler: submit is swallowed until search ships.
+        if (form.dataset.searchFormReady === "true") return;
+        form.dataset.searchFormReady = "true";
         form.addEventListener("submit", (event) => event.preventDefault());
       });
   }
 
-  initSearchForm();
-  document.addEventListener("astro:page-load", initSearchForm);
+  initSearch();
+  document.addEventListener("astro:page-load", initSearch);
 </script>

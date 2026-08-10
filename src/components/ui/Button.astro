@@ -5,9 +5,6 @@ import type { HTMLAttributes } from "astro/types";
 /**
  * Port of components/ui/button.tsx. The Next version used `cva`; the variant
  * maps below hold the identical class strings, resolved at build time.
- *
- * `asChild` (Radix Slot) has no Astro equivalent — pass `href` instead and the
- * component renders an <a> with the same classes.
  */
 export type ButtonVariant =
   | "default"
@@ -25,24 +22,35 @@ interface Props extends Omit<HTMLAttributes<"button">, "size"> {
 }
 
 const BASE =
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
 
 const VARIANTS: Record<ButtonVariant, string> = {
   default:
-    "bg-accent text-white shadow-glow hover:bg-[#1a1a1c] hover:text-white hover:shadow-none",
+    "button-primary rounded-pill shadow-glow hover:bg-ink hover:shadow-none",
   ghost:
-    "border border-primary/30 bg-transparent text-primary hover:border-accent hover:bg-accent hover:text-white",
-  outline: "border border-white/40 bg-transparent text-white hover:bg-white/10",
-  secondary: "bg-lavender text-primary hover:bg-lavender/80",
+    "button-secondary rounded-pill hover:border-accent hover:bg-accent hover:text-on-primary",
+  outline:
+    "button-ghost-sm hover:border-accent hover:bg-accent hover:text-on-primary",
+  secondary:
+    "rounded-md bg-lavender text-foreground text-button-md hover:bg-lavender/80",
   link: "rounded-none text-accent underline-offset-4 hover:underline",
 };
 
 const SIZES: Record<ButtonSize, string> = {
-  default: "h-11 px-6 py-2",
-  sm: "h-9 px-4 text-xs",
-  lg: "h-14 px-8 text-base",
-  icon: "h-10 w-10",
+  default: "h-11 min-h-11 px-[14px] text-button-lg",
+  sm: "button-primary-sm h-9 min-h-9 px-1.5 text-button-md",
+  lg: "h-14 min-h-14 px-8 text-button-lg",
+  icon: "button-icon-circular h-10 w-10",
 };
+
+const COMPOUND: Array<{ variant: ButtonVariant; size: ButtonSize; class: string }> = [
+  {
+    variant: "default",
+    size: "sm",
+    class: "button-primary-sm rounded-sm shadow-none hover:bg-primary",
+  },
+  { variant: "ghost", size: "sm", class: "button-ghost-sm rounded-sm" },
+];
 
 const {
   variant = "default",
@@ -53,7 +61,10 @@ const {
   ...rest
 } = Astro.props;
 
-const classes = cn(BASE, VARIANTS[variant], SIZES[size], className);
+const compound =
+  COMPOUND.find((c) => c.variant === variant && c.size === size)?.class ?? "";
+
+const classes = cn(BASE, VARIANTS[variant], SIZES[size], compound, className);
 ---
 
 {

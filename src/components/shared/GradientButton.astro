@@ -14,9 +14,9 @@ interface Props {
 }
 
 const SIZE_CLASSES = {
-  sm: "h-9 px-4 text-xs",
-  default: "h-11 px-6 text-sm",
-  lg: "h-14 px-8 text-base",
+  sm: "button-primary-sm h-9 min-h-9 px-1.5 text-button-md",
+  default: "button-primary h-11 min-h-11 px-[14px] text-button-lg rounded-pill",
+  lg: "button-primary h-14 min-h-14 px-8 text-button-lg rounded-pill",
 } as const;
 
 const {
@@ -30,9 +30,10 @@ const {
 } = Astro.props;
 
 const classes = cn(
-  "group inline-flex items-center justify-center gap-2 rounded-full font-semibold text-white bg-accent shadow-glow transition-colors duration-300 hover:bg-[#1a1a1c] hover:text-white hover:shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2",
+  "inline-flex items-center justify-center gap-2 transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2",
+  size === "sm" ? "shadow-none" : "shadow-glow hover:bg-ink hover:shadow-none",
   SIZE_CLASSES[size],
-  className
+  className,
 );
 ---
 

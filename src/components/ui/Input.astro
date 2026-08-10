@@ -9,7 +9,7 @@ const { class: className, ...rest } = Astro.props;
 
 <input
   class={cn(
-    "flex h-11 w-full rounded-xl border border-border bg-white px-4 py-2 text-base text-primary placeholder:text-muted-light transition-colors focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 disabled:cursor-not-allowed disabled:opacity-50",
+    "text-input flex h-11 w-full text-body-md text-foreground placeholder:text-muted-light transition-colors focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 disabled:cursor-not-allowed disabled:opacity-50",
     className
   )}
   {...rest}

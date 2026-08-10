@@ -21,7 +21,7 @@ const titleId = `dialog-title-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}
   <div
     data-overlay
     data-state="closed"
-    class="fixed inset-0 z-[60] bg-primary/60 backdrop-blur-sm"
+    class="fixed inset-0 z-[60] bg-foreground/60 backdrop-blur-sm"
     aria-hidden="true"
   >
   </div>
@@ -35,12 +35,12 @@ const titleId = `dialog-title-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}
     aria-modal="true"
     aria-labelledby={titleId}
     class={cn(
-      "fixed left-1/2 top-1/2 z-[60] w-full max-w-lg rounded-2xl bg-white p-6 shadow-soft-lg",
+      "fixed left-1/2 top-1/2 z-[60] w-full max-w-lg rounded-lg bg-white p-6 shadow-soft-lg",
       className
     )}
   >
     <div class="flex flex-col space-y-2 text-left">
-      <h2 id={titleId} class="text-xl font-bold text-primary">{title}</h2>
+      <h2 id={titleId} class="text-xl font-bold text-foreground">{title}</h2>
     </div>
 
     <slot />

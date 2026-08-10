@@ -16,35 +16,33 @@ function initials(name: string) {
 }
 ---
 
-<section class="border-y border-border bg-card py-16 sm:py-20 lg:py-28">
+<section class="border-y border-border bg-card section-padding">
   <Container>
     <FadeIn>
       <div class="mx-auto max-w-3xl text-center">
-        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+        <SectionLabel class="mb-0">
           {TESTIMONIALS_CONTENT.label}
         </SectionLabel>
-        <h2 class="text-section mt-5 text-primary">
+        <h2 class="text-section stack-sm text-foreground">
           {TESTIMONIALS_CONTENT.title}
         </h2>
-        <p
-          class="mx-auto mt-4 max-w-[52ch] text-[16px] leading-[1.6] text-muted sm:text-[18px]"
-        >
+        <p class="mx-auto stack-md lede max-w-[52ch]">
           {TESTIMONIALS_CONTENT.description}
         </p>
       </div>
     </FadeIn>
 
-    <div class="mt-10 grid gap-5 sm:mt-12 md:grid-cols-3 md:gap-6 lg:mt-14">
+    <div class="card-grid md:grid-cols-3">
       {
         TESTIMONIALS.map((testimonial, i) => {
           const avatar = TESTIMONIAL_META[testimonial.id]?.avatar;
 
           return (
             <FadeIn delay={0.08 * (i + 1)}>
-              <figure class="flex h-full flex-col rounded-[18px] border border-border bg-background p-6 sm:rounded-[22px] sm:p-8">
+              <figure class="flex h-full flex-col rounded-md border border-border bg-background p-6 sm:rounded-md sm:p-8">
                 <Quote class="h-6 w-6 shrink-0 text-accent" />
 
-                <blockquote class="mt-5 text-[16px] leading-[1.65] text-primary sm:text-[17.5px]">
+                <blockquote class="mt-5 text-[16px] leading-[1.65] text-foreground sm:text-[17.5px]">
                   {testimonial.quote}
                 </blockquote>
 
@@ -60,12 +58,12 @@ function initials(name: string) {
                       class="h-11 w-11 shrink-0 rounded-full object-cover"
                     />
                   ) : (
-                    <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-lavender text-[13px] font-bold text-primary">
+                    <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-lavender text-[13px] font-bold text-foreground">
                       {initials(testimonial.name)}
                     </span>
                   )}
                   <div class="min-w-0">
-                    <p class="text-[15px] font-bold leading-tight text-primary">
+                    <p class="text-[15px] font-bold leading-tight text-foreground">
                       {testimonial.name}
                     </p>
                     <p class="mt-1 text-[13.5px] leading-snug text-muted">

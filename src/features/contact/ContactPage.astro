@@ -80,14 +80,14 @@ const DETAIL_ICONS = { email: Mail, phone: Phone, location: MapPin, response: Cl
 />
 
 {/* Form + details */}
-<section class="bg-background py-16 sm:py-20 lg:py-28">
+<section class="bg-background section-padding">
   <Container>
     <div class="grid gap-10 lg:grid-cols-12 lg:gap-14">
       <FadeIn class="lg:col-span-5">
-        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+        <SectionLabel class="mb-0">
           Get In Touch
         </SectionLabel>
-        <h2 class="text-section mt-5 max-w-[18ch] text-primary">
+        <h2 class="text-section stack-sm max-w-[18ch] text-foreground">
           Reach us directly
         </h2>
 
@@ -108,12 +108,12 @@ const DETAIL_ICONS = { email: Mail, phone: Phone, location: MapPin, response: Cl
                     {detail.href ? (
                       <a
                         href={detail.href}
-                        class="mt-1 block text-[16px] font-semibold text-primary transition-colors hover:text-accent"
+                        class="mt-1 block text-[16px] font-semibold text-foreground transition-colors hover:text-accent"
                       >
                         {detail.value}
                       </a>
                     ) : (
-                      <p class="mt-1 text-[16px] font-semibold text-primary">
+                      <p class="mt-1 text-[16px] font-semibold text-foreground">
                         {detail.value}
                       </p>
                     )}
@@ -129,7 +129,7 @@ const DETAIL_ICONS = { email: Mail, phone: Phone, location: MapPin, response: Cl
             REASSURANCES.map((item) => (
               <li class="flex gap-2.5">
                 <Check class="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                <span class="text-[14.5px] leading-[1.55] text-primary/75">
+                <span class="text-[14.5px] leading-[1.55] text-foreground/75">
                   {item}
                 </span>
               </li>
@@ -147,7 +147,7 @@ const DETAIL_ICONS = { email: Mail, phone: Phone, location: MapPin, response: Cl
 
 {/* What happens next — dark band */}
 <section
-  class="relative overflow-hidden bg-[#1a1a1c] py-16 text-white sm:py-20 lg:py-24"
+  class="relative overflow-hidden bg-[#1a1a1c] section-padding text-white"
 >
   <div class="dot-grid pointer-events-none absolute inset-0 opacity-60"></div>
   <Container class="relative z-10">
@@ -155,7 +155,7 @@ const DETAIL_ICONS = { email: Mail, phone: Phone, location: MapPin, response: Cl
       <div class="mx-auto max-w-2xl text-center">
         <SectionLabel
           tone="accent"
-          class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm"
+          class="mb-0"
         >
           What Happens Next
         </SectionLabel>
@@ -171,7 +171,7 @@ const DETAIL_ICONS = { email: Mail, phone: Phone, location: MapPin, response: Cl
       {
         WHAT_HAPPENS.map((step, i) => (
           <FadeIn delay={0.08 * (i + 1)}>
-            <div class="h-full rounded-[18px] border border-white/12 bg-white/[0.04] p-6 sm:rounded-[22px] sm:p-7">
+            <div class="h-full rounded-md border border-white/12 bg-white/[0.04] p-6 sm:rounded-md sm:p-7">
               <span class="text-[12px] font-bold tracking-[0.16em] text-teal">
                 {step.index}
               </span>
@@ -190,14 +190,14 @@ const DETAIL_ICONS = { email: Mail, phone: Phone, location: MapPin, response: Cl
 </section>
 
 {/* FAQ — answers the objections that stop people submitting */}
-<section class="bg-lavender/30 py-16 sm:py-20 lg:py-24">
+<section class="bg-lavender/30 section-padding">
   <Container>
     <div class="grid gap-8 lg:grid-cols-12 lg:gap-12">
       <FadeIn class="lg:col-span-4">
-        <SectionLabel class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm">
+        <SectionLabel class="mb-0">
           Before You Write
         </SectionLabel>
-        <h2 class="text-section mt-5 text-primary">Questions teams ask first</h2>
+        <h2 class="text-section stack-sm text-foreground">Questions teams ask first</h2>
         <p class="mt-4 max-w-[38ch] text-[16px] leading-[1.6] text-muted">
           Still unsure? Send the message anyway — a short reply is faster than
           more reading.

@@ -8,37 +8,31 @@ import FadeIn from "@/components/animations/FadeIn.astro";
 import { HERO_CONTENT } from "@/features/hero-section/constants";
 import HeroNetworkBg from "./HeroNetworkBg.astro";
 import HeroArchitecture from "./HeroArchitecture.astro";
+import ProofStrip from "./ProofStrip.astro";
 
 /** Port of features/hero-section/components/hero-section.tsx. */
 ---
 
 <section
-  class="relative overflow-hidden bg-[#FAFAFA] pb-10 pt-[5.5rem] sm:pb-12 sm:pt-[6rem] lg:pb-14 lg:pt-[8rem]"
+  class="relative flex min-h-dvh flex-col overflow-hidden bg-[#FAFAFA] pt-[5.5rem] sm:pt-[6rem] lg:pt-[8rem]"
 >
   <HeroNetworkBg />
 
-  <div class="relative z-10">
-    <Container>
+  <div class="relative z-10 flex min-h-0 flex-1 flex-col">
+    <Container class="flex flex-1 flex-col justify-center pb-6 sm:pb-8">
       <div class="mx-auto max-w-6xl text-center">
         <FadeIn>
-          <SectionLabel
-            tone="primary"
-            class="mb-2 block pl-0 text-[12px] font-semibold uppercase tracking-[0.22em] text-primary sm:text-[14px] sm:tracking-[0.28em]"
-          >
+          <SectionLabel tone="primary" class="mb-0 block pl-0">
             {HERO_CONTENT.label}
           </SectionLabel>
-          <h1
-            class="mx-auto max-w-[36ch] text-[clamp(1.4rem,3.8vw+0.55rem,4rem)] font-bold leading-[1.12] tracking-[-0.02em] text-primary"
-          >
+          <h1 class="text-hero stack-sm mx-auto max-w-[36ch] text-foreground">
             {HERO_CONTENT.title}
           </h1>
-          <p
-            class="mx-auto mt-4 max-w-2xl text-[0.95rem] leading-relaxed text-muted sm:mt-5 sm:text-[1.05rem] md:text-[1.1rem]"
-          >
+          <p class="text-body-lg stack-md mx-auto max-w-2xl text-muted">
             {HERO_CONTENT.description}
           </p>
           <div
-            class="mt-6 flex w-full flex-col items-stretch justify-center gap-3 sm:mt-7 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4"
+            class="stack-lg flex w-full flex-col items-stretch justify-center gap-4 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center"
           >
             <GradientButton
               href={HERO_CONTENT.primaryCta.href}
@@ -56,18 +50,18 @@ import HeroArchitecture from "./HeroArchitecture.astro";
             </GhostButton>
           </div>
           <div
-            class="mt-6 flex flex-col items-center justify-center gap-3 text-sm font-medium text-primary/80 sm:mt-7 sm:flex-row sm:flex-wrap sm:gap-4"
+            class="stack-lg flex flex-col items-center justify-center gap-4 text-body-md text-foreground/80 sm:flex-row sm:flex-wrap"
           >
             <div class="flex -space-x-2">
               {
                 HERO_CONTENT.trustedAvatars.map((avatar) => (
-                  <span class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-linear-to-br from-[#c5d4f5] via-[#e8e2d9] to-[#f7f4ef] text-[11px] font-semibold text-primary shadow-sm sm:h-10 sm:w-10 sm:text-xs">
+                  <span class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-linear-to-br from-[#c5d4f5] via-[#e8e2d9] to-[#f7f4ef] text-[11px] font-semibold text-foreground shadow-sm sm:h-10 sm:w-10 sm:text-xs">
                     {avatar}
                   </span>
                 ))
               }
               <span
-                class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-white text-primary shadow-sm sm:h-10 sm:w-10"
+                class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-white text-foreground shadow-sm sm:h-10 sm:w-10"
               >
                 <Plus class="h-4 w-4" />
               </span>
@@ -81,5 +75,7 @@ import HeroArchitecture from "./HeroArchitecture.astro";
         <HeroArchitecture />
       </FadeIn>
     </Container>
+
+    <ProofStrip />
   </div>
 </section>
