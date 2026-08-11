@@ -39,6 +39,8 @@ export interface IndustryItem {
 
 export interface CaseStudyItem {
   id: string;
+  /** URL segment under /case-studies. Named for the work, not the client. */
+  slug: string;
   title: string;
   description: string;
   category: string;

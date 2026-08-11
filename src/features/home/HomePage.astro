@@ -1,8 +1,8 @@
 ---
 import HeroSection from "@/features/hero-section/components/HeroSection.astro";
 import ProblemSection from "@/features/problem-section/components/ProblemSection.astro";
-import TrustSections from "@/features/trust-sections/components/TrustSections.astro";
-import CaseHighlights from "@/features/case-highlights/components/CaseHighlights.astro";
+import ServicesSection from "@/features/services-section/components/ServicesSection.astro";
+import SelectedWork from "@/features/selected-work/components/SelectedWork.astro";
 import StatsBand from "@/features/stats-band/components/StatsBand.astro";
 import PlatformSection from "@/features/platform-section/components/PlatformSection.astro";
 import WhyCognivac from "@/features/why-cognivac/components/WhyCognivac.astro";
@@ -24,15 +24,17 @@ import { FAQS, SERVICES } from "./constants/content";
 /**
  * Port of features/home/index.tsx.
  *
- * Scroll order: clarity → comprehension → credibility → conversion, with the
- * de-risk beats (process, security) placed after proof and before the ask.
+ * Scroll order follows the client wireframe. Its ten numbered slots map to our
+ * sections as marked below; slot 7 (Founders) has no component yet, and five
+ * sections we already ship have no slot in the wireframe — they sit in that gap
+ * rather than being dropped.
  *
- * Background rhythm — no two adjacent sections share a surface, and the three
- * dark bands land on every third section:
- *   hero #FAFAFA · problem lavender · SOLUTIONS DARK · cases background
- *   · stats card · PLATFORM DARK · why background · process card
- *   · SECURITY DARK · industries background · testimonials card
- *   · faq lavender · cta background (dark inset card) · footer gradient-dark
+ * Background rhythm is preserved — no two adjacent sections share a surface,
+ * and the three dark bands still land on every third section:
+ *   hero #FAFAFA (+ dark proof strip flush to viewport floor) · problem lavender
+ *   · SERVICES DARK · selected work background · process card · PLATFORM DARK
+ *   · stats card · why background · SECURITY DARK · industries background
+ *   · testimonials card · faq lavender · cta background · footer gradient-dark
  */
 ---
 
@@ -51,36 +53,42 @@ import { FAQS, SERVICES } from "./constants/content";
   ]}
 />
 
-{/* 1 · Clarity — what this is, who it is for, who already trusts it.
-     ProofStrip lives inside HeroSection (flush to the hero floor). */}
+{/* Slots 1–5 are one argument in order — who we are, what goes wrong,
+    what we sell, and proof it worked. Reordering one breaks the others. */}
+
+{/* 1 · Hero — the one-line promise: AI products that actually ship.
+    2 · Proof strip (delivery figures) renders inside it, flush to the
+    viewport floor, so the claim is never on screen without evidence. */}
 <HeroSection />
 
-{/* 2 · The pain, named before anything is sold */}
+{/* 3 · Problem we solve — "AI demos are easy. Production is hard."
+    Six ways a pilot dies after the demo. Names the pain, sells nothing. */}
 <ProblemSection />
 
-{/* 3 · What we build (existing solutions deck — untouched) */}
-<TrustSections />
+{/* 4 · Services — the answer to slot 3, one offer per failure. Titled by
+    the buyer's situation, never by the technology behind it. */}
+<ServicesSection />
 
-{/* 4–5 · Credibility: specific proof, then aggregate proof */}
-<CaseHighlights />
-<StatsBand />
+{/* 5 · Selected work — proof the two slots above are not theory. A
+    horizontal track of cards: the problem → what we built → the number. */}
+<SelectedWork />
 
-{/* 6 · Technical credibility — how the stack fits together */}
-<PlatformSection />
-
-{/* 7 · Differentiation, only after proof has been earned */}
-<WhyCognivac />
-
-{/* 8–9 · De-risk: how an engagement runs, and how it clears review */}
+{/* Wireframe 6 · How we work */}
 <ProcessSection />
-<SecuritySection />
 
-{/* 10–11 · Relevance confirmation, then human proof */}
+{/* Wireframe 7 · Founders — no component for this yet.
+    The five sections below have no wireframe slot; they fill this gap. */}
+<PlatformSection />
+<StatsBand />
+<WhyCognivac />
+<SecuritySection />
 <IndustriesShowcase />
+
+{/* Wireframe 8 · Testimonials */}
 <TestimonialsSection />
 
-{/* 12 · Objection handling immediately before the ask */}
+{/* Wireframe 9 · FAQ */}
 <FaqSection />
 
-{/* 13 · Conversion */}
+{/* Wireframe 10 · Final CTA */}
 <CtaSection />

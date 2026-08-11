@@ -69,28 +69,28 @@ export const INDUSTRIES: IndustryItem[] = [
     id: "fintech",
     title: "FinTech",
     description: "Risk, fraud, personalization, and ops intelligence for financial institutions.",
-    image: "/images/industries/fintech.svg",
+    image: "/images/industries/fintech.webp",
     href: `${NAV_ROUTES.industries}#fintech`,
   },
   {
     id: "retail",
     title: "Retail",
     description: "Demand forecasting, customer intelligence, and supply chain optimization.",
-    image: "/images/industries/retail.svg",
+    image: "/images/industries/retail.webp",
     href: `${NAV_ROUTES.industries}#retail`,
   },
   {
     id: "manufacturing",
     title: "Manufacturing",
     description: "Predictive maintenance, quality vision, and plant-floor automation.",
-    image: "/images/industries/manufacturing.svg",
+    image: "/images/industries/manufacturing.webp",
     href: `${NAV_ROUTES.industries}#manufacturing`,
   },
   {
     id: "saas",
     title: "SaaS",
     description: "Product AI features, usage intelligence, and growth automation.",
-    image: "/images/industries/saas.svg",
+    image: "/images/industries/saas.webp",
     href: `${NAV_ROUTES.industries}#saas`,
   },
 ];
@@ -98,33 +98,76 @@ export const INDUSTRIES: IndustryItem[] = [
 export const CASE_STUDIES: CaseStudyItem[] = [
   {
     id: "1",
+    slug: "enterprise-knowledge-copilots",
     title: "Enterprise knowledge copilots for a Fortune 500 manufacturer",
     description:
       "Unified technical documentation into a governed GenAI assistant used by 12,000 engineers.",
     category: "Generative AI",
-    image: "/images/case-studies/case-1.svg",
-    href: NAV_ROUTES.caseStudies,
+    image: "/images/case-studies/case-1.webp",
+    href: `${NAV_ROUTES.caseStudies}/enterprise-knowledge-copilots`,
     metric: "3.4x faster answers",
   },
   {
     id: "2",
+    slug: "real-time-fraud-detection",
     title: "Fraud detection ML that adapts in real time",
     description:
       "Rebuilt a payments risk engine with continuous learning and explainable decisions.",
     category: "Machine Learning",
-    image: "/images/case-studies/case-2.svg",
-    href: NAV_ROUTES.caseStudies,
+    image: "/images/case-studies/case-2.webp",
+    href: `${NAV_ROUTES.caseStudies}/real-time-fraud-detection`,
     metric: "41% fewer false positives",
   },
   {
     id: "3",
+    slug: "agentic-logistics-operations",
     title: "Agentic ops platform for a global logistics network",
     description:
       "Automated exception handling across warehouses with human-in-the-loop oversight.",
     category: "AI Agents",
-    image: "/images/case-studies/case-3.svg",
-    href: NAV_ROUTES.caseStudies,
+    image: "/images/case-studies/case-3.webp",
+    href: `${NAV_ROUTES.caseStudies}/agentic-logistics-operations`,
     metric: "18 hrs saved weekly",
+  },
+  /*
+   * 4–6 are named after the service line that sold them, not the technology
+   * inside them — "Pilot rescue" is a line on the services deck, "Generative
+   * AI" is not. The first three keep their technology categories because the
+   * case-studies page has shipped with them; new work should read the way the
+   * services section does.
+   */
+  {
+    id: "4",
+    slug: "field-service-platform",
+    title: "A field service platform built from nothing in one quarter",
+    description:
+      "Took a specialist contractor from spreadsheets and a group chat to a web and mobile product their crews use on site.",
+    category: "Product Build",
+    image: "/images/case-studies/case-4.webp",
+    href: `${NAV_ROUTES.caseStudies}/field-service-platform`,
+    metric: "11 weeks to first crews",
+  },
+  {
+    id: "5",
+    slug: "claims-assistant-pilot-rescue",
+    title: "A stalled claims assistant taken the rest of the way",
+    description:
+      "An insurer's document AI had demoed well for a year without going live. We shipped the production half it was missing.",
+    category: "Pilot Rescue",
+    image: "/images/case-studies/case-5.webp",
+    href: `${NAV_ROUTES.caseStudies}/claims-assistant-pilot-rescue`,
+    metric: "6 weeks to production",
+  },
+  {
+    id: "6",
+    slug: "retail-data-foundation",
+    title: "The data groundwork a retail group's forecasting was missing",
+    description:
+      "Reconciled two decades of records across eleven systems into one trusted source before a single model was trained on it.",
+    category: "Data Platform",
+    image: "/images/case-studies/case-6.webp",
+    href: `${NAV_ROUTES.caseStudies}/retail-data-foundation`,
+    metric: "11 systems reconciled",
   },
 ];
 

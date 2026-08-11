@@ -1,24 +1,41 @@
 ---
 import {
+  Activity,
   Bot,
-  Brain,
-  Cloud,
+  Database,
+  Gauge,
+  LifeBuoy,
+  Puzzle,
+  Rocket,
+  Users,
   Workflow,
-  AppWindow,
   ChevronLeft,
   ChevronRight,
 } from "@lucide/astro";
 import Container from "@/components/shared/Container.astro";
 import SectionLabel from "@/components/shared/SectionLabel.astro";
-import { SOLUTIONS } from "@/features/trust-sections/constants";
+import {
+  SERVICE_OFFERS,
+  SERVICES_HEADER,
+} from "@/features/services-section/constants";
 
 /**
- * Port of features/trust-sections/components/solutions-grid.tsx — circular wheel
- * deck with continuous rotation, horizon scrim, and rAF-driven paint loop.
+ * Port of features/services-section/components/services-grid.tsx — circular
+ * wheel deck with continuous rotation, horizon scrim, and rAF-driven paint.
  */
-const ICONS = { Bot, Brain, Cloud, Workflow, AppWindow } as const;
+const ICONS = {
+  Puzzle,
+  Workflow,
+  Rocket,
+  Bot,
+  Gauge,
+  LifeBuoy,
+  Activity,
+  Database,
+  Users,
+} as const;
 
-const CARD_COUNT = SOLUTIONS.length;
+const CARD_COUNT = SERVICE_OFFERS.length;
 const RING_SLOTS = CARD_COUNT * Math.max(1, Math.ceil(10 / CARD_COUNT));
 const initialIndex = Math.min(2, CARD_COUNT - 1);
 ---
@@ -34,19 +51,24 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
       class="mx-auto max-w-6xl text-center"
     >
       <div data-reveal-item>
-        <SectionLabel tone="accent" class="mb-0">
-          Solutions
+        <SectionLabel
+          tone="accent"
+          class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm"
+        >
+          {SERVICES_HEADER.label}
         </SectionLabel>
       </div>
-      <h2 data-reveal-item class="text-section stack-sm text-white">
-        What we build for enterprise teams
+      <h2
+        data-reveal-item
+        class="mt-5 text-[clamp(1.625rem,3.5vw+0.75rem,3.5rem)] font-bold leading-[1.08] tracking-[-0.02em] text-white"
+      >
+        {SERVICES_HEADER.title}
       </h2>
       <p
         data-reveal-item
-        class="mx-auto mt-4 max-w-[640px] px-1 text-body-lg text-white/75 sm:mt-6"
+        class="mx-auto stack-md lede max-w-[640px] px-1 text-white/75"
       >
-        End-to-end capability across intelligence, platforms, and product —
-        delivered with production rigor.
+        {SERVICES_HEADER.description}
       </p>
     </div>
 
@@ -55,7 +77,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
         <button
           type="button"
           data-deck-prev
-          aria-label="Previous solution"
+          aria-label="Previous service"
           class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/25 text-white transition-colors active:bg-white/10"
         >
           <ChevronLeft class="h-4 w-4" />
@@ -65,14 +87,14 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
             class="inline-flex max-w-full items-center justify-center rounded-full border border-accent bg-accent px-4 py-2 text-[13px] font-semibold text-white"
           >
             <span data-deck-active-title class="truncate"
-              >{SOLUTIONS[initialIndex].title}</span
+              >{SERVICE_OFFERS[initialIndex].short}</span
             >
           </span>
         </div>
         <button
           type="button"
           data-deck-next
-          aria-label="Next solution"
+          aria-label="Next service"
           class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/25 text-white transition-colors active:bg-white/10"
         >
           <ChevronRight class="h-4 w-4" />
@@ -80,12 +102,12 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
       </div>
       <div class="mt-3 flex items-center justify-center gap-1.5 sm:hidden">
         {
-          SOLUTIONS.map((solution, i) => (
+          SERVICE_OFFERS.map((service, i) => (
             <button
               type="button"
               data-deck-dot
               data-index={i}
-              aria-label={solution.title}
+              aria-label={service.title}
               class="h-1.5 rounded-full transition-all duration-300"
               data-active={i === initialIndex ? "true" : "false"}
             />
@@ -97,7 +119,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
         <button
           type="button"
           data-deck-prev
-          aria-label="Previous solution"
+          aria-label="Previous service"
           class="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full border border-white/25 bg-transparent text-white transition-colors hover:border-white/50 hover:bg-white/10"
         >
           <ChevronLeft class="h-4 w-4" />
@@ -105,11 +127,11 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
 
         <div
           data-deck-tabs-viewport
-          class="max-w-[min(760px,calc(100%-5.5rem))] overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          class="mx-auto w-max min-w-0 max-w-[min(1040px,calc(100%_-_5.5rem))] overflow-x-auto overflow-y-hidden [scrollbar-width:none] [mask-image:linear-gradient(to_right,transparent_0,black_28px,black_calc(100%_-_28px),transparent_100%)] [&::-webkit-scrollbar]:hidden"
         >
-          <div class="flex justify-center gap-2">
+          <div class="flex w-max gap-2 px-1">
             {
-              SOLUTIONS.map((solution, i) => (
+              SERVICE_OFFERS.map((service, i) => (
                 <button
                   type="button"
                   data-deck-tab
@@ -117,7 +139,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
                   data-active={i === initialIndex ? "true" : "false"}
                   class="shrink-0 whitespace-nowrap rounded-pill-category border px-4 py-2 text-button-md transition-all duration-300"
                 >
-                  {solution.title}
+                  {service.short}
                 </button>
               ))
             }
@@ -127,7 +149,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
         <button
           type="button"
           data-deck-next
-          aria-label="Next solution"
+          aria-label="Next service"
           class="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full border border-white/25 bg-transparent text-white transition-colors hover:border-white/50 hover:bg-white/10"
         >
           <ChevronRight class="h-4 w-4" />
@@ -152,14 +174,15 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
     <div class="relative mx-auto h-full w-full">
       {
         Array.from({ length: RING_SLOTS }, (_, slot) => {
-          const solution = SOLUTIONS[slot % CARD_COUNT];
-          const Icon = ICONS[solution.icon as keyof typeof ICONS] ?? Bot;
+          const service = SERVICE_OFFERS[slot % CARD_COUNT];
+          const Icon = ICONS[service.icon as keyof typeof ICONS] ?? Bot;
 
           return (
             <div
               data-deck-orbit
               data-slot={slot}
-              data-href={solution.href}
+              data-href={service.href}
+              data-short={service.short}
               class="absolute left-1/2 top-4 sm:top-7 md:top-10"
               style="visibility:hidden;opacity:0"
             >
@@ -168,22 +191,22 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
                 role="button"
                 tabindex="-1"
                 class="group flex h-full w-full flex-col overflow-hidden rounded-md p-4 text-left text-[#0b0b0f] shadow-[0_14px_28px_-12px_rgba(0,0,0,0.7)] transition-[transform,opacity] duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] sm:rounded-md sm:p-6 md:p-[30px]"
-                style={`background:${solution.color}`}
+                style={`background:${service.color}`}
               >
                 <div class="flex min-h-0 flex-1 flex-col overflow-hidden">
                   <div class="mb-1.5 flex items-center gap-2.5 sm:mb-2 sm:gap-3">
                     <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-black/[0.08] text-[#0b0b0f] sm:h-11 sm:w-11 sm:rounded-2xl">
                       <Icon class="h-4 w-4 sm:h-5 sm:w-5" stroke-width={1.75} />
                     </div>
-                    <h3 class="m-0 line-clamp-1 min-w-0 flex-1 text-[18px] font-semibold tracking-[-0.02em] leading-[1.15] text-[#0b0b0f] sm:text-[22px] md:text-[24px]">
-                      {solution.title}
+                    <h3 class="m-0 line-clamp-2 min-w-0 flex-1 text-[16.5px] font-semibold tracking-[-0.02em] leading-[1.2] text-[#0b0b0f] sm:text-[20px] md:text-[22px]">
+                      {service.title}
                     </h3>
                   </div>
-                  <p class="m-0 mb-3 line-clamp-2 max-w-[28ch] text-[12px] leading-[1.45] text-[#0b0b0f]/72 sm:mb-5 sm:line-clamp-3 sm:max-w-none sm:text-[14px] sm:leading-[1.5] md:text-[15px]">
-                    {solution.description}
+                  <p class="m-0 mb-3 line-clamp-2 max-w-[30ch] text-[12.5px] leading-[1.5] text-[#0b0b0f]/72 sm:mb-5 sm:line-clamp-3 sm:max-w-none sm:text-[14.5px] sm:leading-[1.55] md:text-[15.5px]">
+                    {service.description}
                   </p>
                   <div class="mb-2 hidden gap-5 border-t border-black/10 pt-3.5 sm:mb-0 sm:flex md:gap-7 md:pt-4">
-                    {solution.stats.map((stat) => (
+                    {service.stats.map((stat) => (
                       <div class="min-w-0">
                         <b class="block text-[16px] font-semibold tracking-[-0.02em] text-[#0b0b0f] md:text-[18px]">
                           {stat.value}
@@ -198,13 +221,13 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
                     data-deck-cta
                     class="mt-auto inline-flex h-5 shrink-0 items-center gap-0.5 text-[12px] font-semibold tracking-[-0.01em] text-[#0b0b0f]/80 opacity-0 pointer-events-none sm:mt-4 sm:h-auto sm:text-[13px] [@media(hover:hover)]:hidden"
                   >
-                    View solution
+                    View service
                     <ChevronRight class="h-3.5 w-3.5" />
                   </span>
                 </div>
                 <div class="relative mt-3 h-[88px] shrink-0 overflow-hidden rounded-2xl sm:mt-4 sm:h-[130px] md:h-[150px]">
                   <img
-                    src={solution.image}
+                    src={service.image}
                     alt=""
                     loading="lazy"
                     decoding="async"
@@ -216,7 +239,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
                   data-deck-hover-cta
                   class="pointer-events-none absolute left-1/2 top-1/2 z-50 hidden -translate-x-1/2 -translate-y-1/2 scale-90 whitespace-nowrap rounded-full bg-black/85 px-[22px] py-3 text-[13px] font-semibold text-white opacity-0 transition-all duration-300 hover:bg-accent"
                 >
-                  View solution →
+                  View service →
                 </span>
               </div>
             </div>
@@ -275,6 +298,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
 <script define:vars={{ CARD_COUNT, RING_SLOTS, initialIndex }}>
   const DEG = Math.PI / 180;
   const CLICK_SLOP = 8;
+  const CARD_CLEARANCE = 72;
   const ANGLE_STEP = 360 / RING_SLOTS;
   const SECTION_BG = "#1a1a1c";
   const HORIZON_SCRIM = `linear-gradient(to bottom, rgba(26,26,28,0) 0%, rgba(26,26,28,0.55) 45%, rgba(26,26,28,0.9) 78%, ${SECTION_BG} 100%)`;
@@ -305,7 +329,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
     };
   }
 
-  function initSolutionsWheel() {
+  function initServicesWheel() {
     const stage = document.querySelector("[data-deck-stage]");
     if (!stage || stage.dataset.wheelReady === "true") return;
     stage.dataset.wheelReady = "true";
@@ -318,6 +342,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
     const tabsViewport = section?.querySelector("[data-deck-tabs-viewport]");
     const activeTitle = section?.querySelector("[data-deck-active-title]");
 
+    const shorts = orbits.map((orbit) => orbit.dataset.short ?? "");
     const titles = orbits.map(
       (orbit) => orbit.querySelector("h3")?.textContent?.trim() ?? "",
     );
@@ -359,7 +384,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
         1 - ((1 - Math.cos(ANGLE_STEP * DEG)) / 2) * scaleDrop;
       const minRadius =
         (cardW / 2 +
-          8 +
+          CARD_CLEARANCE +
           ((cardW * Math.cos(neighbourTilt * DEG) +
             cardH * Math.sin(neighbourTilt * DEG)) /
             2) *
@@ -506,7 +531,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
       dots.forEach((dot, i) => {
         dot.dataset.active = i === activeIndex ? "true" : "false";
       });
-      if (activeTitle) activeTitle.textContent = titles[activeSlot] ?? "";
+      if (activeTitle) activeTitle.textContent = shorts[activeSlot] ?? "";
       if (isSm && tabsViewport) {
         const tab = tabs[activeIndex];
         if (tab) {
@@ -627,6 +652,6 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
     updateTabs();
   }
 
-  initSolutionsWheel();
-  document.addEventListener("astro:page-load", initSolutionsWheel);
+  initServicesWheel();
+  document.addEventListener("astro:page-load", initServicesWheel);
 </script>

@@ -1,58 +1,66 @@
+/**
+ * Wireframe slot 3 · Problem we solve.
+ *
+ * Brief: headline "AI demos are easy. Production is hard.", 3–4 lines
+ * positioning us against prototype-builders. Outcome language, zero tech
+ * jargon — so nothing here names a technology, a system of record, or an
+ * ops term. A CTO and a CFO should both read this without translating.
+ */
 export const PROBLEM_CONTENT = {
-  label: "The Challenge",
-  title: "Most AI initiatives stall between proof-of-concept and production.",
+  label: "Problem we solve",
+  title: "AI demos are easy. Production is hard.",
   description:
-    "The demo lands. Then it meets real data, real users, and real compliance — and the gap that opens has nothing to do with the model. It is everything that has to be true before a system can be trusted to run the business.",
-  pivot: "Cognivac is built for the part that comes after the demo.",
+    "Plenty of people can build you something impressive in two weeks. Far fewer can hand you something that still works a year later, on an ordinary Monday, with nobody watching it. That gap is where most AI budgets quietly disappear.",
+  pivot: "We only take on the part that comes after the demo.",
 } as const;
 
 export const PROBLEM_POINTS = [
   {
     id: "data",
     index: "01",
-    tag: "Data readiness",
-    title: "Data that was never production-ready",
+    tag: "Real conditions",
+    title: "It only ever worked on the tidy version",
     description:
-      "A pilot runs on a clean extract. Production runs on live systems, half-filled records, and edge cases nobody wrote down.",
+      "The demo ran on a clean sample someone prepared for it. Your business runs on messy, half-finished, contradictory records — and that is where it falls over.",
   },
   {
     id: "ownership",
     index: "02",
     tag: "Ownership",
-    title: "No owner once the pilot team disbands",
+    title: "Nobody owns it once the demo team leaves",
     description:
-      "The prototype works, the team rotates off, and nobody is accountable for uptime, drift, or the next release.",
+      "The people who built it move on, and no one is left whose job it is to keep it running, fix what breaks, or decide what happens next.",
   },
   {
     id: "governance",
     index: "03",
-    tag: "Governance",
-    title: "No path through security review",
+    tag: "Approval",
+    title: "It never gets past your own review process",
     description:
-      "Access control, audit trails, data residency, and model governance arrive as blockers instead of requirements — and the rollout stops cold.",
+      "The questions nobody planned for arrive at the end, from the people who can say no. The rollout stops there, sometimes for good.",
   },
   {
     id: "integration",
     index: "04",
-    tag: "Integration",
-    title: "Systems that refuse to talk to each other",
+    tag: "The rest of the business",
+    title: "It cannot reach the systems you actually run on",
     description:
-      "The model is ready. The ERP, CRM, and warehouse are not. Integration work balloons until the pilot quietly expires.",
+      "The tool is ready. The software your teams live in all day is not. Joining the two turns into a second project nobody budgeted for.",
   },
   {
     id: "reliability",
     index: "05",
-    tag: "Reliability",
-    title: "No ops layer for models in production",
+    tag: "Running it",
+    title: "It fails quietly, and no one notices",
     description:
-      "Latency spikes, silent failures, and drift go unnoticed because the monitoring was built for apps — not for inference.",
+      "It slows down, starts getting things wrong, or stops altogether — and you hear about it from a customer rather than from your own team.",
   },
   {
     id: "adoption",
     index: "06",
     tag: "Adoption",
-    title: "Teams that never absorb the change",
+    title: "Your teams never actually use it",
     description:
-      "Workflows, training, and incentives never catch up. The system ships, usage stalls, and leadership calls it a miss.",
+      "Habits, training, and incentives never catch up. It ships, usage flatlines, and leadership writes the whole thing off as a miss.",
   },
 ] as const;

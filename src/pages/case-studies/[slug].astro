@@ -1,0 +1,45 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import JsonLd from "@/lib/seo/JsonLd.astro";
+import { breadcrumbSchema, createPageMetadata } from "@/lib/seo";
+import CaseStudyDetail from "@/features/case-studies/components/CaseStudyDetail.astro";
+import { CASE_STUDIES } from "@/features/home/constants/content";
+import { CASE_METRICS } from "@/features/selected-work/constants";
+import type { CaseStudyItem } from "@/types";
+
+/** Port of app/case-studies/[slug]/page.tsx. Every study prerenders. */
+
+export function getStaticPaths() {
+  return CASE_STUDIES.map((study) => ({
+    params: { slug: study.slug },
+    props: { study },
+  }));
+}
+
+interface Props {
+  study: CaseStudyItem;
+}
+
+const { study } = Astro.props;
+const metric = CASE_METRICS[study.id];
+
+const metadata = createPageMetadata({
+  title: study.title,
+  description: metric
+    ? `${study.description} ${metric.value} ${metric.label}.`
+    : study.description,
+  path: `/case-studies/${study.slug}`,
+  image: study.image,
+});
+---
+
+<Layout metadata={metadata}>
+  <JsonLd
+    data={breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: "Case Studies", path: "/case-studies" },
+      { name: study.title, path: `/case-studies/${study.slug}` },
+    ])}
+  />
+  <CaseStudyDetail study={study} />
+</Layout>
