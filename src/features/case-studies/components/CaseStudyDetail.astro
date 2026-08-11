@@ -39,8 +39,23 @@ const beats = [
   class="relative overflow-hidden text-white"
   style={`background:${STUDY_ART[study.id]}`}
 >
+  <img
+    src={study.image}
+    alt=""
+    fetchpriority="high"
+    decoding="async"
+    class="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-25"
+  />
+  {/* Keeps the gradient reading through the photo so white type never
+      sits on a busy patch of the illustration. */}
   <div
-    class="dot-grid pointer-events-none absolute inset-0 opacity-50"
+    class="pointer-events-none absolute inset-0"
+    style={`background:${STUDY_ART[study.id]};opacity:0.45`}
+    aria-hidden="true"
+  >
+  </div>
+  <div
+    class="dot-grid pointer-events-none absolute inset-0 opacity-40"
     aria-hidden="true"
   >
   </div>
