@@ -297,12 +297,34 @@ h6 {
   font-weight: 600;
 }
 
+/**
+ * The section heading for the whole site. It tops out one step below the dark
+ * bands' centred display headings (3.5rem) so a light section reads as the same
+ * voice at a slightly quieter volume — before this it capped at 2rem, which put
+ * a 32px heading directly above a 56px one on the same page.
+ *
+ * Weight and tracking match those dark headings (700 / -0.03em) rather than the
+ * 600 of the small MD scale: at 40px+ the lighter weight read as body copy.
+ */
 @utility text-section {
   font-family: var(--font-heading);
-  font-size: clamp(1.625rem, 3.5vw + 0.75rem, 2rem);
-  line-height: 1.25;
-  letter-spacing: -0.04em;
-  font-weight: 600;
+  font-size: clamp(1.75rem, 3.2vw + 0.9rem, 3.25rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+}
+
+/**
+ * Same heading voice, sized for a 4-column rail instead of the page. Used where
+ * an h2 shares its row with content — `text-section` at 3.25rem overflows a
+ * ~440px column and swamps whatever it is introducing.
+ */
+@utility text-section-column {
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 1.4vw + 1rem, 2.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  font-weight: 700;
 }
 
 @utility text-card-title {
