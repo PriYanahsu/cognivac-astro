@@ -1,38 +1,55 @@
 ---
+import { ArrowUpRight, MessageCircleQuestion } from "@lucide/astro";
 import Container from "@/components/shared/Container.astro";
 import SectionLabel from "@/components/shared/SectionLabel.astro";
+import GhostButton from "@/components/shared/GhostButton.astro";
+import FaqAccordion from "@/components/shared/FaqAccordion.astro";
 import FadeIn from "@/components/animations/FadeIn.astro";
-import Accordion from "@/components/ui/Accordion.astro";
-import AccordionItem from "@/components/ui/AccordionItem.astro";
-import { FAQS } from "@/features/home/constants/content";
+import { FAQ_CONTENT, FAQS } from "@/features/home/constants/content";
 
 /** Port of features/home/components/faq-section.tsx. */
 ---
 
-<section class="bg-lavender/30 section-padding">
-  <Container>
-    <div class="grid gap-8 lg:grid-cols-12 lg:gap-12">
-      <FadeIn class="lg:col-span-4">
-        <SectionLabel>FAQ</SectionLabel>
-        <h2 class="text-section-column text-foreground">
-          Questions teams ask before we start
+<section
+  class="relative bg-lavender/30 py-14 sm:py-18 lg:py-28"
+  aria-labelledby="faq-title"
+>
+  <Container class="relative z-10">
+    <div class="grid items-start gap-10 lg:grid-cols-12 lg:gap-16">
+      <FadeIn class="lg:col-span-5">
+        <SectionLabel class="mb-0">{FAQ_CONTENT.label}</SectionLabel>
+        <h2
+          id="faq-title"
+          class="text-section-column stack-sm max-w-[16ch] text-foreground"
+        >
+          {FAQ_CONTENT.title}
         </h2>
+        <p class="stack-md lede max-w-[42ch]">
+          {FAQ_CONTENT.description}
+        </p>
       </FadeIn>
 
-      <FadeIn delay={0.1} class="lg:col-span-8">
-        <Accordion>
-          {
-            FAQS.map((faq) => (
-              <AccordionItem
-                value={`home-${faq.id}`}
-                question={faq.question}
-                answer={faq.answer}
-                triggerClass="py-4 text-[0.95rem] leading-snug sm:py-5 sm:text-lg sm:leading-normal"
-                contentClass="pb-4 text-[0.9375rem] leading-relaxed sm:pb-5 sm:text-base"
-              />
-            ))
-          }
-        </Accordion>
+      <FadeIn delay={0.1} class="lg:col-span-7 lg:row-span-2">
+        <FaqAccordion items={FAQS} idPrefix="home-faq" />
+      </FadeIn>
+
+      <FadeIn delay={0.16} class="lg:col-span-5 lg:self-end">
+        <div class="rounded-lg border border-border bg-card/70 p-6 shadow-[0_20px_50px_-42px_rgba(34,32,28,0.5)] sm:p-7">
+          <span class="flex h-10 w-10 items-center justify-center rounded-full bg-accent/8 text-accent">
+            <MessageCircleQuestion class="h-5 w-5" aria-hidden="true" />
+          </span>
+          <p class="mt-4 text-[15.5px] font-semibold leading-snug tracking-[-0.01em] text-foreground sm:text-[16.5px]">
+            Still have a question?
+          </p>
+          <p class="mt-2 max-w-[34ch] text-[14.5px] leading-[1.6] text-muted">
+            Send it over. A short reply from the people who would do the work is
+            faster than more reading.
+          </p>
+          <GhostButton href={FAQ_CONTENT.cta.href} class="mt-5 w-full sm:w-auto">
+            {FAQ_CONTENT.cta.label}
+            <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+          </GhostButton>
+        </div>
       </FadeIn>
     </div>
   </Container>

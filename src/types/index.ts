@@ -71,12 +71,21 @@ export interface TestimonialItem {
   name: string;
   role: string;
   company: string;
+  /**
+   * Headshot, if one exists. Optional on purpose: with no file the card renders
+   * the same monogram the team page uses, which is a designed state rather than
+   * a broken one. Drop real photos into /public/images/testimonials and point
+   * this at them.
+   */
+  image?: string;
 }
 
 export interface FaqItem {
   id: string;
   question: string;
   answer: string;
+  /** Short label shown on the FAQ index — Scope, Security, and so on. */
+  tag?: string;
 }
 
 export interface PlatformCard {

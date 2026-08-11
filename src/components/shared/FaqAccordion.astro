@@ -1,0 +1,192 @@
+---
+import { Plus } from "@lucide/astro";
+import { cn } from "@/lib/utils";
+import type { FaqItem } from "@/types";
+
+/**
+ * Port of components/shared/faq-accordion.tsx.
+ * Single-open accordion: the open row lifts into a card, everything else stays
+ * a quiet hairline. Framer height/opacity is CSS grid-template-rows.
+ */
+
+interface Props {
+  items: FaqItem[];
+  idPrefix: string;
+  /** Row that starts open. `null` opens nothing. Omitted = first item. */
+  defaultOpenId?: string | null;
+  numbered?: boolean;
+  class?: string;
+}
+
+const {
+  items,
+  idPrefix,
+  defaultOpenId,
+  numbered = true,
+  class: className,
+} = Astro.props;
+
+const initialOpenId =
+  defaultOpenId === undefined ? (items[0]?.id ?? null) : defaultOpenId;
+
+function pad(n: number) {
+  return String(n).padStart(2, "0");
+}
+---
+
+<div
+  data-faq-accordion
+  class={cn("flex flex-col gap-2.5", className)}
+>
+  {
+    items.map((faq, i) => {
+      const isOpen = initialOpenId === faq.id;
+      const triggerId = `${idPrefix}-trigger-${faq.id}`;
+      const panelId = `${idPrefix}-panel-${faq.id}`;
+
+      return (
+        <div
+          data-faq-item
+          data-faq-id={faq.id}
+          data-state={isOpen ? "open" : "closed"}
+          class="group relative overflow-hidden rounded-lg border transition-[background-color,border-color,box-shadow] duration-500 ease-out data-[state=open]:border-accent/25 data-[state=open]:bg-card data-[state=open]:shadow-[0_26px_60px_-42px_rgba(34,32,28,0.55)] data-[state=closed]:border-border/70 data-[state=closed]:bg-card/45 data-[state=closed]:hover:border-border data-[state=closed]:hover:bg-card"
+        >
+          <span
+            aria-hidden="true"
+            class="pointer-events-none absolute inset-y-3 left-0 w-[3px] origin-center rounded-full bg-accent scale-y-0 opacity-0 transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-data-[state=open]:scale-y-100 group-data-[state=open]:opacity-100"
+          />
+
+          <h3>
+            <button
+              type="button"
+              id={triggerId}
+              data-faq-trigger
+              aria-expanded={isOpen ? "true" : "false"}
+              aria-controls={panelId}
+              class="flex w-full items-start gap-4 px-5 py-5 text-left sm:gap-6 sm:px-7 sm:py-6"
+            >
+              {numbered && (
+                <span class="mt-1 w-6 shrink-0 text-[11px] font-bold tabular-nums tracking-[0.14em] transition-colors duration-500 sm:mt-1.5 group-data-[state=open]:text-accent group-data-[state=closed]:text-muted-light group-hover:group-data-[state=closed]:text-accent/70">
+                  {pad(i + 1)}
+                </span>
+              )}
+
+              <span class="min-w-0 flex-1">
+                {faq.tag && (
+                  <span class="block text-[10px] font-semibold uppercase tracking-[0.18em] transition-colors duration-500 sm:text-[11px] group-data-[state=open]:text-accent group-data-[state=closed]:text-muted-light">
+                    {faq.tag}
+                  </span>
+                )}
+                <span class="mt-1 block text-[16px] font-semibold leading-snug tracking-[-0.015em] transition-colors duration-500 sm:text-[18px] group-data-[state=open]:text-foreground group-data-[state=closed]:text-muted group-hover:group-data-[state=closed]:text-foreground">
+                  {faq.question}
+                </span>
+              </span>
+
+              <span
+                aria-hidden="true"
+                class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all duration-500 ease-out sm:h-9 sm:w-9 group-data-[state=open]:rotate-45 group-data-[state=open]:border-accent group-data-[state=open]:bg-accent group-data-[state=open]:text-white group-data-[state=open]:shadow-[0_0_0_5px_rgba(30,79,216,0.10)] group-data-[state=closed]:border-border group-data-[state=closed]:bg-background group-data-[state=closed]:text-muted-light group-hover:group-data-[state=closed]:border-accent/45 group-hover:group-data-[state=closed]:text-accent"
+              >
+                <Plus class="h-4 w-4" />
+              </span>
+            </button>
+          </h3>
+
+          <div
+            id={panelId}
+            data-faq-panel
+            role="region"
+            aria-labelledby={triggerId}
+            aria-hidden={isOpen ? "false" : "true"}
+            class="grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-data-[state=open]:grid-rows-[1fr] group-data-[state=open]:opacity-100 motion-reduce:transition-none"
+          >
+            <div class="min-h-0 overflow-hidden">
+              <div
+                class={cn(
+                  "pb-6 pr-5 sm:pb-7 sm:pr-16",
+                  numbered ? "pl-15 sm:pl-19" : "pl-5 sm:pl-7",
+                )}
+              >
+                <span
+                  aria-hidden="true"
+                  class="mb-4 block h-px w-10 bg-accent/30"
+                />
+                <p class="max-w-[62ch] text-[15px] leading-[1.7] text-muted sm:text-[16.5px]">
+                  {faq.answer}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    })
+  }
+</div>
+
+<script>
+  function initFaqAccordions() {
+    document
+      .querySelectorAll<HTMLElement>("[data-faq-accordion]")
+      .forEach((root) => {
+        if (root.dataset.faqReady === "true") return;
+        root.dataset.faqReady = "true";
+
+        const items = Array.from(
+          root.querySelectorAll<HTMLElement>("[data-faq-item]"),
+        );
+        const triggers = Array.from(
+          root.querySelectorAll<HTMLButtonElement>("[data-faq-trigger]"),
+        );
+
+        const setOpen = (id: string | null) => {
+          items.forEach((item) => {
+            const open = item.dataset.faqId === id;
+            item.dataset.state = open ? "open" : "closed";
+            const trigger = item.querySelector<HTMLButtonElement>(
+              "[data-faq-trigger]",
+            );
+            const panel = item.querySelector<HTMLElement>("[data-faq-panel]");
+            trigger?.setAttribute("aria-expanded", open ? "true" : "false");
+            panel?.setAttribute("aria-hidden", open ? "false" : "true");
+          });
+        };
+
+        root.addEventListener("click", (event) => {
+          const trigger = (event.target as HTMLElement).closest<HTMLButtonElement>(
+            "[data-faq-trigger]",
+          );
+          if (!trigger || !root.contains(trigger)) return;
+          const item = trigger.closest<HTMLElement>("[data-faq-item]");
+          if (!item) return;
+          const id = item.dataset.faqId ?? null;
+          const wasOpen = item.dataset.state === "open";
+          setOpen(wasOpen ? null : id);
+        });
+
+        root.addEventListener("keydown", (event) => {
+          const trigger = (event.target as HTMLElement).closest<HTMLButtonElement>(
+            "[data-faq-trigger]",
+          );
+          if (!trigger || !root.contains(trigger)) return;
+          const i = triggers.indexOf(trigger);
+          if (i < 0) return;
+          const last = triggers.length - 1;
+          const next =
+            event.key === "ArrowDown"
+              ? Math.min(last, i + 1)
+              : event.key === "ArrowUp"
+                ? Math.max(0, i - 1)
+                : event.key === "Home"
+                  ? 0
+                  : event.key === "End"
+                    ? last
+                    : -1;
+          if (next < 0) return;
+          event.preventDefault();
+          triggers[next]?.focus();
+        });
+      });
+  }
+
+  initFaqAccordions();
+  document.addEventListener("astro:page-load", initFaqAccordions);
+</script>

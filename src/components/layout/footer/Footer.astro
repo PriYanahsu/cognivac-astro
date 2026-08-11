@@ -1,5 +1,5 @@
 ---
-import { ArrowUpRight, Mail, MapPin } from "@lucide/astro";
+import { ArrowUp, ArrowUpRight, Mail, MapPin } from "@lucide/astro";
 import Container from "@/components/shared/Container.astro";
 import CognivacLogo from "@/components/shared/CognivacLogo.astro";
 import SocialIcon, {
@@ -41,20 +41,30 @@ const LEGAL = [
 const year = new Date().getFullYear();
 ---
 
-<footer class="relative overflow-hidden gradient-dark text-white">
+<footer class="relative overflow-hidden bg-ink-deep text-white">
   <div
     aria-hidden="true"
-    class="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-accent/50 to-transparent"
+    class="dot-grid pointer-events-none absolute inset-0 opacity-70"
   >
   </div>
   <div
     aria-hidden="true"
-    class="pointer-events-none absolute -left-24 top-0 h-72 w-72 rounded-full bg-accent/10 blur-3xl"
+    class="pointer-events-none absolute inset-x-0 top-0 h-80 bg-linear-to-b from-white/6 to-transparent"
   >
   </div>
   <div
     aria-hidden="true"
-    class="pointer-events-none absolute -right-16 bottom-0 h-64 w-64 rounded-full bg-teal/5 blur-3xl"
+    class="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-accent/55 to-transparent"
+  >
+  </div>
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute -left-32 -top-24 h-100 w-100 rounded-full bg-[radial-gradient(circle,rgba(30,79,216,0.20),transparent_66%)]"
+  >
+  </div>
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute -right-24 bottom-0 h-90 w-90 rounded-full bg-[radial-gradient(circle,rgba(14,165,233,0.10),transparent_68%)]"
   >
   </div>
 
@@ -68,7 +78,7 @@ const year = new Date().getFullYear();
         >
           <CognivacLogo variant="light" class="h-10 w-auto sm:h-11" />
         </a>
-        <p class="mt-5 text-body-lg leading-relaxed text-white/65">
+        <p class="mt-5 text-body-lg leading-relaxed text-white/70">
           {SITE_CONFIG.description}
         </p>
 
@@ -76,7 +86,7 @@ const year = new Date().getFullYear();
           <li>
             <a
               href={`mailto:${SITE_CONFIG.email}`}
-              class="inline-flex items-center gap-2.5 text-body-md text-white/70 transition-colors hover:text-white"
+              class="inline-flex items-center gap-2.5 text-body-md text-white/75 transition-colors hover:text-white"
             >
               <span
                 class="flex h-8 w-8 items-center justify-center rounded-full border border-white/12 bg-white/6"
@@ -86,7 +96,7 @@ const year = new Date().getFullYear();
               {SITE_CONFIG.email}
             </a>
           </li>
-          <li class="inline-flex items-center gap-2.5 text-body-md text-white/55">
+          <li class="inline-flex items-center gap-2.5 text-body-md text-white/60">
             <span
               class="flex h-8 w-8 items-center justify-center rounded-full border border-white/12 bg-white/6"
             >
@@ -116,8 +126,13 @@ const year = new Date().getFullYear();
       </div>
 
       <div
-        class="rounded-2xl border border-white/10 bg-white/4 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-sm sm:p-6"
+        class="relative overflow-hidden rounded-lg border border-white/12 bg-white/5 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.07)] backdrop-blur-sm sm:p-6"
       >
+        <span
+          aria-hidden="true"
+          class="pointer-events-none absolute inset-x-8 top-0 h-px bg-linear-to-r from-transparent via-accent/45 to-transparent"
+        >
+        </span>
         <NewsletterForm />
       </div>
     </div>
@@ -133,7 +148,7 @@ const year = new Date().getFullYear();
           ] as const
         ).map((column) => (
           <div>
-            <p class="mb-4 text-mono-eyebrow uppercase tracking-[0.12em] text-white/45">
+            <p class="mb-4 text-mono-eyebrow uppercase tracking-[0.12em] text-white/50">
               {column.title}
             </p>
             <ul class="space-y-3">
@@ -141,7 +156,7 @@ const year = new Date().getFullYear();
                 <li>
                   <a
                     href={link.href}
-                    class="group inline-flex items-center gap-1 text-body-md text-white/70 transition-colors hover:text-white"
+                    class="group inline-flex items-center gap-1 text-body-md text-white/75 transition-colors hover:text-white"
                   >
                     {link.label}
                     <ArrowUpRight class="h-3 w-3 opacity-0 transition-[opacity,transform] duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-60" />
@@ -153,10 +168,10 @@ const year = new Date().getFullYear();
         ))
       }
       <div class="col-span-2 sm:col-span-1">
-        <p class="mb-4 text-mono-eyebrow uppercase tracking-[0.12em] text-white/45">
+        <p class="mb-4 text-mono-eyebrow uppercase tracking-[0.12em] text-white/50">
           Start a project
         </p>
-        <p class="mb-4 max-w-[28ch] text-body-md text-white/60">
+        <p class="mb-4 max-w-[28ch] text-body-md text-white/65">
           Tell us what you&apos;re building — we&apos;ll reply with a clear next
           step.
         </p>
@@ -173,23 +188,37 @@ const year = new Date().getFullYear();
     <div
       class="mt-12 flex flex-col gap-4 border-t border-white/10 pt-6 sm:mt-14 sm:flex-row sm:items-center sm:justify-between sm:pt-8"
     >
-      <p class="text-body-sm text-white/45">
+      <p class="text-body-sm text-white/50">
         © {year} {SITE_CONFIG.name}. All rights reserved.
       </p>
-      <ul class="flex flex-wrap items-center gap-x-5 gap-y-2">
-        {
-          LEGAL.map((link) => (
-            <li>
-              <a
-                href={link.href}
-                class="text-body-sm text-white/45 transition-colors hover:text-white/80"
-              >
-                {link.label}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
+
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-3">
+        <ul class="flex flex-wrap items-center gap-x-5 gap-y-2">
+          {
+            LEGAL.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class="text-body-sm text-white/50 transition-colors hover:text-white/85"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+
+        <a
+          href="#main-content"
+          class="group inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/6 px-3 py-1.5 text-body-sm text-white/70 transition-colors duration-300 hover:border-white/25 hover:bg-white/10 hover:text-white"
+        >
+          Back to top
+          <ArrowUp
+            class="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5"
+            aria-hidden="true"
+          />
+        </a>
+      </div>
     </div>
   </Container>
 </footer>

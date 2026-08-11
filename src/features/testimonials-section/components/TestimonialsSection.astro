@@ -1,19 +1,21 @@
 ---
+import { ArrowLeft, ArrowRight } from "@lucide/astro";
 import Container from "@/components/shared/Container.astro";
 import SectionLabel from "@/components/shared/SectionLabel.astro";
+import PersonAvatar from "@/components/shared/PersonAvatar.astro";
 import FadeIn from "@/components/animations/FadeIn.astro";
 import { TESTIMONIALS } from "@/features/home/constants/content";
 import { TESTIMONIALS_CONTENT } from "../constants";
 
 /**
  * Port of features/testimonials-section/components/testimonials-section.tsx.
- * Framer stagger (0.1s / 0.05s lead-in, y:28, 0.65s) is data-reveal-stagger.
- * Hover lift lives on the figure, not the reveal wrapper — otherwise the
- * `[data-reveal-item]` transform wins on specificity and the card never lifts.
+ * One quote on screen, cycling itself. All six occupy the same grid cell so
+ * the page never jumps when quote length changes.
  */
 ---
 
 <section
+  data-testimonials
   class="relative overflow-hidden border-y border-border bg-card section-padding"
   aria-labelledby="testimonials-title"
 >
@@ -46,48 +48,311 @@ import { TESTIMONIALS_CONTENT } from "../constants";
       </div>
     </FadeIn>
 
-    <div
-      data-reveal-stagger
-      data-reveal-margin="-80px"
-      data-stagger="0.1"
-      data-delay-children="0.05"
-      style="--reveal-item-y:28px;--reveal-item-duration:0.65s"
-      class="card-grid md:grid-cols-3"
-    >
-      {
-        TESTIMONIALS.map((testimonial) => (
-          <div data-reveal-item class="h-full">
-            <figure class="group relative flex h-full flex-col overflow-hidden rounded-lg border border-border bg-background p-7 transition duration-500 ease-out hover:-translate-y-1 hover:border-accent/30 hover:shadow-[0_24px_60px_rgba(34,32,28,0.09)] sm:p-8">
-              <span
-                aria-hidden="true"
-                class="pointer-events-none absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-linear-to-r from-accent to-accent/0 transition-transform duration-700 ease-out group-hover:scale-x-100"
-              />
-
-              <span
-                aria-hidden="true"
-                class="pointer-events-none absolute -top-6 right-4 select-none font-serif text-[110px] leading-none text-accent/10 transition-colors duration-500 group-hover:text-accent/18"
+    <FadeIn delay={0.1}>
+      <div
+        data-testimonials-stage
+        role="group"
+        aria-roledescription="carousel"
+        aria-label="Client testimonials"
+        tabindex="0"
+        class="mx-auto mt-12 max-w-6xl outline-none sm:mt-14"
+      >
+        <div class="relative grid grid-cols-1">
+          {
+            TESTIMONIALS.map((testimonial, i) => (
+              <figure
+                data-testimonials-slide
+                data-index={i}
+                data-state={i === 0 ? "active" : "waiting"}
+                class="col-start-1 row-start-1"
+                aria-hidden={i === 0 ? "false" : "true"}
               >
-                &ldquo;
-              </span>
+                <div class="mx-auto flex max-w-212 flex-col items-center text-center">
+                  <span
+                    aria-hidden="true"
+                    class="block select-none font-serif text-[64px] leading-[0.5] text-accent/20 sm:text-[76px]"
+                  >
+                    &ldquo;
+                  </span>
 
-              <blockquote class="relative flex-1 text-[17px] font-medium leading-[1.7] tracking-[-0.01em] text-pretty text-foreground sm:text-[18.5px]">
-                {testimonial.quote}
-              </blockquote>
+                  <blockquote class="mt-6 text-[21px] font-medium leading-[1.4] tracking-[-0.02em] text-balance text-foreground sm:mt-7 sm:text-[26px] lg:text-[30px]">
+                    {testimonial.quote}
+                  </blockquote>
 
-              <figcaption class="mt-7 border-t border-border pt-5">
-                <p class="text-[15px] font-bold leading-tight tracking-[-0.01em] text-foreground">
-                  {testimonial.name}
-                </p>
-                <p class="mt-1.5 text-[13.5px] leading-snug text-muted">
-                  {testimonial.role}
-                  <span class="mx-1.5 text-border">·</span>
-                  <span class="font-semibold text-body">{testimonial.company}</span>
-                </p>
-              </figcaption>
-            </figure>
+                  <span
+                    aria-hidden="true"
+                    class="mt-8 block h-px w-12 bg-border sm:mt-9"
+                  />
+
+                  <figcaption class="mt-7 flex flex-col items-center sm:mt-8">
+                    <PersonAvatar
+                      name={testimonial.name}
+                      image={testimonial.image}
+                      size={64}
+                      tone="dark"
+                      class="ring-4 ring-accent/10"
+                    />
+                    <p class="mt-4 text-[17px] font-bold leading-tight tracking-[-0.02em] text-foreground sm:text-[18px]">
+                      {testimonial.name}
+                    </p>
+                    <p class="mt-1.5 text-[14px] leading-snug text-muted sm:text-[14.5px]">
+                      {testimonial.role}
+                      <span class="mx-1.5 text-border">·</span>
+                      <span class="font-semibold text-accent">
+                        {testimonial.company}
+                      </span>
+                    </p>
+                  </figcaption>
+                </div>
+              </figure>
+            ))
+          }
+        </div>
+
+        <div class="mt-10 flex items-center justify-center gap-4 sm:mt-12 sm:gap-6">
+          <button
+            type="button"
+            data-testimonials-prev
+            aria-label="Previous testimonial"
+            class="hidden h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-white sm:flex"
+          >
+            <ArrowLeft class="h-4 w-4" aria-hidden="true" />
+          </button>
+
+          <div class="flex items-center gap-3 sm:gap-3.5">
+            {
+              TESTIMONIALS.map((testimonial, i) => (
+                <button
+                  type="button"
+                  data-testimonials-dot
+                  data-index={i}
+                  aria-label={`Read what ${testimonial.name} said`}
+                  aria-current={i === 0 ? "true" : undefined}
+                  class:list={[
+                    "rounded-full transition duration-500 ease-out",
+                    i === 0
+                      ? "ring-2 ring-accent ring-offset-2 ring-offset-card"
+                      : "opacity-40 grayscale hover:opacity-100 hover:grayscale-0",
+                  ]}
+                >
+                  <span
+                    data-testimonials-face
+                    class:list={[
+                      "inline-flex transition-transform duration-500 ease-out",
+                      i === 0 && "scale-110",
+                    ]}
+                  >
+                    <PersonAvatar
+                      name={testimonial.name}
+                      image={testimonial.image}
+                      size={40}
+                      tone="dark"
+                    />
+                  </span>
+                </button>
+              ))
+            }
           </div>
-        ))
-      }
-    </div>
+
+          <button
+            type="button"
+            data-testimonials-next
+            aria-label="Next testimonial"
+            class="hidden h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-white sm:flex"
+          >
+            <ArrowRight class="h-4 w-4" aria-hidden="true" />
+          </button>
+        </div>
+
+        <div class="mx-auto mt-7 h-px w-40 overflow-hidden bg-border sm:w-56">
+          <span
+            data-testimonials-fill
+            class="block h-full origin-left bg-accent"
+          >
+          </span>
+        </div>
+      </div>
+    </FadeIn>
   </Container>
 </section>
+
+<script>
+  const DWELL = 6.5;
+  const TRAVEL = 72;
+  const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
+  const DOT_ON =
+    "rounded-full transition duration-500 ease-out ring-2 ring-accent ring-offset-2 ring-offset-card";
+  const DOT_OFF =
+    "rounded-full transition duration-500 ease-out opacity-40 grayscale hover:opacity-100 hover:grayscale-0";
+  const FACE_ON =
+    "inline-flex transition-transform duration-500 ease-out scale-110";
+  const FACE_OFF = "inline-flex transition-transform duration-500 ease-out";
+
+  function initTestimonials() {
+    const section = document.querySelector<HTMLElement>("[data-testimonials]");
+    if (!section || section.dataset.ready === "true") return;
+    section.dataset.ready = "true";
+
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const stage = section.querySelector<HTMLElement>("[data-testimonials-stage]");
+    const slides = Array.from(
+      section.querySelectorAll<HTMLElement>("[data-testimonials-slide]"),
+    );
+    const dots = Array.from(
+      section.querySelectorAll<HTMLButtonElement>("[data-testimonials-dot]"),
+    );
+    const fill = section.querySelector<HTMLElement>("[data-testimonials-fill]");
+    const prev = section.querySelector<HTMLButtonElement>(
+      "[data-testimonials-prev]",
+    );
+    const next = section.querySelector<HTMLButtonElement>(
+      "[data-testimonials-next]",
+    );
+    const total = slides.length;
+    if (!total) return;
+
+    let index = 0;
+    let prevIndex = -1;
+    let dir = 1;
+    let held = false;
+    let inView = false;
+    let timer = 0;
+
+    const playing = () => inView && !held && !reduceMotion;
+
+    const offsetFor = (i: number) => {
+      if (reduceMotion) return 0;
+      const isActive = i === index;
+      const isLeaving = i === prevIndex && !isActive;
+      if (isActive) return 0;
+      if (isLeaving) return dir > 0 ? -TRAVEL : TRAVEL;
+      return dir > 0 ? TRAVEL : -TRAVEL;
+    };
+
+    const paintFill = () => {
+      if (!fill) return;
+      fill.style.transition = "none";
+      fill.style.transform = playing() ? "scaleX(0)" : "scaleX(1)";
+      if (!playing()) return;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          fill.style.transition = `transform ${DWELL}s linear`;
+          fill.style.transform = "scaleX(1)";
+        });
+      });
+    };
+
+    const paint = () => {
+      slides.forEach((slide, i) => {
+        const isActive = i === index;
+        const isLeaving = i === prevIndex && !isActive;
+        slide.dataset.state = isActive
+          ? "active"
+          : isLeaving
+            ? "leaving"
+            : "waiting";
+        slide.setAttribute("aria-hidden", isActive ? "false" : "true");
+        slide.style.pointerEvents = isActive ? "auto" : "none";
+
+        const x = offsetFor(i);
+        const scale = reduceMotion || isActive ? 1 : 0.985;
+        const moving = isActive || isLeaving;
+
+        if (reduceMotion) {
+          slide.style.transition = "none";
+        } else if (moving) {
+          slide.style.transition = `opacity ${isActive ? 0.5 : 0.32}s ease-out, transform 0.75s ${EASE}`;
+        } else {
+          slide.style.transition = "none";
+        }
+
+        slide.style.opacity = isActive ? "1" : "0";
+        slide.style.transform = `translateX(${x}px) scale(${scale})`;
+      });
+
+      dots.forEach((dot, i) => {
+        const isActive = i === index;
+        dot.className = isActive ? DOT_ON : DOT_OFF;
+        if (isActive) dot.setAttribute("aria-current", "true");
+        else dot.removeAttribute("aria-current");
+        const face = dot.querySelector<HTMLElement>("[data-testimonials-face]");
+        if (face) face.className = isActive ? FACE_ON : FACE_OFF;
+      });
+
+      paintFill();
+    };
+
+    const go = (nextIndex: number, direction: number) => {
+      const target = ((nextIndex % total) + total) % total;
+      if (target === index) return;
+      prevIndex = index;
+      dir = direction;
+      index = target;
+      paint();
+      schedule();
+    };
+
+    const schedule = () => {
+      window.clearTimeout(timer);
+      if (!playing()) return;
+      timer = window.setTimeout(() => go(index + 1, 1), DWELL * 1000);
+    };
+
+    prev?.addEventListener("click", () => go(index - 1, -1));
+    next?.addEventListener("click", () => go(index + 1, 1));
+    dots.forEach((dot, i) => {
+      dot.addEventListener("click", () => go(i, i > index ? 1 : -1));
+    });
+
+    section.addEventListener("pointerenter", () => {
+      held = true;
+      paintFill();
+      schedule();
+    });
+    section.addEventListener("pointerleave", () => {
+      held = false;
+      paintFill();
+      schedule();
+    });
+
+    stage?.addEventListener("focusin", () => {
+      held = true;
+      paintFill();
+      schedule();
+    });
+    stage?.addEventListener("focusout", (event) => {
+      if (stage.contains((event as FocusEvent).relatedTarget as Node)) return;
+      held = false;
+      paintFill();
+      schedule();
+    });
+    stage?.addEventListener("keydown", (event) => {
+      const delta =
+        event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
+      if (!delta) return;
+      event.preventDefault();
+      go(index + delta, delta);
+    });
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        inView = entry.isIntersecting;
+        paintFill();
+        schedule();
+      },
+      { threshold: 0.3 },
+    );
+    observer.observe(section);
+
+    slides.forEach((slide, i) => {
+      slide.style.opacity = i === 0 ? "1" : "0";
+      slide.style.transform = `translateX(${i === 0 ? 0 : TRAVEL}px) scale(${i === 0 ? 1 : 0.985})`;
+    });
+    paintFill();
+  }
+
+  initTestimonials();
+  document.addEventListener("astro:page-load", initTestimonials);
+</script>

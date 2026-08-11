@@ -31,6 +31,11 @@
   --card: #ffffff;
   --dark: #2b2b2e;
   --dark-mid: #3a3a3e;
+  /* The floor of the page. One step below the #1a1a1c the dark bands and the
+     CTA card sit on, so the footer reads as ground under them rather than as
+     one more band — the old radial grey topped out at #3a3a3e and washed the
+     top of the footer out to a flat slate. */
+  --ink-deep: #0e0e11;
 
   /* DESIGN-vercel.md — tokens not already on site */
   --body: #4d4d4d;
@@ -144,6 +149,7 @@
   --color-card: var(--card);
   --color-dark: var(--dark);
   --color-dark-mid: var(--dark-mid);
+  --color-ink-deep: var(--ink-deep);
   --color-body: var(--body);
   --color-mute: var(--mute);
   --color-faint: var(--faint);

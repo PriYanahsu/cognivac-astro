@@ -8,8 +8,7 @@ import SectionLabel from "@/components/shared/SectionLabel.astro";
 import FadeIn from "@/components/animations/FadeIn.astro";
 import { SITE_CONFIG } from "@/constants/site";
 import { FAQS } from "@/features/home/constants/content";
-import Accordion from "@/components/ui/Accordion.astro";
-import AccordionItem from "@/components/ui/AccordionItem.astro";
+import FaqAccordion from "@/components/shared/FaqAccordion.astro";
 import ContactForm from "./components/ContactForm.astro";
 
 /** Port of features/contact/index.tsx. */
@@ -205,19 +204,7 @@ const DETAIL_ICONS = { email: Mail, phone: Phone, location: MapPin, response: Cl
       </FadeIn>
 
       <FadeIn delay={0.1} class="lg:col-span-8">
-        <Accordion>
-          {
-            FAQS.map((faq) => (
-              <AccordionItem
-                value={`contact-${faq.id}`}
-                question={faq.question}
-                answer={faq.answer}
-                triggerClass="py-4 text-[0.95rem] leading-snug sm:py-5 sm:text-lg sm:leading-normal"
-                contentClass="pb-4 text-[0.9375rem] leading-relaxed sm:pb-5 sm:text-base"
-              />
-            ))
-          }
-        </Accordion>
+        <FaqAccordion items={FAQS} idPrefix="contact-faq" />
       </FadeIn>
     </div>
   </Container>

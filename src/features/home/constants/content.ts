@@ -230,35 +230,72 @@ export const TESTIMONIALS: TestimonialItem[] = [
     role: "Head of AI Strategy",
     company: "Helix Manufacturing",
   },
+  {
+    id: "4",
+    quote:
+      "Weekly demos on real data, never slides. We always knew what was working — including the week the honest answer was 'not much yet'.",
+    name: "Sofia Almeida",
+    role: "Director of Data Platform",
+    company: "Meridian Logistics",
+  },
+  {
+    id: "5",
+    quote:
+      "They argued us out of half our roadmap in the first workshop. That one conversation saved us a quarter of build time.",
+    name: "James Okonkwo",
+    role: "Chief Operating Officer",
+    company: "Verity Insurance",
+  },
+  {
+    id: "6",
+    quote:
+      "Handover was an actual handover — runbooks, evaluation suites, and two of our own engineers shipping changes without calling them.",
+    name: "Hannah Brill",
+    role: "Head of Platform Engineering",
+    company: "Larkspur Retail",
+  },
 ];
+
+export const FAQ_CONTENT = {
+  label: "FAQ",
+  title: "Questions teams ask before we start",
+  description:
+    "The five things a CTO usually wants settled before a kickoff call. If yours is not here, send it — a short reply is faster than more reading.",
+  cta: { label: "Ask us directly", href: NAV_ROUTES.contact },
+} as const;
 
 export const FAQS: FaqItem[] = [
   {
     id: "1",
+    tag: "Scope",
     question: "What kinds of AI projects does Cognivac take on?",
     answer:
       "We specialize in AI agents, machine learning systems, generative AI applications, cloud platforms, automation, and enterprise software. Engagements typically span discovery, architecture, build, and production hardening.",
   },
   {
     id: "2",
+    tag: "Security",
     question: "How do you approach AI governance and security?",
     answer:
       "Every engagement includes threat modeling, access controls, evaluation harnesses, audit logging, and deployment patterns suited to your compliance requirements. We design for explainability and human oversight where decisions are high-stakes.",
   },
   {
     id: "3",
+    tag: "Collaboration",
     question: "Do you work with existing internal teams?",
     answer:
       "Yes. We embed with your product and engineering teams, transfer knowledge continuously, and leave you with documentation, runbooks, and ownership—not a black box.",
   },
   {
     id: "4",
+    tag: "Timeline",
     question: "How long does a typical engagement take?",
     answer:
       "Pilots often ship in 6–10 weeks. Full platform builds vary from a quarter to multi-phase programs depending on scope, data readiness, and integration complexity.",
   },
   {
     id: "5",
+    tag: "Foundations",
     question: "Can Cognivac modernize legacy systems alongside AI?",
     answer:
       "Absolutely. Many of our strongest outcomes combine AI capability with API modernization, cloud migration, and workflow redesign so intelligence has a solid foundation.",
