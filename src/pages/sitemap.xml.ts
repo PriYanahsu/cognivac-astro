@@ -6,6 +6,7 @@ const siteUrl = "https://cognivac.com";
 const routes = [
   "/",
   "/about",
+  "/team",
   "/services",
   "/industries",
   "/case-studies",

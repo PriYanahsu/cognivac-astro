@@ -18,6 +18,7 @@ export const SITE_CONFIG = {
 export const NAV_ROUTES = {
   home: "/",
   about: "/about",
+  team: "/team",
   services: "/services",
   industries: "/industries",
   caseStudies: "/case-studies",

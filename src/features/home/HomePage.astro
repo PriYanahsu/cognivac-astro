@@ -3,12 +3,8 @@ import HeroSection from "@/features/hero-section/components/HeroSection.astro";
 import ProblemSection from "@/features/problem-section/components/ProblemSection.astro";
 import ServicesSection from "@/features/services-section/components/ServicesSection.astro";
 import SelectedWork from "@/features/selected-work/components/SelectedWork.astro";
-import StatsBand from "@/features/stats-band/components/StatsBand.astro";
-import PlatformSection from "@/features/platform-section/components/PlatformSection.astro";
-import WhyCognivac from "@/features/why-cognivac/components/WhyCognivac.astro";
 import ProcessSection from "@/features/process-section/components/ProcessSection.astro";
-import SecuritySection from "@/features/security-section/components/SecuritySection.astro";
-import IndustriesShowcase from "@/features/industries-showcase/components/IndustriesShowcase.astro";
+import FoundersSection from "@/features/founders-section/components/FoundersSection.astro";
 import TestimonialsSection from "@/features/testimonials-section/components/TestimonialsSection.astro";
 import CtaSection from "@/features/cta-section/components/CtaSection.astro";
 import FaqSection from "./components/FaqSection.astro";
@@ -24,10 +20,8 @@ import { FAQS, SERVICES } from "./constants/content";
 /**
  * Port of features/home/index.tsx.
  *
- * Scroll order follows the client wireframe. Its ten numbered slots map to our
- * sections as marked below; slot 7 (Founders) has no component yet, and five
- * sections we already ship have no slot in the wireframe — they sit in that gap
- * rather than being dropped.
+ * Scroll order follows the client wireframe. Slot 7 is the founders band;
+ * the five sections that previously filled that gap are parked below.
  *
  * Background rhythm is preserved — no two adjacent sections share a surface,
  * and the three dark bands still land on every third section:
@@ -80,13 +74,18 @@ import { FAQS, SERVICES } from "./constants/content";
     contract) a CTO would otherwise have to ask for on a call. */}
 <ProcessSection />
 
-{/* Wireframe 7 · Founders — no component for this yet.
-    The five sections below have no wireframe slot; they fill this gap. */}
-<PlatformSection />
+{/* 7 · Founders — the last thing slots 1–6 leave unanswered: who is
+    actually going to do this? Two named people with their credentials,
+    then the bench behind them, handed off to /team. */}
+<FoundersSection />
+
+{/* The five sections below have no wireframe slot; they filled this gap
+    before slot 7 existed. */}
+{/* <PlatformSection />
 <StatsBand />
 <WhyCognivac />
 <SecuritySection />
-<IndustriesShowcase />
+<IndustriesShowcase /> */}
 
 {/* Wireframe 8 · Testimonials */}
 <TestimonialsSection />

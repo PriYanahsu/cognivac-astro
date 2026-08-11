@@ -1,0 +1,42 @@
+---
+import PersonAvatar from "@/components/shared/PersonAvatar.astro";
+import type { Person } from "@/constants/people";
+
+/** Port of MemberCard in features/team/index.tsx. */
+interface Props {
+  person: Person;
+}
+
+const { person } = Astro.props;
+---
+
+<div
+  class="group relative flex h-full min-h-[172px] min-w-0 flex-col overflow-hidden rounded-md border border-border bg-card p-5 transition-[border-color,box-shadow] duration-300 hover:border-accent/45 hover:shadow-soft sm:p-6"
+>
+  <span
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-accent transition-transform duration-500 ease-out group-hover:scale-x-100"
+  ></span>
+
+  <div class="flex items-center gap-4">
+    <PersonAvatar
+      name={person.name}
+      image={person.image}
+      size={52}
+      tone="light"
+      class="ring-1 ring-border transition-shadow duration-300 group-hover:ring-accent/40"
+    />
+    <div class="min-w-0">
+      <h3 class="text-[16px] font-bold leading-snug tracking-[-0.015em] text-foreground sm:text-[17px]">
+        {person.name}
+      </h3>
+      <p class="mt-1 text-[13px] font-semibold text-accent">
+        {person.role}
+      </p>
+    </div>
+  </div>
+
+  <p class="mt-4 border-t border-hairline pt-4 text-[13.5px] leading-[1.55] text-muted sm:text-[14px]">
+    {person.focus}
+  </p>
+</div>

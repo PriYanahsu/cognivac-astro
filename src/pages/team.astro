@@ -1,0 +1,11 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import TeamPage from "@/features/team/TeamPage.astro";
+import { teamMetadata } from "@/features/team/metadata";
+
+/** Port of app/team/page.tsx. */
+---
+
+<Layout metadata={teamMetadata}>
+  <TeamPage />
+</Layout>

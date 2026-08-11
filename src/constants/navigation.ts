@@ -12,6 +12,11 @@ export const NAV_ITEMS: NavItem[] = [
         description: "Our mission, vision, and leadership",
       },
       {
+        label: "Team",
+        href: NAV_ROUTES.team,
+        description: "The founders and the bench behind the work",
+      },
+      {
         label: "Careers",
         href: NAV_ROUTES.careers,
         description: "Join the Cognivac team",

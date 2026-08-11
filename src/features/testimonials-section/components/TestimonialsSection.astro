@@ -1,29 +1,43 @@
 ---
-import { Quote } from "@lucide/astro";
 import Container from "@/components/shared/Container.astro";
 import SectionLabel from "@/components/shared/SectionLabel.astro";
 import FadeIn from "@/components/animations/FadeIn.astro";
 import { TESTIMONIALS } from "@/features/home/constants/content";
-import { TESTIMONIAL_META, TESTIMONIALS_CONTENT } from "../constants";
+import { TESTIMONIALS_CONTENT } from "../constants";
 
-/** Port of features/testimonials-section/components/testimonials-section.tsx. */
-function initials(name: string) {
-  return name
-    .split(" ")
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join("");
-}
+/**
+ * Port of features/testimonials-section/components/testimonials-section.tsx.
+ * Framer stagger (0.1s / 0.05s lead-in, y:28, 0.65s) is data-reveal-stagger.
+ * Hover lift lives on the figure, not the reveal wrapper — otherwise the
+ * `[data-reveal-item]` transform wins on specificity and the card never lifts.
+ */
 ---
 
-<section class="border-y border-border bg-card section-padding">
-  <Container>
+<section
+  class="relative overflow-hidden border-y border-border bg-card section-padding"
+  aria-labelledby="testimonials-title"
+>
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute -top-32 left-[-10%] h-120 w-120 rounded-full bg-[radial-gradient(circle,rgba(30,79,216,0.07),transparent_68%)]"
+  >
+  </div>
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute -bottom-40 right-[-8%] h-130 w-130 rounded-full bg-[radial-gradient(circle,rgba(30,79,216,0.05),transparent_68%)]"
+  >
+  </div>
+
+  <Container class="relative z-10">
     <FadeIn>
       <div class="mx-auto max-w-3xl text-center">
         <SectionLabel class="mb-0">
           {TESTIMONIALS_CONTENT.label}
         </SectionLabel>
-        <h2 class="text-section stack-sm text-foreground">
+        <h2
+          id="testimonials-title"
+          class="text-section stack-sm text-foreground"
+        >
           {TESTIMONIALS_CONTENT.title}
         </h2>
         <p class="mx-auto stack-md lede max-w-[52ch]">
@@ -32,49 +46,47 @@ function initials(name: string) {
       </div>
     </FadeIn>
 
-    <div class="card-grid md:grid-cols-3">
+    <div
+      data-reveal-stagger
+      data-reveal-margin="-80px"
+      data-stagger="0.1"
+      data-delay-children="0.05"
+      style="--reveal-item-y:28px;--reveal-item-duration:0.65s"
+      class="card-grid md:grid-cols-3"
+    >
       {
-        TESTIMONIALS.map((testimonial, i) => {
-          const avatar = TESTIMONIAL_META[testimonial.id]?.avatar;
+        TESTIMONIALS.map((testimonial) => (
+          <div data-reveal-item class="h-full">
+            <figure class="group relative flex h-full flex-col overflow-hidden rounded-lg border border-border bg-background p-7 transition duration-500 ease-out hover:-translate-y-1 hover:border-accent/30 hover:shadow-[0_24px_60px_rgba(34,32,28,0.09)] sm:p-8">
+              <span
+                aria-hidden="true"
+                class="pointer-events-none absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-linear-to-r from-accent to-accent/0 transition-transform duration-700 ease-out group-hover:scale-x-100"
+              />
 
-          return (
-            <FadeIn delay={0.08 * (i + 1)}>
-              <figure class="flex h-full flex-col rounded-md border border-border bg-background p-6 sm:rounded-md sm:p-8">
-                <Quote class="h-6 w-6 shrink-0 text-accent" />
+              <span
+                aria-hidden="true"
+                class="pointer-events-none absolute -top-6 right-4 select-none font-serif text-[110px] leading-none text-accent/10 transition-colors duration-500 group-hover:text-accent/18"
+              >
+                &ldquo;
+              </span>
 
-                <blockquote class="mt-5 text-[16px] leading-[1.65] text-foreground sm:text-[17.5px]">
-                  {testimonial.quote}
-                </blockquote>
+              <blockquote class="relative flex-1 text-[17px] font-medium leading-[1.7] tracking-[-0.01em] text-pretty text-foreground sm:text-[18.5px]">
+                {testimonial.quote}
+              </blockquote>
 
-                <figcaption class="mt-auto flex items-center gap-3.5 pt-7">
-                  {avatar ? (
-                    <img
-                      src={avatar}
-                      alt={testimonial.name}
-                      width="44"
-                      height="44"
-                      loading="lazy"
-                      decoding="async"
-                      class="h-11 w-11 shrink-0 rounded-full object-cover"
-                    />
-                  ) : (
-                    <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-lavender text-[13px] font-bold text-foreground">
-                      {initials(testimonial.name)}
-                    </span>
-                  )}
-                  <div class="min-w-0">
-                    <p class="text-[15px] font-bold leading-tight text-foreground">
-                      {testimonial.name}
-                    </p>
-                    <p class="mt-1 text-[13.5px] leading-snug text-muted">
-                      {testimonial.role}, {testimonial.company}
-                    </p>
-                  </div>
-                </figcaption>
-              </figure>
-            </FadeIn>
-          );
-        })
+              <figcaption class="mt-7 border-t border-border pt-5">
+                <p class="text-[15px] font-bold leading-tight tracking-[-0.01em] text-foreground">
+                  {testimonial.name}
+                </p>
+                <p class="mt-1.5 text-[13.5px] leading-snug text-muted">
+                  {testimonial.role}
+                  <span class="mx-1.5 text-border">·</span>
+                  <span class="font-semibold text-body">{testimonial.company}</span>
+                </p>
+              </figcaption>
+            </figure>
+          </div>
+        ))
       }
     </div>
   </Container>

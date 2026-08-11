@@ -1,0 +1,66 @@
+---
+import { cn } from "@/lib/utils";
+
+/** Port of components/shared/person-portrait.tsx — a plate, not an avatar. */
+
+function initialsOf(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}
+
+interface Props {
+  name: string;
+  image?: string;
+  class?: string;
+}
+
+const { name, image, class: className } = Astro.props;
+const initials = initialsOf(name);
+---
+
+<div
+  class={cn(
+    "relative shrink-0 overflow-hidden rounded-md bg-[#121216] ring-1 ring-white/12",
+    className,
+  )}
+>
+  {
+    image ? (
+      <>
+        <img
+          src={image}
+          alt={name}
+          class="absolute inset-0 h-full w-full object-cover grayscale contrast-[1.05] brightness-[0.92]"
+          loading="lazy"
+          decoding="async"
+        />
+        <span
+          aria-hidden="true"
+          class="absolute inset-0 bg-linear-to-t from-black/45 to-transparent"
+        />
+      </>
+    ) : (
+      <>
+        <span
+          aria-hidden="true"
+          class="absolute inset-0 opacity-70 [background-image:repeating-linear-gradient(0deg,rgba(255,255,255,0.05)_0_1px,transparent_1px_24px),repeating-linear-gradient(90deg,rgba(255,255,255,0.05)_0_1px,transparent_1px_24px)]"
+        />
+        <span
+          aria-hidden="true"
+          class="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/25 to-transparent"
+        />
+        <span
+          aria-hidden="true"
+          class="absolute inset-0 flex items-center justify-center bg-linear-to-b from-white/85 to-white/45 bg-clip-text text-[clamp(2.5rem,6vw,3.75rem)] font-bold leading-none tracking-[-0.05em] text-transparent"
+        >
+          {initials}
+        </span>
+      </>
+    )
+  }
+</div>

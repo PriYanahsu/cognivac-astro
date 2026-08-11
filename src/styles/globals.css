@@ -16,6 +16,11 @@
   --foreground: #22201c;
   --secondary: #2b2b2e;
   --accent: var(--primary);
+  /* Cobalt is a fill colour, not a text colour: #1e4fd8 on a near-black band
+     lands around 3:1, under the 4.5:1 small-text floor. This is the same hue
+     lifted until it passes, for accent TYPE on dark surfaces only — buttons
+     and fills keep --accent. */
+  --accent-on-dark: #7ba0ff;
   --teal: #0ea5e9;
   --warm: #f5a623;
   --lavender: #efeae3;
@@ -128,6 +133,7 @@
   --color-ink: var(--ink);
   --color-secondary: var(--secondary);
   --color-accent: var(--accent);
+  --color-accent-on-dark: var(--accent-on-dark);
   --color-teal: var(--teal);
   --color-warm: var(--warm);
   --color-lavender: var(--lavender);

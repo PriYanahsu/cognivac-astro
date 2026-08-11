@@ -1,0 +1,108 @@
+---
+import SocialIcon from "@/components/shared/SocialIcon.astro";
+import PersonPortrait from "@/components/shared/PersonPortrait.astro";
+import { FOUNDERS, type Founder } from "@/constants/people";
+import { cn } from "@/lib/utils";
+
+/**
+ * Port of FounderCard in founders-section.tsx.
+ * Panel material is a 1px gradient frame around a glass fill.
+ */
+interface Props {
+  founder: Founder;
+  index: number;
+}
+
+const { founder, index } = Astro.props;
+const total = String(FOUNDERS.length).padStart(2, "0");
+---
+
+<div
+  class="group relative h-full rounded-lg bg-linear-to-b from-white/[0.16] via-white/[0.06] to-white/[0.03] p-px transition-[background-image] duration-700 hover:from-accent/55 hover:via-accent/12"
+>
+  <div
+    class="relative flex h-full flex-col overflow-hidden rounded-[15px] bg-[#212124] p-5 sm:p-6"
+  >
+    <span
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-x-10 top-0 h-px bg-linear-to-r from-transparent via-white/35 to-transparent"
+    ></span>
+    <span
+      aria-hidden="true"
+      class="pointer-events-none absolute -right-28 -top-24 h-64 w-64 rounded-full bg-white/8 opacity-60 blur-[80px] transition-opacity duration-700 group-hover:opacity-100"
+    ></span>
+
+    <div class="relative flex gap-4 sm:gap-5">
+      <PersonPortrait
+        name={founder.name}
+        image={founder.image}
+        class="aspect-[4/5] w-[92px] shrink-0 self-start sm:w-[112px]"
+      />
+
+      <div class="flex min-w-0 flex-1 flex-col">
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <h3 class="text-[19px] font-bold leading-tight tracking-[-0.025em] text-white sm:text-[22px]">
+              {founder.name}
+            </h3>
+            <p class="mt-1 text-[13px] font-semibold text-accent-on-dark sm:text-[13.5px]">
+              {founder.role}
+            </p>
+          </div>
+
+          <div class="flex shrink-0 items-center gap-3">
+            <span
+              aria-hidden="true"
+              class="text-code font-medium tabular-nums text-white/20"
+            >
+              {String(index + 1).padStart(2, "0")}/{total}
+            </span>
+
+            {
+              founder.linkedin && (
+                <a
+                  href={founder.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${founder.name} on LinkedIn`}
+                  class="flex h-8 w-8 items-center justify-center rounded-full border border-white/12 bg-white/[0.04] text-white/60 transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-white"
+                >
+                  <SocialIcon name="linkedin" class="h-[15px] w-[15px]" />
+                </a>
+              )
+            }
+          </div>
+        </div>
+
+        <p class="mt-3.5 text-[14.5px] font-medium leading-[1.45] tracking-[-0.015em] text-white sm:mt-4 sm:text-[16px]">
+          {founder.focus}
+        </p>
+      </div>
+    </div>
+
+    <p class="relative mt-5 text-[13.5px] leading-[1.65] text-white/72 sm:text-[14.5px]">
+      {founder.bio}
+    </p>
+
+    <div class="relative mt-auto pt-6">
+      <span
+        aria-hidden="true"
+        class="block h-px w-full bg-linear-to-r from-white/18 via-white/8 to-transparent"
+      ></span>
+      <dl class="mt-4 grid grid-cols-3">
+        {
+          founder.credentials.map((credential, i) => (
+            <div class={cn(i > 0 ? "border-l border-white/10 pl-4" : "pr-4")}>
+              <dt class="text-[14.5px] font-bold leading-none tracking-[-0.02em] text-white sm:text-[16px]">
+                {credential.value}
+              </dt>
+              <dd class="mt-1.5 text-[10px] font-semibold uppercase leading-tight tracking-[0.1em] text-white/55 sm:text-[10.5px]">
+                {credential.label}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </div>
+</div>
