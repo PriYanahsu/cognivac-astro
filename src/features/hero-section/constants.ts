@@ -2,6 +2,12 @@ import { NAV_ROUTES } from "@/constants/site";
 
 export const HERO_CONTENT = {
   label: "AI SOFTWARE PARTNER FOR ENTERPRISE TEAMS",
+  /**
+   * The same claim, short enough to hold one line on a 390px phone. The full
+   * label wraps to two lines up there, and a two-line eyebrow above a
+   * four-line headline reads as one grey block rather than as a label.
+   */
+  labelShort: "AI SOFTWARE PARTNER",
   title: "Building Intelligent Software That Accelerates Business Growth",
   /**
    * One sentence, outcome-led. The service list this replaced belongs in the

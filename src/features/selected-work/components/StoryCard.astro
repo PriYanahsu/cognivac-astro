@@ -22,8 +22,8 @@ const story = WORK_STORIES[study.id];
       href={study.href}
       tabindex={duplicate ? -1 : undefined}
       class={cn(
-        "group relative flex w-84 shrink-0 flex-col overflow-hidden surface-card p-6",
-        "sm:w-96 sm:p-6.5 lg:w-108 lg:p-7",
+        "group relative flex w-[calc(100vw-4.5rem)] shrink-0 snap-start flex-col overflow-hidden surface-card p-5",
+        "sm:w-96 sm:snap-align-none sm:p-6.5 lg:w-108 lg:p-7",
         "transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)]",
         "hover:border-accent/45 hover:shadow-soft [@media(hover:hover)]:hover:-translate-y-1",
       )}

@@ -15,8 +15,26 @@ const STAGES = [
 const flowId = "hero-architecture-flow";
 ---
 
-<div class="relative mx-auto mt-8 w-full max-w-5xl sm:mt-10" aria-hidden="true">
-  <svg viewBox="0 0 1000 156" class="h-auto w-full overflow-visible" fill="none">
+<div class="relative mx-auto mt-4 w-full max-w-5xl sm:mt-5" aria-hidden="true">
+  <ol class="flex items-start justify-between gap-1 px-1 sm:hidden">
+    {
+      STAGES.map((stage, i) => (
+        <li class="relative flex min-w-0 flex-1 flex-col items-center">
+          {i < STAGES.length - 1 && (
+            <span class="absolute left-1/2 top-[5px] h-px w-full bg-foreground/15" />
+          )}
+          <span class="relative z-10 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-[#FAFAFA]">
+            <span class="h-1.5 w-1.5 rounded-full bg-foreground/70" />
+          </span>
+          <span class="mt-2 text-[11px] font-semibold leading-tight tracking-[-0.01em] text-foreground/75">
+            {stage.label}
+          </span>
+        </li>
+      ))
+    }
+  </ol>
+
+  <svg viewBox="0 0 1000 156" class="hidden h-auto w-full overflow-visible sm:block" fill="none">
     <defs>
       <linearGradient id={flowId} x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="0%" stop-color="#22201c" stop-opacity="0"></stop>

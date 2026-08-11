@@ -392,10 +392,24 @@ h6 {
   margin-top: var(--space-2xl);
 }
 
+/**
+ * The standing lede under a section heading.
+ *
+ * A step smaller on a phone than on a desktop. 16/24 in a 350px column runs a
+ * two-line desktop lede out to five lines, and five lines of grey is what a
+ * reader skips — it is the same copy, set at the density the column can hold.
+ */
 .lede {
-  font-size: var(--font-body-lg-size);
-  line-height: var(--font-body-lg-line-height);
+  font-size: 15px;
+  line-height: 1.55;
   color: var(--muted);
+}
+
+@media (min-width: 640px) {
+  .lede {
+    font-size: var(--font-body-lg-size);
+    line-height: var(--font-body-lg-line-height);
+  }
 }
 
 .copy-md {
@@ -673,13 +687,25 @@ h6 {
   border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
+/**
+ * 20px gutters on a phone rather than 24px. Eight pixels of content width is
+ * roughly one extra word per line at mobile body size, and at this scale the
+ * gutter is still wide enough that type never reads as touching the bezel.
+ */
 .section-container {
   width: 100%;
   max-width: 1440px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .section-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -689,9 +715,14 @@ h6 {
   }
 }
 
+/**
+ * Section air. The floor is 56px rather than 64px: on a phone the band change
+ * itself already separates two sections, and eight sections paying 16px each
+ * for air nobody reads is most of a screen of scrolling.
+ */
 .section-padding {
-  padding-top: clamp(4rem, 8vw, var(--space-section));
-  padding-bottom: clamp(4rem, 8vw, var(--space-section));
+  padding-top: clamp(3.5rem, 8vw, var(--space-section));
+  padding-bottom: clamp(3.5rem, 8vw, var(--space-section));
 }
 
 /* Soft shadow */

@@ -26,12 +26,12 @@ import Input from "@/components/ui/Input.astro";
       name="email"
       placeholder="you@company.com"
       aria-label="Email for newsletter"
-      class="h-10 flex-1 border-0 bg-transparent px-3.5 text-body-md text-white shadow-none placeholder:text-white/40 focus-visible:border-transparent focus-visible:ring-0"
+      class="h-10 min-w-0 flex-1 border-0 bg-transparent px-3 text-body-md text-white shadow-none placeholder:text-white/40 focus-visible:border-transparent focus-visible:ring-0 sm:px-3.5"
     />
     <button
       type="submit"
       aria-label="Subscribe to newsletter"
-      class="group inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-accent px-4 text-button-md font-semibold text-white transition-[background-color,box-shadow,transform] duration-300 hover:bg-indigo hover:shadow-glow active:scale-[0.98] disabled:opacity-70"
+      class="group inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-accent px-3 text-button-md font-semibold text-white transition-[background-color,box-shadow,transform] duration-300 sm:px-4 hover:bg-indigo hover:shadow-glow active:scale-[0.98] disabled:opacity-70"
     >
       <span data-newsletter-label>Subscribe</span>
       <ArrowRight

@@ -55,7 +55,7 @@ import { TESTIMONIALS_CONTENT } from "../constants";
         aria-roledescription="carousel"
         aria-label="Client testimonials"
         tabindex="0"
-        class="mx-auto mt-12 max-w-6xl outline-none sm:mt-14"
+        class="mx-auto mt-8 max-w-6xl outline-none sm:mt-14"
       >
         <div class="relative grid grid-cols-1">
           {
@@ -70,21 +70,21 @@ import { TESTIMONIALS_CONTENT } from "../constants";
                 <div class="mx-auto flex max-w-212 flex-col items-center text-center">
                   <span
                     aria-hidden="true"
-                    class="block select-none font-serif text-[64px] leading-[0.5] text-accent/20 sm:text-[76px]"
+                    class="block select-none font-serif text-[52px] leading-[0.5] text-accent/20 sm:text-[76px]"
                   >
                     &ldquo;
                   </span>
 
-                  <blockquote class="mt-6 text-[21px] font-medium leading-[1.4] tracking-[-0.02em] text-balance text-foreground sm:mt-7 sm:text-[26px] lg:text-[30px]">
+                  <blockquote class="mt-5 text-[20px] font-medium leading-[1.35] tracking-[-0.02em] text-balance text-foreground sm:mt-7 sm:text-[26px] sm:leading-[1.4] lg:text-[30px]">
                     {testimonial.quote}
                   </blockquote>
 
                   <span
                     aria-hidden="true"
-                    class="mt-8 block h-px w-12 bg-border sm:mt-9"
+                    class="mt-6 block h-px w-12 bg-border sm:mt-9"
                   />
 
-                  <figcaption class="mt-7 flex flex-col items-center sm:mt-8">
+                  <figcaption class="mt-5 flex flex-col items-center sm:mt-8">
                     <PersonAvatar
                       name={testimonial.name}
                       image={testimonial.image}
@@ -109,7 +109,7 @@ import { TESTIMONIALS_CONTENT } from "../constants";
           }
         </div>
 
-        <div class="mt-10 flex items-center justify-center gap-4 sm:mt-12 sm:gap-6">
+        <div class="mt-7 flex items-center justify-center gap-4 sm:mt-12 sm:gap-6">
           <button
             type="button"
             data-testimonials-prev

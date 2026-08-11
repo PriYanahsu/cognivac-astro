@@ -19,54 +19,57 @@ import ProofStrip from "./ProofStrip.astro";
   <HeroNetworkBg />
 
   <div class="relative z-10 flex min-h-0 flex-1 flex-col">
-    <Container class="flex flex-1 flex-col justify-center pb-6 sm:pb-8">
+    <Container class="flex flex-1 flex-col justify-center pb-5 sm:pb-8">
       <div class="mx-auto max-w-6xl text-center">
         <FadeIn>
           <SectionLabel tone="primary" class="mb-0 block pl-0">
-            {HERO_CONTENT.label}
+            <span class="sm:hidden">{HERO_CONTENT.labelShort}</span>
+            <span class="hidden sm:inline">{HERO_CONTENT.label}</span>
           </SectionLabel>
-          <h1 class="text-hero stack-sm mx-auto max-w-[36ch] text-foreground">
+          <h1 class="text-hero stack-sm mx-auto max-w-[19ch] leading-[1.05] text-foreground sm:max-w-[36ch] sm:leading-[1.08]">
             {HERO_CONTENT.title}
           </h1>
-          <p class="text-body-lg stack-md mx-auto max-w-2xl text-muted">
+          <p class="stack-sm mx-auto max-w-[44ch] text-[14.5px] leading-[1.5] text-muted sm:stack-md sm:max-w-2xl sm:text-body-lg">
             {HERO_CONTENT.description}
           </p>
           <div
-            class="stack-lg flex w-full flex-col items-stretch justify-center gap-4 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center"
+            class="stack-md flex w-full flex-col items-stretch justify-center gap-2.5 sm:stack-lg sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4"
           >
             <GradientButton
               href={HERO_CONTENT.primaryCta.href}
               size="lg"
-              class="w-full justify-center sm:w-auto"
+              class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto"
             >
               {HERO_CONTENT.primaryCta.label}
             </GradientButton>
             <GhostButton
               href={HERO_CONTENT.secondaryCta.href}
               size="lg"
-              class="w-full justify-center sm:w-auto"
+              class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto"
             >
               {HERO_CONTENT.secondaryCta.label}
             </GhostButton>
           </div>
           <div
-            class="stack-lg flex flex-col items-center justify-center gap-4 text-body-md text-foreground/80 sm:flex-row sm:flex-wrap"
+            class="stack-md flex flex-row flex-wrap items-center justify-center gap-x-3 gap-y-2 text-foreground/80 sm:stack-lg sm:gap-4"
           >
             <div class="flex -space-x-2">
               {
                 HERO_CONTENT.trustedAvatars.map((avatar) => (
-                  <span class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-linear-to-br from-[#c5d4f5] via-[#e8e2d9] to-[#f7f4ef] text-[11px] font-semibold text-foreground shadow-sm sm:h-10 sm:w-10 sm:text-xs">
+                  <span class="flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-linear-to-br from-[#c5d4f5] via-[#e8e2d9] to-[#f7f4ef] text-[10px] font-semibold text-foreground shadow-sm sm:h-10 sm:w-10 sm:text-xs">
                     {avatar}
                   </span>
                 ))
               }
               <span
-                class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-white text-foreground shadow-sm sm:h-10 sm:w-10"
+                class="flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-white text-foreground shadow-sm sm:h-10 sm:w-10"
               >
-                <Plus class="h-4 w-4" />
+                <Plus class="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </span>
             </div>
-            <p class="text-center">{HERO_CONTENT.trustedText}</p>
+            <p class="text-center text-[12.5px] sm:text-body-md">
+              {HERO_CONTENT.trustedText}
+            </p>
           </div>
         </FadeIn>
       </div>

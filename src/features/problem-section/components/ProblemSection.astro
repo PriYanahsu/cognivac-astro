@@ -17,27 +17,29 @@ import { PROBLEM_CONTENT, PROBLEM_POINTS } from "../constants";
 const total = String(PROBLEM_POINTS.length).padStart(2, "0");
 ---
 
-<section class="relative bg-lavender/30 py-7 sm:py-20 lg:py-28">
+<section class="relative bg-lavender/30 py-12 sm:py-20 lg:py-28">
   <Container>
-    <div class="grid items-start gap-4 sm:gap-10 lg:grid-cols-12 lg:gap-16">
+    <div class="grid items-start gap-6 sm:gap-10 lg:grid-cols-12 lg:gap-16">
       <FadeIn class="lg:sticky lg:top-28 lg:col-span-5 lg:self-start">
-        <SectionLabel class="mb-0">
+        <SectionLabel class="mb-0 text-[11px] tracking-[0.08em] sm:text-sm">
           {PROBLEM_CONTENT.label}
         </SectionLabel>
         {/* Sized against the 5-column sidebar, not the viewport: `text-section`
-            tops out at 3.25rem, which overflows a ~540px column. */}
+            tops out at 3.25rem, which overflows a ~540px column. On a phone
+            it is a section heading again — 17.6px put the page's sharpest
+            line at barely above body size. */}
         <h2
-          class="mt-2 max-w-[22ch] text-[1.1rem] font-bold leading-[1.2] tracking-[-0.02em] text-foreground sm:mt-5 sm:text-[clamp(1.5rem,1.4vw+1rem,2.75rem)] sm:leading-[1.15]"
+          class="mt-2 max-w-[22ch] text-[26px] font-bold leading-[1.15] tracking-[-0.02em] text-foreground sm:mt-5 sm:text-[clamp(1.5rem,1.4vw+1rem,2.75rem)]"
         >
           {PROBLEM_CONTENT.title}
         </h2>
         <p
-          class="mt-2 max-w-[46ch] text-[12.5px] leading-[1.5] text-muted sm:mt-5 sm:text-[17px] sm:leading-[1.65] lg:text-[18.5px]"
+          class="mt-2.5 max-w-[46ch] text-[14.5px] leading-normal text-muted sm:mt-5 sm:text-[17px] sm:leading-[1.65] lg:text-[18.5px]"
         >
           {PROBLEM_CONTENT.description}
         </p>
         <p
-          class="mt-3 max-w-[40ch] border-l-2 border-accent pl-3 text-[12.5px] font-semibold leading-snug text-foreground sm:mt-6 sm:pl-4 sm:text-[17px] lg:text-[18.5px]"
+          class="mt-4 max-w-[40ch] border-l-2 border-accent pl-3 text-[14.5px] font-semibold leading-snug text-foreground sm:mt-6 sm:pl-4 sm:text-[17px] lg:text-[18.5px]"
         >
           {PROBLEM_CONTENT.pivot}
         </p>
@@ -69,7 +71,7 @@ const total = String(PROBLEM_POINTS.length).padStart(2, "0");
       <div data-problem-list class="relative lg:col-span-7">
         {/* Rail: static track with a scroll-driven accent fill */}
         <div
-          class="absolute left-[15px] top-8 bottom-8 w-0.5 bg-border/80"
+          class="absolute left-3.25 top-8 bottom-8 w-0.5 bg-border/80 sm:left-3.75"
           aria-hidden="true"
         >
           <div
@@ -90,14 +92,14 @@ const total = String(PROBLEM_POINTS.length).padStart(2, "0");
               data-reveal-margin="-10% 0px -10% 0px"
               style="--reveal-x:0px;--reveal-y:32px;--reveal-duration:0.65s"
               class={cn(
-                "group relative pl-12 sm:pl-16",
+                "group relative pl-10 sm:pl-16",
                 i > 0 && "border-t border-border"
               )}
             >
               {/* Numbered marker sitting on the rail */}
               <span
                 data-problem-marker
-                class="absolute left-0 top-5 z-10 flex h-7 w-7 items-center justify-center rounded-full border text-[10px] font-bold tabular-nums tracking-[0.06em] transition-all duration-500 ease-out sm:top-9 sm:h-8 sm:w-8 sm:text-[11px]"
+                class="absolute left-0 top-4 z-10 flex h-7 w-7 items-center justify-center rounded-full border text-[10px] font-bold tabular-nums tracking-[0.06em] transition-all duration-500 ease-out sm:top-9 sm:h-8 sm:w-8 sm:text-[11px]"
                 aria-hidden="true"
               >
                 {point.index}
@@ -105,23 +107,23 @@ const total = String(PROBLEM_POINTS.length).padStart(2, "0");
 
               <div
                 data-problem-body
-                class="py-3.5 transition-transform duration-500 ease-out sm:py-9"
+                class="py-4 transition-transform duration-500 ease-out sm:py-9"
               >
                 <span
                   data-problem-tag
-                  class="block text-[10px] font-semibold uppercase tracking-[0.18em] transition-colors duration-500 sm:text-[11px] lg:text-[12px]"
+                  class="block text-[10px] font-semibold uppercase tracking-[0.16em] transition-colors duration-500 sm:text-[11px] sm:tracking-[0.18em] lg:text-[12px]"
                 >
                   {point.tag}
                 </span>
                 <h3
                   data-problem-title
-                  class="mt-1.5 text-[0.95rem] font-bold leading-snug transition-colors duration-500 sm:mt-2.5 sm:text-card-title"
+                  class="mt-1 text-[16px] font-bold leading-tight tracking-[-0.01em] transition-colors duration-500 sm:mt-2.5 sm:text-card-title"
                 >
                   {point.title}
                 </h3>
                 <p
                   data-problem-desc
-                  class="mt-1.5 max-w-[54ch] text-[12.5px] leading-[1.5] transition-colors duration-500 sm:mt-3 sm:text-[16.5px] sm:leading-[1.65] lg:text-[17.5px]"
+                  class="mt-1.5 max-w-[54ch] text-[13.5px] leading-[1.5] transition-colors duration-500 sm:mt-3 sm:text-[16.5px] sm:leading-[1.65] lg:text-[17.5px]"
                 >
                   {point.description}
                 </p>
@@ -158,7 +160,13 @@ const total = String(PROBLEM_POINTS.length).padStart(2, "0");
   }
 
   [data-problem-title] {
-    color: color-mix(in srgb, var(--foreground) 60%, transparent);
+    color: var(--foreground);
+  }
+
+  @media (min-width: 640px) {
+    [data-problem-title] {
+      color: color-mix(in srgb, var(--foreground) 60%, transparent);
+    }
   }
 
   [data-problem-point][data-active="true"] [data-problem-title] {
@@ -166,7 +174,13 @@ const total = String(PROBLEM_POINTS.length).padStart(2, "0");
   }
 
   [data-problem-desc] {
-    color: color-mix(in srgb, var(--muted) 60%, transparent);
+    color: var(--muted);
+  }
+
+  @media (min-width: 640px) {
+    [data-problem-desc] {
+      color: color-mix(in srgb, var(--muted) 60%, transparent);
+    }
   }
 
   [data-problem-point][data-active="true"] [data-problem-desc] {
