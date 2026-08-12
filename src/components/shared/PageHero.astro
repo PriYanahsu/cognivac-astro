@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * Port of components/shared/page-hero.tsx.
- * The framer-motion stagger (0.09s between children, 0.05s lead-in) is now a
+ * The framer-motion stagger (0.08s between children, 0.04s lead-in) is now a
  * `data-reveal-stagger` container; lib/reveal.ts assigns each child its delay.
  */
 interface Crumb {
@@ -48,15 +48,14 @@ const {
 
 <section
   class={cn(
-    "relative overflow-hidden bg-[#1a1a1c] pb-16 pt-28 text-white sm:pb-20 sm:pt-32 lg:pb-24 lg:pt-38",
-    className
+    "relative overflow-hidden bg-[#1a1a1c] pb-14 pt-24 text-white sm:pb-20 sm:pt-32 lg:pb-24 lg:pt-38",
+    className,
   )}
 >
-  {/* On-theme backdrop: dot grid + a cobalt bloom behind the headline */}
   <div class="dot-grid pointer-events-none absolute inset-0 opacity-70"></div>
   <div
     aria-hidden="true"
-    class="page-hero-halo pointer-events-none absolute left-1/2 top-0 h-[420px] w-[820px] rounded-full bg-accent/25 blur-[120px]"
+    class="page-hero-halo pointer-events-none absolute left-1/2 top-0 h-[280px] w-[520px] rounded-full bg-accent/25 blur-[90px] sm:h-[420px] sm:w-[820px] sm:blur-[120px]"
   >
   </div>
   <div
@@ -68,9 +67,9 @@ const {
     <div
       data-reveal-stagger
       data-reveal-margin="-80px"
-      data-stagger="0.09"
-      data-delay-children="0.05"
-      style="--reveal-item-y:20px;--reveal-item-duration:0.6s"
+      data-stagger="0.08"
+      data-delay-children="0.04"
+      style="--reveal-item-y:18px;--reveal-item-duration:0.6s"
       class="mx-auto max-w-4xl text-center"
     >
       {
@@ -78,7 +77,7 @@ const {
           <nav
             data-reveal-item
             aria-label="Breadcrumb"
-            class="mb-7 flex flex-wrap items-center justify-center gap-1.5 text-[13px] text-white/50"
+            class="mb-5 flex flex-wrap items-center justify-center gap-1.5 text-[12px] text-white/50 sm:mb-7 sm:text-[13px]"
           >
             <a href="/" class="transition-colors hover:text-white">
               Home
@@ -87,7 +86,10 @@ const {
               <span class="flex items-center gap-1.5">
                 <ChevronRight class="h-3.5 w-3.5 text-white/30" />
                 {crumb.href ? (
-                  <a href={crumb.href} class="transition-colors hover:text-white">
+                  <a
+                    href={crumb.href}
+                    class="transition-colors hover:text-white"
+                  >
                     {crumb.label}
                   </a>
                 ) : (
@@ -100,21 +102,19 @@ const {
       }
 
       <div data-reveal-item>
-        <SectionLabel tone="accent" class="mb-0">
-          {label}
-        </SectionLabel>
+        <SectionLabel class="mb-0 text-accent-on-dark">{label}</SectionLabel>
       </div>
 
       <h1
         data-reveal-item
-        class="text-hero mx-auto mt-5 max-w-[26ch] text-white"
+        class="text-hero mx-auto mt-3.5 max-w-[20ch] leading-[1.05] text-white sm:mt-5 sm:max-w-[26ch] sm:leading-[1.08]"
       >
         {title}
       </h1>
 
       <p
         data-reveal-item
-        class="text-body-lg mx-auto mt-5 max-w-[62ch] text-white/75"
+        class="mx-auto mt-3.5 max-w-[46ch] text-[14.5px] leading-[1.55] text-white/75 sm:mt-5 sm:max-w-[62ch] sm:text-[18px] sm:leading-[1.6]"
       >
         {description}
       </p>
@@ -123,13 +123,13 @@ const {
         (primaryCta || secondaryCta) && (
           <div
             data-reveal-item
-            class="mt-9 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:gap-4"
+            class="mt-7 flex flex-col items-stretch justify-center gap-2.5 sm:mt-9 sm:flex-row sm:items-center sm:gap-4"
           >
             {primaryCta && (
               <GradientButton
                 href={primaryCta.href}
                 size="lg"
-                class="w-full justify-center sm:w-auto"
+                class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto"
               >
                 {primaryCta.label}
               </GradientButton>
@@ -139,7 +139,7 @@ const {
                 href={secondaryCta.href}
                 tone="light"
                 size="lg"
-                class="w-full justify-center sm:w-auto"
+                class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto"
               >
                 {secondaryCta.label}
               </GhostButton>
@@ -152,10 +152,10 @@ const {
         highlights && highlights.length > 0 && (
           <ul
             data-reveal-item
-            class="mt-9 flex flex-wrap items-center justify-center gap-2.5"
+            class="mt-6 flex flex-wrap items-center justify-center gap-2 sm:mt-9 sm:gap-2.5"
           >
             {highlights.map((highlight) => (
-              <li class="rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-[13px] font-medium text-white/75">
+              <li class="rounded-full border border-white/15 bg-white/[0.06] px-3 py-1.5 text-[12px] font-medium text-white/75 sm:px-4 sm:py-2 sm:text-[13px]">
                 {highlight}
               </li>
             ))}

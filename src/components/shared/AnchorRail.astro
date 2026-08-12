@@ -1,0 +1,154 @@
+---
+import { cn } from "@/lib/utils";
+
+export interface AnchorRailItem {
+  /** The `id` of the section this chip jumps to. */
+  id: string;
+  label: string;
+}
+
+/**
+ * Port of components/shared/anchor-rail.tsx.
+ *
+ * A sticky index for the long single-column pages. Scroll position decides
+ * the active chip; the jump is an explicit smooth scroll that clears the
+ * floating nav pill plus this rail.
+ */
+interface Props {
+  items: readonly AnchorRailItem[];
+  /** Accessible name — "Capabilities", "Sectors". */
+  ariaLabel: string;
+  class?: string;
+}
+
+const { items, ariaLabel, class: className } = Astro.props;
+---
+
+<nav
+  data-anchor-rail
+  aria-label={ariaLabel}
+  class={cn(
+    "sticky top-16 z-30 -mx-5 border-y border-border bg-background/85 backdrop-blur-md sm:top-20 sm:-mx-6 lg:top-24",
+    className,
+  )}
+>
+  <div
+    data-anchor-track
+    class="flex gap-1.5 overflow-x-auto overscroll-x-contain px-5 py-2.5 scrollbar-none sm:gap-2 sm:px-6 lg:justify-center"
+  >
+    {
+      items.map((item, i) => (
+        <a
+          href={`#${item.id}`}
+          data-chip={item.id}
+          data-active={i === 0 ? "" : undefined}
+          aria-current={i === 0 ? "true" : undefined}
+          class="shrink-0 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-[12.5px] font-semibold transition-colors duration-300 sm:px-4 sm:py-2 sm:text-[13.5px] border-border bg-card text-muted hover:border-accent/40 hover:text-foreground data-active:border-accent data-active:bg-accent data-active:text-white"
+        >
+          {item.label}
+        </a>
+      ))
+    }
+  </div>
+</nav>
+
+<script>
+  /**
+   * How far down the viewport a section has to reach before it counts as the
+   * one being read. It has to clear the floating nav pill AND this rail sitting
+   * under it, or the chip would flip to the next section while its heading is
+   * still hidden behind the chrome.
+   */
+  const ACTIVE_LINE = 168;
+
+  function initAnchorRails() {
+    document
+      .querySelectorAll<HTMLElement>("[data-anchor-rail]")
+      .forEach((rail) => {
+        if (rail.dataset.railReady === "true") return;
+        rail.dataset.railReady = "true";
+
+        const track = rail.querySelector<HTMLElement>("[data-anchor-track]");
+        const chips = Array.from(
+          rail.querySelectorAll<HTMLAnchorElement>("[data-chip]"),
+        );
+        if (!track || chips.length === 0) return;
+
+        const ids = chips.map((chip) => chip.dataset.chip ?? "");
+        let activeId = ids[0] ?? "";
+        let frame = 0;
+
+        const setActive = (id: string) => {
+          if (id === activeId) return;
+          activeId = id;
+          chips.forEach((chip) => {
+            const on = chip.dataset.chip === id;
+            chip.toggleAttribute("data-active", on);
+            if (on) chip.setAttribute("aria-current", "true");
+            else chip.removeAttribute("aria-current");
+          });
+
+          const chip = track.querySelector<HTMLElement>(`[data-chip="${id}"]`);
+          if (!chip) return;
+          const reduceMotion = window.matchMedia(
+            "(prefers-reduced-motion: reduce)",
+          ).matches;
+          const left =
+            chip.offsetLeft - (track.clientWidth - chip.offsetWidth) / 2;
+          track.scrollTo({
+            left,
+            behavior: reduceMotion ? "auto" : "smooth",
+          });
+        };
+
+        const measure = () => {
+          frame = 0;
+          let current = ids[0] ?? "";
+          for (const id of ids) {
+            const el = document.getElementById(id);
+            if (!el) continue;
+            if (el.getBoundingClientRect().top <= ACTIVE_LINE) current = id;
+          }
+          setActive(current);
+        };
+
+        const onScroll = () => {
+          if (!frame) frame = requestAnimationFrame(measure);
+        };
+
+        chips[0]?.toggleAttribute("data-active", true);
+        measure();
+        window.addEventListener("scroll", onScroll, { passive: true });
+        window.addEventListener("resize", onScroll, { passive: true });
+
+        rail.addEventListener("click", (event) => {
+          const chip = (event.target as HTMLElement).closest<HTMLAnchorElement>(
+            "[data-chip]",
+          );
+          if (!chip || !rail.contains(chip)) return;
+          const id = chip.dataset.chip;
+          const target = id ? document.getElementById(id) : null;
+          if (!id || !target) return;
+
+          event.preventDefault();
+          const reduceMotion = window.matchMedia(
+            "(prefers-reduced-motion: reduce)",
+          ).matches;
+          const top =
+            target.getBoundingClientRect().top +
+            window.scrollY -
+            ACTIVE_LINE +
+            8;
+          window.scrollTo({
+            top,
+            behavior: reduceMotion ? "auto" : "smooth",
+          });
+          setActive(id);
+          history.replaceState(null, "", `#${id}`);
+        });
+      });
+  }
+
+  initAnchorRails();
+  document.addEventListener("astro:page-load", initAnchorRails);
+</script>

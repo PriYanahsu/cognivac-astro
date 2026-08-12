@@ -4,14 +4,17 @@ import JsonLd from "@/lib/seo/JsonLd.astro";
 import { breadcrumbSchema, articleSchema } from "@/lib/seo";
 import PageHero from "@/components/shared/PageHero.astro";
 import Container from "@/components/shared/Container.astro";
-import SectionLabel from "@/components/shared/SectionLabel.astro";
+import SectionIntro from "@/components/shared/SectionIntro.astro";
+import ChipCloud from "@/components/shared/ChipCloud.astro";
 import FadeIn from "@/components/animations/FadeIn.astro";
 import CtaSection from "@/features/cta-section/components/CtaSection.astro";
 import { NAV_ROUTES } from "@/constants/site";
+import PostGrid from "./components/PostGrid.astro";
+import type { BlogPost } from "./types";
 
 /** Port of features/blog/index.tsx. */
 
-const POSTS = [
+const POSTS: BlogPost[] = [
   {
     id: "1",
     title: "From copilots to agents: designing reliable autonomy",
@@ -61,7 +64,7 @@ function formatDate(date: string) {
   });
 }
 
-const [featured, ...rest] = POSTS;
+const [featured] = POSTS;
 ---
 
 <JsonLd
@@ -77,7 +80,7 @@ const [featured, ...rest] = POSTS;
         path: `/blog#${p.id}`,
         datePublished: p.date,
         image: p.image,
-      })
+      }),
     ),
   ]}
 />
@@ -91,149 +94,85 @@ const [featured, ...rest] = POSTS;
   highlights={TOPICS.slice(0, 3)}
 />
 
-{/* Featured post — wide split card */}
 <section class="bg-background section-padding">
   <Container>
     <FadeIn>
-      <article
-        id={featured.id}
-        class="grid scroll-mt-32 overflow-hidden rounded-md border border-border bg-card sm:rounded-md lg:grid-cols-12"
-      >
-        <div class="relative aspect-16/9 lg:col-span-6 lg:aspect-auto lg:min-h-[380px]">
+      <article class="group relative grid overflow-hidden rounded-md border border-border bg-card transition-[border-color,box-shadow] duration-300 hover:border-accent/40 hover:shadow-soft lg:grid-cols-12">
+        <div class="relative aspect-video overflow-hidden lg:col-span-6 lg:aspect-auto lg:min-h-95">
           <img
             src={featured.image}
             alt={featured.title}
-            fetchpriority="high"
-            decoding="async"
-            class="absolute inset-0 h-full w-full object-cover"
+            class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-105"
           />
         </div>
 
-        <div class="flex flex-col justify-center p-6 sm:p-8 lg:col-span-6 lg:p-12">
-          <div class="flex flex-wrap items-center gap-3">
-            <span
-              class="rounded-full bg-accent px-3.5 py-1.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-white"
-            >
+        <div class="flex flex-col justify-center p-5 sm:p-8 lg:col-span-6 lg:p-12">
+          <div class="flex flex-wrap items-center gap-2.5 sm:gap-3">
+            <span class="rounded-full bg-accent px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-white sm:px-3.5 sm:py-1.5 sm:text-[12px]">
               Latest
             </span>
-            <span
-              class="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-accent"
-            >
+            <span class="text-[11.5px] font-semibold uppercase tracking-[0.14em] text-accent sm:text-[12.5px]">
               {featured.category}
             </span>
           </div>
 
-          <h2
-            class="mt-5 text-[clamp(1.5rem,2vw+0.9rem,2.375rem)] font-bold leading-[1.15] tracking-[-0.015em] text-foreground"
-          >
-            {featured.title}
+          <h2 class="mt-3.5 text-[clamp(1.375rem,2vw+0.9rem,2.375rem)] font-bold leading-[1.15] tracking-[-0.02em] text-foreground sm:mt-5">
+            <a
+              href={`/blog#${featured.id}`}
+              class="transition-colors after:absolute after:inset-0 after:content-[''] group-hover:text-accent"
+            >
+              {featured.title}
+            </a>
           </h2>
-          <p
-            class="mt-4 max-w-[52ch] text-[16px] leading-[1.65] text-muted sm:text-[17.5px]"
-          >
+          <p class="mt-2.5 max-w-[52ch] text-[14.5px] leading-[1.55] text-muted sm:mt-4 sm:text-[17.5px] sm:leading-[1.65]">
             {featured.excerpt}
           </p>
 
-          <div
-            class="mt-6 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[13.5px] text-muted"
-          >
+          <div class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[12.5px] text-muted sm:mt-6 sm:gap-x-4 sm:text-[13.5px]">
             <time datetime={featured.date}>{formatDate(featured.date)}</time>
-            <span class="h-1 w-1 rounded-full bg-muted-light"></span>
+            <span class="h-1 w-1 rounded-full bg-muted-light" />
             <span>{featured.readingTime}</span>
           </div>
 
-          <a
-            href={`/blog#${featured.id}`}
-            class="mt-7 inline-flex w-fit items-center gap-1.5 text-[14px] font-semibold text-foreground transition-colors hover:text-accent"
-          >
+          <span class="mt-5 inline-flex w-fit items-center gap-1.5 text-[13.5px] font-semibold text-foreground transition-colors group-hover:text-accent sm:mt-7 sm:text-[14px]">
             Read the article
-            <ArrowUpRight class="h-4 w-4" />
-          </a>
+            <ArrowUpRight class="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </span>
         </div>
       </article>
     </FadeIn>
   </Container>
 </section>
 
-{/* Remaining posts */}
 <section class="border-y border-border bg-card section-padding">
   <Container>
-    <FadeIn>
-      <div class="max-w-3xl">
-        <SectionLabel class="mb-0">
-          More Reading
-        </SectionLabel>
-        <h2 class="text-section stack-sm text-foreground">Recent articles</h2>
-      </div>
-    </FadeIn>
+    <SectionIntro
+      label="More Reading"
+      title="Every article, by topic"
+      description="Three pieces so far, each written by the engineer who did the work it describes."
+      descriptionClass="max-w-[52ch]"
+    />
 
-    <div class="card-grid md:grid-cols-2">
-      {
-        rest.map((post, i) => (
-          <FadeIn delay={0.08 * (i + 1)}>
-            <a
-              href={`/blog#${post.id}`}
-              id={post.id}
-              class="group flex h-full scroll-mt-32 flex-col overflow-hidden rounded-md border border-border bg-background transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-soft sm:rounded-md"
-            >
-              <div class="relative aspect-16/9 overflow-hidden">
-                <img
-                  src={post.image}
-                  alt={post.title}
-                  loading="lazy"
-                  decoding="async"
-                  class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-                />
-              </div>
-
-              <div class="flex flex-1 flex-col p-6 sm:p-7">
-                <p class="text-[12px] font-semibold uppercase tracking-[0.14em] text-accent">
-                  {post.category}
-                </p>
-                <h3 class="mt-2.5 text-[19px] font-bold leading-snug text-foreground sm:text-[21px]">
-                  {post.title}
-                </h3>
-                <p class="mt-3 copy-md">
-                  {post.excerpt}
-                </p>
-
-                <div class="mt-auto flex flex-wrap items-center gap-x-3.5 gap-y-1.5 pt-6 text-[13px] text-muted">
-                  <time datetime={post.date}>{formatDate(post.date)}</time>
-                  <span class="h-1 w-1 rounded-full bg-muted-light" />
-                  <span>{post.readingTime}</span>
-                </div>
-              </div>
-            </a>
-          </FadeIn>
-        ))
-      }
-    </div>
+    <PostGrid posts={POSTS} categories={TOPICS} />
   </Container>
 </section>
 
-{/* Topics */}
-<section class="relative overflow-hidden bg-[#1a1a1c] py-14 text-white sm:py-16">
+<section class="relative overflow-hidden bg-[#1a1a1c] py-11 text-white sm:py-16">
   <div class="dot-grid pointer-events-none absolute inset-0 opacity-60"></div>
   <Container class="relative z-10">
-    <FadeIn>
-      <div class="mx-auto max-w-2xl text-center">
-        <SectionLabel
-          tone="accent"
-          class="mb-0"
-        >
-          What We Write About
-        </SectionLabel>
-        <ul class="mt-6 flex flex-wrap justify-center gap-2.5">
-          {
-            TOPICS.map((topic) => (
-              <li class="rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-[13.5px] font-medium text-white/75">
-                {topic}
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-    </FadeIn>
+    <SectionIntro
+      tone="dark"
+      align="center"
+      label="What We Write About"
+      title="Six beats, all of them things we ship"
+      titleClass="text-[clamp(1.375rem,2.5vw+0.75rem,2.25rem)]"
+      class="max-w-2xl"
+    />
+    <ChipCloud
+      items={TOPICS}
+      tone="dark"
+      class="mx-auto mt-6 max-w-2xl sm:mt-8"
+    />
   </Container>
 </section>
 

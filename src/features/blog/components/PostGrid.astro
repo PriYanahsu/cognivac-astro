@@ -1,0 +1,146 @@
+---
+import { cn } from "@/lib/utils";
+import type { BlogPost } from "../types";
+
+/**
+ * Port of features/blog/components/post-grid.tsx.
+ * Filtering is layout state, not navigation: every post stays in the DOM.
+ */
+interface Props {
+  posts: readonly BlogPost[];
+  categories: readonly string[];
+}
+
+const ALL = "All";
+
+const { posts, categories } = Astro.props;
+
+const populated = categories.filter((category) =>
+  posts.some((post) => post.category === category),
+);
+const tabs = [ALL, ...populated];
+
+function formatDate(date: string) {
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+---
+
+<div
+  data-post-grid
+  role="tablist"
+  aria-label="Filter articles by topic"
+  class="-mx-5 mt-6 flex gap-1.5 overflow-x-auto overscroll-x-contain px-5 pb-1 scrollbar-none sm:mx-0 sm:mt-8 sm:flex-wrap sm:gap-2 sm:overflow-visible sm:px-0"
+>
+  {
+    tabs.map((tab, i) => (
+      <button
+        type="button"
+        role="tab"
+        data-post-tab={tab}
+        aria-selected={i === 0 ? "true" : "false"}
+        class={cn(
+          "shrink-0 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-[12.5px] font-semibold transition-colors duration-300 sm:px-4 sm:py-2 sm:text-[13.5px]",
+          i === 0
+            ? "border-accent bg-accent text-white"
+            : "border-border bg-background text-muted hover:border-accent/40 hover:text-foreground",
+        )}
+      >
+        {tab}
+      </button>
+    ))
+  }
+</div>
+
+<div data-post-cards class="card-grid md:grid-cols-2">
+  {
+    posts.map((post) => (
+      <a
+        href={`/blog#${post.id}`}
+        id={post.id}
+        data-post-card
+        data-category={post.category}
+        class="group flex h-full scroll-mt-32 flex-col overflow-hidden rounded-md border border-border bg-background transition-[border-color,box-shadow,transform] duration-300 hover:border-accent/40 hover:shadow-soft [@media(hover:hover)]:hover:-translate-y-1"
+      >
+        <div class="relative aspect-video overflow-hidden">
+          <img
+            src={post.image}
+            alt={post.title}
+            class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+
+        <div class="flex flex-1 flex-col p-5 sm:p-7">
+          <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent sm:text-[12px]">
+            {post.category}
+          </p>
+          <h3 class="mt-2 text-[17px] font-bold leading-snug tracking-[-0.02em] text-foreground transition-colors group-hover:text-accent sm:mt-2.5 sm:text-[21px]">
+            {post.title}
+          </h3>
+          <p class="mt-2.5 text-[13.5px] leading-[1.55] text-muted sm:mt-3 sm:text-[15px] sm:leading-[1.6]">
+            {post.excerpt}
+          </p>
+
+          <div class="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1.5 pt-5 text-[12.5px] text-muted sm:gap-x-3.5 sm:pt-6 sm:text-[13px]">
+            <time datetime={post.date}>{formatDate(post.date)}</time>
+            <span class="h-1 w-1 rounded-full bg-muted-light" />
+            <span>{post.readingTime}</span>
+          </div>
+        </div>
+      </a>
+    ))
+  }
+</div>
+
+<script>
+  const ALL = "All";
+  const ACTIVE =
+    "border-accent bg-accent text-white";
+  const IDLE =
+    "border-border bg-background text-muted hover:border-accent/40 hover:text-foreground";
+
+  function initPostGrids() {
+    document.querySelectorAll<HTMLElement>("[data-post-grid]").forEach((tabs) => {
+      if (tabs.dataset.gridReady === "true") return;
+      tabs.dataset.gridReady = "true";
+
+      const cardsRoot = tabs.nextElementSibling as HTMLElement | null;
+      if (!cardsRoot?.hasAttribute("data-post-cards")) return;
+
+      const buttons = Array.from(
+        tabs.querySelectorAll<HTMLButtonElement>("[data-post-tab]"),
+      );
+      const cards = Array.from(
+        cardsRoot.querySelectorAll<HTMLElement>("[data-post-card]"),
+      );
+
+      const setActive = (tab: string) => {
+        buttons.forEach((button) => {
+          const on = button.dataset.postTab === tab;
+          button.setAttribute("aria-selected", on ? "true" : "false");
+          button.className = `shrink-0 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-[12.5px] font-semibold transition-colors duration-300 sm:px-4 sm:py-2 sm:text-[13.5px] ${on ? ACTIVE : IDLE}`;
+        });
+        cards.forEach((card) => {
+          const show = tab === ALL || card.dataset.category === tab;
+          card.classList.toggle("hidden", !show);
+        });
+      };
+
+      tabs.addEventListener("click", (event) => {
+        const button = (event.target as HTMLElement).closest<HTMLButtonElement>(
+          "[data-post-tab]",
+        );
+        if (!button || !tabs.contains(button)) return;
+        setActive(button.dataset.postTab ?? ALL);
+      });
+    });
+  }
+
+  initPostGrids();
+  document.addEventListener("astro:page-load", initPostGrids);
+</script>

@@ -4,16 +4,18 @@ import JsonLd from "@/lib/seo/JsonLd.astro";
 import { breadcrumbSchema } from "@/lib/seo";
 import PageHero from "@/components/shared/PageHero.astro";
 import Container from "@/components/shared/Container.astro";
-import SectionLabel from "@/components/shared/SectionLabel.astro";
+import SectionIntro from "@/components/shared/SectionIntro.astro";
+import AnchorRail from "@/components/shared/AnchorRail.astro";
+import ChipCloud from "@/components/shared/ChipCloud.astro";
 import FadeIn from "@/components/animations/FadeIn.astro";
 import { INDUSTRIES } from "@/features/home/constants/content";
 import { INDUSTRY_DETAILS } from "@/features/industries-showcase/constants";
 import CtaSection from "@/features/cta-section/components/CtaSection.astro";
 import { NAV_ROUTES } from "@/constants/site";
+import { cn } from "@/lib/utils";
 
 /** Port of features/industries/index.tsx. */
 
-/** Typical work per sector — proves we have been in the systems, not just the market. */
 const SECTOR_WORK: Record<string, readonly string[]> = {
   fintech: [
     "Real-time fraud and risk decisioning",
@@ -70,45 +72,83 @@ const ALSO_SERVED = [
 
 <section class="bg-background section-padding">
   <Container>
-    <div class="grid gap-6 sm:gap-8 lg:gap-10">
+    <SectionIntro
+      label="Sectors"
+      title="Where we have already been in the systems"
+      description="Four sectors we work in constantly, with the kind of engagement each one actually asks for. The list below is not the whole of it."
+      titleClass="max-w-[22ch]"
+      descriptionClass="max-w-[54ch]"
+    />
+
+    <AnchorRail
+      ariaLabel="Sectors"
+      items={INDUSTRIES.map((industry) => ({
+        id: industry.id,
+        label: industry.title,
+      }))}
+      class="mt-6 sm:mt-8"
+    />
+
+    <div class="mt-6 grid gap-4 sm:mt-8 sm:gap-8 lg:gap-10">
       {
         INDUSTRIES.map((industry, i) => (
           <FadeIn delay={0.06 * (i + 1)}>
             <article
               id={industry.id}
-              class="grid scroll-mt-32 overflow-hidden rounded-md border border-border bg-card sm:rounded-md lg:grid-cols-12"
+              class="group grid scroll-mt-44 overflow-hidden rounded-md border border-border bg-card transition-[border-color,box-shadow] duration-300 hover:border-accent/40 hover:shadow-soft lg:grid-cols-12"
             >
-              <div class="relative aspect-16/9 lg:col-span-5 lg:aspect-auto lg:min-h-[320px]">
+              <div
+                class={cn(
+                  "relative aspect-video overflow-hidden lg:col-span-5 lg:aspect-auto lg:min-h-80",
+                  i % 2 === 1 && "lg:order-2",
+                )}
+              >
                 <img
                   src={industry.image}
                   alt={industry.title}
+                  class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-105"
                   loading="lazy"
                   decoding="async"
-                  class="absolute inset-0 h-full w-full object-cover"
                 />
+                <span
+                  aria-hidden="true"
+                  class="absolute left-4 top-4 rounded-full bg-black/45 px-2.5 py-1 text-[11px] font-bold tracking-[0.16em] text-white backdrop-blur-sm [font-variant-numeric:tabular-nums]"
+                >
+                  {String(i + 1).padStart(2, "0")}
+                  <span class="text-white/50">
+                    /{String(INDUSTRIES.length).padStart(2, "0")}
+                  </span>
+                </span>
               </div>
 
-              <div class="flex flex-col p-6 sm:p-8 lg:col-span-7 lg:p-10">
-                <h2 class="text-section-column text-foreground">{industry.title}</h2>
-                <p class="mt-4 max-w-[54ch] text-[16px] leading-[1.65] text-muted sm:text-[17.5px]">
+              <div
+                class={cn(
+                  "flex flex-col p-5 sm:p-8 lg:col-span-7 lg:p-10",
+                  i % 2 === 1 && "lg:order-1",
+                )}
+              >
+                <h3 class="text-section-column text-foreground">
+                  {industry.title}
+                </h3>
+                <p class="mt-2.5 max-w-[54ch] text-[14.5px] leading-[1.55] text-muted sm:mt-4 sm:text-[17.5px] sm:leading-[1.65]">
                   {industry.description}
                 </p>
 
                 {INDUSTRY_DETAILS[industry.id] && (
-                  <p class="mt-4 text-[14.5px] font-medium leading-[1.6] text-accent">
+                  <p class="mt-3 border-l-2 border-accent pl-3 text-[13.5px] font-medium leading-[1.55] text-accent sm:mt-4 sm:pl-4 sm:text-[14.5px] sm:leading-[1.6]">
                     {INDUSTRY_DETAILS[industry.id]}
                   </p>
                 )}
 
                 {SECTOR_WORK[industry.id] && (
-                  <div class="mt-6 border-t border-border pt-6">
-                    <p class="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted">
+                  <div class="mt-5 border-t border-border pt-5 sm:mt-6 sm:pt-6">
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted sm:text-[12px]">
                       Typical work
                     </p>
-                    <ul class="mt-3.5 grid gap-2.5 sm:grid-cols-2">
+                    <ul class="mt-3 grid gap-2.5 sm:mt-3.5 sm:grid-cols-2">
                       {SECTOR_WORK[industry.id].map((line) => (
-                        <li class="flex gap-2.5 text-[14.5px] leading-[1.55] text-foreground/75">
-                          <span class="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                        <li class="flex gap-2.5 text-[13.5px] leading-[1.55] text-foreground/75 sm:text-[14.5px]">
+                          <span class="mt-1.75 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
                           {line}
                         </li>
                       ))}
@@ -118,10 +158,10 @@ const ALSO_SERVED = [
 
                 <a
                   href={NAV_ROUTES.contact}
-                  class="mt-auto inline-flex items-center gap-1.5 pt-7 text-[13.5px] font-semibold text-foreground transition-colors hover:text-accent"
+                  class="mt-auto inline-flex items-center gap-1.5 pt-6 text-[13.5px] font-semibold text-foreground transition-colors hover:text-accent sm:pt-7"
                 >
                   Discuss {industry.title.toLowerCase()} work
-                  <ArrowUpRight class="h-4 w-4" />
+                  <ArrowUpRight class="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </a>
               </div>
             </article>
@@ -132,44 +172,23 @@ const ALSO_SERVED = [
   </Container>
 </section>
 
-<section
-  class="relative overflow-hidden bg-[#1a1a1c] section-padding text-white"
->
+<section class="relative overflow-hidden bg-[#1a1a1c] section-padding text-white">
   <div class="dot-grid pointer-events-none absolute inset-0 opacity-60"></div>
   <Container class="relative z-10">
-    <FadeIn>
-      <div class="mx-auto max-w-3xl text-center">
-        <SectionLabel
-          tone="accent"
-          class="mb-0"
-        >
-          Also Delivered In
-        </SectionLabel>
-        <h2
-          class="mt-5 text-[clamp(1.625rem,3.5vw+0.75rem,3rem)] font-bold leading-[1.1] tracking-[-0.02em] text-white"
-        >
-          Your sector is probably on this list
-        </h2>
-        <p
-          class="mx-auto mt-4 max-w-[560px] text-[16px] leading-[1.55] text-white/75 sm:text-[18px]"
-        >
-          If it is not, the engineering is usually transferable — the discovery
-          phase is where we prove that.
-        </p>
-      </div>
-    </FadeIn>
+    <SectionIntro
+      tone="dark"
+      align="center"
+      label="Also Delivered In"
+      title="Your sector is probably on this list"
+      description="If it is not, the engineering is usually transferable — the discovery phase is where we prove that."
+      descriptionClass="max-w-140"
+    />
 
-    <FadeIn delay={0.12}>
-      <ul class="mx-auto mt-10 flex max-w-4xl flex-wrap justify-center gap-2.5">
-        {
-          ALSO_SERVED.map((sector) => (
-            <li class="rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-[13.5px] font-medium text-white/75">
-              {sector}
-            </li>
-          ))
-        }
-      </ul>
-    </FadeIn>
+    <ChipCloud
+      items={ALSO_SERVED}
+      tone="dark"
+      class="mx-auto mt-8 max-w-4xl sm:mt-10"
+    />
   </Container>
 </section>
 

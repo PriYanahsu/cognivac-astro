@@ -32,6 +32,14 @@ export const NAV_ITEMS: NavItem[] = [
     label: "Solutions",
     href: NAV_ROUTES.services,
     children: [
+      // The parent is a disclosure button, not a link, so without this row
+      // there is no way to reach /services itself from the nav — only to
+      // land part-way down it on one capability's anchor.
+      {
+        label: "All Services",
+        href: NAV_ROUTES.services,
+        description: "Every capability, and what each one ships",
+      },
       {
         label: "AI Agents",
         href: `${NAV_ROUTES.services}#ai-agents`,
@@ -57,12 +65,24 @@ export const NAV_ITEMS: NavItem[] = [
         href: `${NAV_ROUTES.services}#automation`,
         description: "Intelligent process automation",
       },
+      // The services page has six capabilities; this menu listed five, so
+      // `#apps` was a section with no way in from the nav.
+      {
+        label: "Enterprise Applications",
+        href: `${NAV_ROUTES.services}#apps`,
+        description: "Web, mobile, and internal platforms",
+      },
     ],
   },
   {
     label: "Industries",
     href: NAV_ROUTES.industries,
     children: [
+      {
+        label: "All Industries",
+        href: NAV_ROUTES.industries,
+        description: "Every sector we deliver in",
+      },
       {
         label: "FinTech",
         href: `${NAV_ROUTES.industries}#fintech`,

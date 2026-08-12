@@ -5,7 +5,7 @@ import SectionLabel from "@/components/shared/SectionLabel.astro";
 import PersonAvatar from "@/components/shared/PersonAvatar.astro";
 import FadeIn from "@/components/animations/FadeIn.astro";
 import { TESTIMONIALS } from "@/features/home/constants/content";
-import { TESTIMONIALS_CONTENT } from "../constants";
+import { TESTIMONIALS_CONTENT, TRUST_STRIP } from "../constants";
 
 /**
  * Port of features/testimonials-section/components/testimonials-section.tsx.
@@ -89,7 +89,7 @@ import { TESTIMONIALS_CONTENT } from "../constants";
                       name={testimonial.name}
                       image={testimonial.image}
                       size={64}
-                      tone="dark"
+                      tone="light"
                       class="ring-4 ring-accent/10"
                     />
                     <p class="mt-4 text-[17px] font-bold leading-tight tracking-[-0.02em] text-foreground sm:text-[18px]">
@@ -146,7 +146,7 @@ import { TESTIMONIALS_CONTENT } from "../constants";
                       name={testimonial.name}
                       image={testimonial.image}
                       size={40}
-                      tone="dark"
+                      tone="light"
                     />
                   </span>
                 </button>
@@ -171,6 +171,34 @@ import { TESTIMONIALS_CONTENT } from "../constants";
           >
           </span>
         </div>
+      </div>
+    </FadeIn>
+
+    <FadeIn delay={0.2}>
+      <div class="mx-auto mt-10 max-w-5xl sm:mt-14">
+        <div class="flex items-center gap-4 sm:gap-6">
+          <span
+            aria-hidden="true"
+            class="h-px flex-1 bg-linear-to-r from-transparent to-border"
+          />
+          <p class="text-eyebrow shrink-0 text-center text-muted-light">
+            {TRUST_STRIP.label}
+          </p>
+          <span
+            aria-hidden="true"
+            class="h-px flex-1 bg-linear-to-l from-transparent to-border"
+          />
+        </div>
+
+        <ul class="mt-6 grid grid-cols-3 items-center gap-x-4 gap-y-5 sm:mt-8 sm:grid-cols-6 sm:gap-x-6">
+          {
+            TRUST_STRIP.names.map((name) => (
+              <li class="text-center text-[14px] font-semibold tracking-[-0.01em] text-muted-light transition-colors duration-300 hover:text-muted sm:text-[16px]">
+                {name}
+              </li>
+            ))
+          }
+        </ul>
       </div>
     </FadeIn>
   </Container>

@@ -82,10 +82,22 @@
   --font-label-sm-line-height: 20px;
   --font-label-sm-weight: 500;
   --font-label-sm-tracking: -0.28px;
-  --font-mono-eyebrow-size: 12px;
-  --font-mono-eyebrow-line-height: 16px;
-  --font-mono-eyebrow-weight: 500;
-  --font-mono-eyebrow-tracking: 0px;
+  /**
+   * The eyebrow over a section heading.
+   *
+   * Set in the site face, not in `--font-mono`. That token is a bare system
+   * stack — SFMono, Menlo, Consolas — so the eyebrow rendered in whatever
+   * terminal font the reader's OS ships, half a step off the Plus Jakarta
+   * heading directly beneath it. It read as a stray line of code.
+   *
+   * 13px / 600 / 0.12em rather than 12px / 500 / 0. Uppercase at 12px with no
+   * tracking sets tight and reads small; a label carrying that much visual
+   * job needs the extra weight and the letters given room to stand apart.
+   */
+  --font-eyebrow-size: 13px;
+  --font-eyebrow-line-height: 18px;
+  --font-eyebrow-weight: 600;
+  --font-eyebrow-tracking: 0.12em;
   --font-body-lg-size: 16px;
   --font-body-lg-line-height: 24px;
   --font-body-lg-weight: 400;
@@ -249,13 +261,23 @@ h6 {
   letter-spacing: var(--font-label-sm-tracking);
 }
 
-@utility text-mono-eyebrow {
-  font-family: var(--font-mono);
-  font-size: var(--font-mono-eyebrow-size);
-  line-height: var(--font-mono-eyebrow-line-height);
-  font-weight: var(--font-mono-eyebrow-weight);
-  letter-spacing: var(--font-mono-eyebrow-tracking);
+/**
+ * Responsive in the utility itself, so no component has to restate it. Every
+ * caller previously carried its own `text-[11px] sm:text-[13px]` pair, and
+ * that is exactly how the eyebrow ended up a different size on each page.
+ */
+@utility text-eyebrow {
+  font-family: var(--font-heading);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: var(--font-eyebrow-weight);
+  letter-spacing: var(--font-eyebrow-tracking);
   text-transform: uppercase;
+
+  @media (min-width: 640px) {
+    font-size: var(--font-eyebrow-size);
+    line-height: var(--font-eyebrow-line-height);
+  }
 }
 
 @utility text-body-lg {
@@ -358,11 +380,17 @@ h6 {
   }
 }
 
+/**
+ * The eyebrow's sibling, for labels that are not introducing a section.
+ * Carried the same system-mono face and the same eyebrow tokens, so it moves
+ * with it — otherwise the two would sit next to each other in different
+ * typefaces, which is the drift the rename was meant to end.
+ */
 .text-label {
-  font-family: var(--font-mono);
-  font-size: var(--font-mono-eyebrow-size);
-  font-weight: var(--font-mono-eyebrow-weight);
-  line-height: var(--font-mono-eyebrow-line-height);
+  font-family: var(--font-heading);
+  font-size: var(--font-eyebrow-size);
+  font-weight: var(--font-eyebrow-weight);
+  line-height: var(--font-eyebrow-line-height);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -412,16 +440,47 @@ h6 {
   }
 }
 
+/**
+ * The standing body copy inside a card.
+ *
+ * 14/20 is the design system's `body-md`, and it is a table-cell leading: it
+ * was drawn for a one-line value, not for the three-line paragraph every card
+ * on the inner routes puts through it. At 1.43 those three lines set solid,
+ * and on a phone — where the same paragraph is five lines in a 300px column —
+ * it reads as a grey block. Same 14px on a phone with air between the lines,
+ * one step up from `sm` where the column is wide enough to earn it.
+ */
 .copy-md {
   font-size: var(--font-body-md-size);
-  line-height: var(--font-body-md-line-height);
+  line-height: 1.55;
   color: var(--muted);
 }
 
+@media (min-width: 640px) {
+  .copy-md {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+}
+
+/**
+ * Air between the cards of a section, and between them and the heading above.
+ *
+ * Tightened on a phone for the same reason `.section-padding` was: a stacked
+ * grid is a column of cards whose own borders already separate them, so 24px
+ * of gutter between each of six cards is a third of a screen spent on nothing.
+ */
 .card-grid {
   display: grid;
-  margin-top: var(--space-xl);
-  gap: var(--space-lg);
+  margin-top: var(--space-lg);
+  gap: var(--space-md);
+}
+
+@media (min-width: 640px) {
+  .card-grid {
+    margin-top: var(--space-xl);
+    gap: var(--space-lg);
+  }
 }
 
 @media (min-width: 1024px) {
@@ -536,14 +595,42 @@ h6 {
     padding: 0;
   }
 
+  /**
+   * A form field has to look like a hole you can type into.
+   *
+   * This was white-on-white with a `--hairline` (#ebebeb) edge — about 1.13:1
+   * against the card it sits on, well under the 3:1 that WCAG 1.4.11 asks of
+   * a control's boundary, and in practice invisible: on the contact page only
+   * the focused field could be seen at all, so the form read as four labels
+   * with nothing under them.
+   *
+   * Two changes, both doing the same job. The field is now recessed against
+   * the card rather than being the same white, and the edge is `--muted-light`
+   * (#9a938a) — 3.0:1 on white, the first value on this palette that clears
+   * the bar. `--border` (#e5dfd6) was the obvious pick and is still only
+   * 1.3:1 against a card: a hairline for separating rows, not for drawing the
+   * boundary of something you are asked to click into.
+   *
+   * The 16px font size is deliberate and must not be reduced: iOS Safari zooms
+   * the whole page when a focused input is under 16px, which on a phone throws
+   * the layout sideways mid-form.
+   */
   .text-input {
-    background-color: var(--canvas-elevated);
+    background-color: var(--background);
     color: var(--ink);
-    border: 1px solid var(--hairline);
-    font-size: var(--font-body-md-size);
-    line-height: var(--font-body-md-line-height);
+    border: 1px solid var(--muted-light);
+    font-size: 16px;
+    line-height: 1.5;
     border-radius: var(--rounded-sm);
     padding: var(--space-xs) var(--space-sm);
+  }
+
+  .text-input::placeholder {
+    color: var(--muted-light);
+  }
+
+  .text-input:hover:not(:focus) {
+    border-color: var(--muted);
   }
 
   .feature-card {
@@ -773,6 +860,24 @@ h6 {
   top: 1rem;
 }
 
+/**
+ * Hide the scrollbar on a hand-scrolled rail, keeping the scrolling.
+ *
+ * Tailwind v4 ships no scrollbar utilities, so every `scrollbar-none` in the
+ * codebase — the selected-work marquee, the services carousel, the anchor
+ * rails — was compiling to nothing, and the rails carried a native bar across
+ * their foot on any platform that draws one. The `::-webkit-scrollbar` rule
+ * covers Safari and older Chromium; `scrollbar-width` covers the rest.
+ */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* Dot grid background */
 .dot-grid {
   background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
@@ -972,6 +1077,19 @@ h6 {
 [data-reveal-stagger].is-visible [data-reveal-item] {
   opacity: 1;
   transform: translate3d(0, 0, 0);
+}
+
+/**
+ * Chip clouds assemble in place (scale + opacity), not from below.
+ * A wrapped list has no single reading direction, so chips rising from
+ * below fight the rows above them.
+ */
+[data-reveal-item][data-reveal-scale] {
+  transform: scale(0.96);
+}
+
+[data-reveal-stagger].is-visible [data-reveal-item][data-reveal-scale] {
+  transform: scale(1);
 }
 
 /* Word-by-word headline reveal (was RevealText). */

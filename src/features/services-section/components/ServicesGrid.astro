@@ -41,6 +41,17 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
 ---
 
 <section class="relative overflow-hidden bg-[#1a1a1c] py-12 text-white sm:py-16 lg:py-24">
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-0 bg-cover bg-center opacity-45"
+    style="background-image: url(/images/services-section-bg.png)"
+  >
+  </div>
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-0 bg-linear-to-b from-[#1a1a1c]/70 via-[#1a1a1c]/40 to-[#1a1a1c]/85"
+  >
+  </div>
   <Container class="relative z-10 w-full">
     <div
       data-reveal-stagger
@@ -53,7 +64,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
       <div data-reveal-item>
         <SectionLabel
           tone="accent"
-          class="mb-0 text-[13px] tracking-[0.08em] sm:text-sm"
+          class="mb-0"
         >
           {SERVICES_HEADER.label}
         </SectionLabel>

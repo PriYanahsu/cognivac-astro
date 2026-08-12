@@ -1,13 +1,15 @@
 ---
+import CountUp from "@/components/shared/CountUp.astro";
 import { cn } from "@/lib/utils";
 
 /**
  * Port of components/shared/stat-counter.tsx.
  *
- * One deliberate improvement over the React version: the final value is
- * rendered into the HTML rather than a placeholder `0`, so crawlers and
- * no-JS visitors read the real number. The count-up then starts from 0 on
- * first intersection exactly as before.
+ * A figure with its caption, for light surfaces. The counting itself lives
+ * in `CountUp` — this is the light band's presentation of it. Dark bands
+ * compose `CountUp` directly rather than passing a tone through here:
+ * `gradient-text` ends on the ink colour, which on a near-black band is
+ * the background.
  */
 interface Props {
   value: number;
@@ -26,82 +28,28 @@ const {
   decimals = 0,
   label,
   class: className,
-  duration = 2000,
+  duration = 1600,
 } = Astro.props;
-
-const formatted = decimals > 0 ? value.toFixed(decimals) : String(Math.floor(value));
 ---
 
-<div
-  data-stat-counter
-  data-value={value}
-  data-decimals={decimals}
-  data-duration={duration}
-  class={cn("text-center", className)}
->
-  <p class="gradient-text text-4xl font-bold md:text-5xl lg:text-6xl">
-    {prefix}<span data-stat-value>{formatted}</span>{suffix}
+<div class={cn("text-center", className)}>
+  {/* The floor is 1.75rem, not 2.25rem: these bands run three across even
+      on a phone, which leaves each figure about a third of a 350px column
+      — and a figure that overflows its column is not a proof point. */}
+  <p
+    class="gradient-text text-[clamp(1.75rem,6vw,3.75rem)] font-bold leading-none tracking-[-0.02em]"
+  >
+    <CountUp
+      value={value}
+      prefix={prefix}
+      suffix={suffix}
+      decimals={decimals}
+      durationMs={duration}
+    />
   </p>
-  <p class="mt-3 text-sm text-muted md:text-base">{label}</p>
+  <p
+    class="mx-auto mt-2 max-w-[24ch] text-[11.5px] leading-snug text-muted sm:mt-3 sm:text-[15px]"
+  >
+    {label}
+  </p>
 </div>
-
-<script>
-  function initStatCounters() {
-    const counters = document.querySelectorAll<HTMLElement>(
-      "[data-stat-counter]"
-    );
-    if (counters.length === 0) return;
-
-    const prefersReduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-    const observer = new IntersectionObserver(
-      (entries, obs) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-
-          const el = entry.target as HTMLElement;
-          obs.unobserve(el);
-
-          const output = el.querySelector<HTMLElement>("[data-stat-value]");
-          if (!output) continue;
-
-          const value = Number(el.dataset.value ?? "0");
-          const decimals = Number(el.dataset.decimals ?? "0");
-          const duration = Number(el.dataset.duration ?? "2000");
-
-          const format = (n: number) =>
-            decimals > 0 ? n.toFixed(decimals) : String(Math.floor(n));
-
-          if (prefersReduced) {
-            output.textContent = format(value);
-            continue;
-          }
-
-          const start = performance.now();
-          const tick = (now: number) => {
-            const progress = Math.min((now - start) / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            output.textContent = format(value * eased);
-            if (progress < 1) requestAnimationFrame(tick);
-            else output.textContent = format(value);
-          };
-
-          output.textContent = format(0);
-          requestAnimationFrame(tick);
-        }
-      },
-      { threshold: 0.4 }
-    );
-
-    counters.forEach((el) => {
-      if (el.dataset.counterReady === "true") return;
-      el.dataset.counterReady = "true";
-      observer.observe(el);
-    });
-  }
-
-  initStatCounters();
-  document.addEventListener("astro:page-load", initStatCounters);
-</script>

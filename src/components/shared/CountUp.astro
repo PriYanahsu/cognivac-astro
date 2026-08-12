@@ -1,0 +1,101 @@
+---
+import { cn } from "@/lib/utils";
+
+/**
+ * Port of components/shared/count-up.tsx.
+ *
+ * Just the figure, counting itself up on first view — no label, no layout.
+ * Split out from `StatCounter` so a number band can be styled by the surface
+ * it sits on. The final value is in the HTML so crawlers and no-JS visitors
+ * read the real number; the count-up then starts from 0 on first intersection.
+ */
+interface Props {
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  decimals?: number;
+  durationMs?: number;
+  class?: string;
+}
+
+const {
+  value,
+  prefix = "",
+  suffix = "",
+  decimals = 0,
+  durationMs = 1600,
+  class: className,
+} = Astro.props;
+
+const formatted =
+  decimals > 0 ? value.toFixed(decimals) : String(Math.floor(value));
+---
+
+<span
+  data-count-up
+  data-value={value}
+  data-decimals={decimals}
+  data-duration={durationMs}
+  class={cn("[font-variant-numeric:tabular-nums]", className)}
+>
+  {prefix}<span data-count-value>{formatted}</span>{suffix}
+</span>
+
+<script>
+  function initCountUps() {
+    const nodes = document.querySelectorAll<HTMLElement>("[data-count-up]");
+    if (nodes.length === 0) return;
+
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+
+          const el = entry.target as HTMLElement;
+          obs.unobserve(el);
+
+          const output = el.querySelector<HTMLElement>("[data-count-value]");
+          if (!output) continue;
+
+          const value = Number(el.dataset.value ?? "0");
+          const decimals = Number(el.dataset.decimals ?? "0");
+          const duration = Number(el.dataset.duration ?? "1600");
+
+          const format = (n: number) =>
+            decimals > 0 ? n.toFixed(decimals) : String(Math.floor(n));
+
+          if (prefersReduced) {
+            output.textContent = format(value);
+            continue;
+          }
+
+          const start = performance.now();
+          const tick = (now: number) => {
+            const progress = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            output.textContent = format(value * eased);
+            if (progress < 1) requestAnimationFrame(tick);
+            else output.textContent = format(value);
+          };
+
+          output.textContent = format(0);
+          requestAnimationFrame(tick);
+        }
+      },
+      { threshold: 0.4 },
+    );
+
+    nodes.forEach((el) => {
+      if (el.dataset.counterReady === "true") return;
+      el.dataset.counterReady = "true";
+      observer.observe(el);
+    });
+  }
+
+  initCountUps();
+  document.addEventListener("astro:page-load", initCountUps);
+</script>

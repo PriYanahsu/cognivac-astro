@@ -21,7 +21,14 @@ interface Props {
   image?: string;
   size?: number;
   shape?: "circle" | "rounded";
-  tone?: "dark" | "light";
+  /**
+   * Which surface it sits on — decides the fallback's colours.
+   *
+   * `muted` is for a STACK of monograms on a dark band. One avatar on the
+   * brand gradient is an accent; five overlapping is a row of saturated blue
+   * discs that pulls the eye off the sentence beside it.
+   */
+  tone?: "dark" | "light" | "muted";
   class?: string;
 }
 
@@ -42,9 +49,11 @@ const initials = initialsOf(name);
   class={cn(
     "relative inline-flex shrink-0 items-center justify-center overflow-hidden",
     radius,
-    tone === "dark"
-      ? "bg-linear-to-br from-accent/85 to-indigo text-white ring-1 ring-white/15"
-      : "bg-linear-to-br from-lavender to-border text-foreground ring-1 ring-border",
+    tone === "dark" &&
+      "bg-linear-to-br from-accent/85 to-indigo text-white ring-1 ring-white/15",
+    tone === "light" &&
+      "bg-linear-to-br from-lavender to-border text-foreground ring-1 ring-border",
+    tone === "muted" && "bg-white/9 text-white/80 ring-1 ring-white/15",
     className,
   )}
   style={`width:${size}px;height:${size}px`}

@@ -14,3 +14,33 @@ export const TESTIMONIALS_CONTENT = {
   description:
     "Outcomes are covered above. These are about how the engagement actually ran.",
 } as const;
+
+/**
+ * ⚠️ EVERY NAME IN THIS LIST IS A PUBLIC CLAIM ABOUT A THIRD PARTY.
+ *
+ * A strip like this is read as "these companies are our clients". Naming a
+ * company that is not one is false advertising and a trademark problem, and
+ * it is the single easiest thing on a services site for a prospect to check.
+ * Before this ships, every entry has to be either a real client or a real,
+ * documented partnership — and if it is the latter, use the partner wording
+ * below rather than the customer wording.
+ *
+ * The names render as text, not as logo files. Reproducing someone's mark
+ * needs their actual asset and usually their brand guidelines; an approximated
+ * logo is worse than a wordmark. Drop real SVGs into /public/images/partners
+ * and extend this list with an `image` when you have permission to use them.
+ */
+export const TRUST_STRIP = {
+  /** Customer wording. Swap for the partner line if that is the true claim. */
+  label: "Trusted by innovative teams worldwide",
+  /** e.g. "Certified on the platforms our clients already run" */
+  partnerLabel: "Built on the platforms our clients already run",
+  names: [
+    "Google Cloud",
+    "Microsoft",
+    "Amazon",
+    "Meta",
+    "IBM",
+    "NVIDIA",
+  ],
+} as const;

@@ -1,0 +1,176 @@
+---
+import { ArrowUpRight, MapPin, Plus } from "@lucide/astro";
+import { NAV_ROUTES } from "@/constants/site";
+import type { Role } from "../constants";
+
+/**
+ * Port of features/careers/components/role-list.tsx.
+ * One panel open at a time. Height animation is CSS grid-template-rows.
+ */
+interface Props {
+  roles: readonly Role[];
+}
+
+const { roles } = Astro.props;
+---
+
+<div data-role-list class="mt-8 space-y-3 sm:mt-12 sm:space-y-4">
+  {
+    roles.map((role, i) => {
+      const panelId = `role-panel-${role.id}`;
+
+      return (
+        <div
+          data-role-item
+          data-role-id={role.id}
+          data-state="closed"
+          data-reveal
+          data-reveal-margin="-10% 0px"
+          style={`--reveal-y:18px;--reveal-duration:0.5s;--reveal-delay:${0.06 * i}s`}
+          class="overflow-hidden rounded-md border transition-colors duration-300 data-[state=open]:border-accent/50 data-[state=open]:bg-white/[0.07] data-[state=closed]:border-white/12 data-[state=closed]:bg-white/[0.04] data-[state=closed]:hover:border-white/25"
+        >
+          <button
+            type="button"
+            data-role-trigger
+            aria-expanded="false"
+            aria-controls={panelId}
+            class="flex w-full items-start justify-between gap-4 p-5 text-left sm:p-8"
+          >
+            <div class="min-w-0">
+              <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-teal sm:text-[12px]">
+                {role.discipline}
+              </p>
+              <h3 class="mt-2 text-[18px] font-bold leading-tight tracking-[-0.02em] text-white sm:mt-2.5 sm:text-[23px]">
+                {role.title}
+              </h3>
+              <p class="mt-2 max-w-[62ch] text-[13.5px] leading-[1.55] text-white/70 sm:mt-2.5 sm:text-[15.5px] sm:leading-[1.6]">
+                {role.summary}
+              </p>
+              <p class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[12.5px] text-white/55 sm:mt-4 sm:gap-x-4 sm:text-[13.5px]">
+                <span class="flex items-center gap-1.5">
+                  <MapPin class="h-3.5 w-3.5" />
+                  {role.location}
+                </span>
+                <span>{role.type}</span>
+              </p>
+            </div>
+
+            <span
+              aria-hidden="true"
+              class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-colors duration-300 sm:h-10 sm:w-10 group-data-[state=open]:border-accent group-data-[state=open]:bg-accent group-data-[state=open]:text-white border-white/25 text-white data-[open]:border-accent data-[open]:bg-accent data-[open]:text-white"
+              data-role-icon
+            >
+              <Plus
+                data-role-plus
+                class="h-4 w-4 transition-transform duration-300 ease-out"
+              />
+            </span>
+          </button>
+
+          <div
+            id={panelId}
+            data-role-panel
+            class="grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-[320ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+          >
+            <div class="min-h-0 overflow-hidden">
+              <div class="border-t border-white/10 px-5 pb-5 pt-5 sm:px-8 sm:pb-8 sm:pt-6">
+                <div class="grid gap-5 sm:grid-cols-2 sm:gap-8">
+                  <div>
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/45 sm:text-[12px]">
+                      What you own
+                    </p>
+                    <ul class="mt-3 space-y-2">
+                      {role.owns.map((line) => (
+                        <li class="flex gap-2.5 text-[13.5px] leading-[1.55] text-white/75 sm:text-[14.5px]">
+                          <span class="mt-1.75 h-1.5 w-1.5 shrink-0 rounded-full bg-teal" />
+                          {line}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div>
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/45 sm:text-[12px]">
+                      What we look for
+                    </p>
+                    <ul class="mt-3 space-y-2">
+                      {role.looking.map((line) => (
+                        <li class="flex gap-2.5 text-[13.5px] leading-[1.55] text-white/75 sm:text-[14.5px]">
+                          <span class="mt-1.75 h-1.5 w-1.5 shrink-0 rounded-full bg-accent-on-dark" />
+                          {line}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <a
+                  href={`${NAV_ROUTES.contact}?role=${role.id}`}
+                  class="mt-6 inline-flex h-11 items-center gap-1.5 rounded-full bg-accent px-5 text-[13.5px] font-semibold text-white transition-colors hover:bg-indigo sm:mt-7"
+                >
+                  Apply for this role
+                  <ArrowUpRight class="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    })
+  }
+</div>
+
+<script>
+  function initRoleLists() {
+    document.querySelectorAll<HTMLElement>("[data-role-list]").forEach((root) => {
+      if (root.dataset.roleReady === "true") return;
+      root.dataset.roleReady = "true";
+
+      const items = Array.from(
+        root.querySelectorAll<HTMLElement>("[data-role-item]"),
+      );
+
+      const setOpen = (id: string | null) => {
+        items.forEach((item) => {
+          const open = item.dataset.roleId === id;
+          item.dataset.state = open ? "open" : "closed";
+          const trigger = item.querySelector<HTMLButtonElement>(
+            "[data-role-trigger]",
+          );
+          const panel = item.querySelector<HTMLElement>("[data-role-panel]");
+          const icon = item.querySelector<HTMLElement>("[data-role-icon]");
+          const plus = item.querySelector<HTMLElement>("[data-role-plus]");
+          trigger?.setAttribute("aria-expanded", open ? "true" : "false");
+          if (panel) {
+            panel.classList.toggle("grid-rows-[1fr]", open);
+            panel.classList.toggle("opacity-100", open);
+            panel.classList.toggle("grid-rows-[0fr]", !open);
+            panel.classList.toggle("opacity-0", !open);
+          }
+          if (icon) {
+            icon.classList.toggle("border-accent", open);
+            icon.classList.toggle("bg-accent", open);
+            icon.classList.toggle("text-white", open);
+            icon.classList.toggle("border-white/25", !open);
+          }
+          plus?.classList.toggle("rotate-45", open);
+        });
+      };
+
+      root.addEventListener("click", (event) => {
+        const trigger = (event.target as HTMLElement).closest<HTMLButtonElement>(
+          "[data-role-trigger]",
+        );
+        if (!trigger || !root.contains(trigger)) return;
+        const item = trigger.closest<HTMLElement>("[data-role-item]");
+        if (!item) return;
+        const id = item.dataset.roleId ?? null;
+        const wasOpen = item.dataset.state === "open";
+        setOpen(wasOpen ? null : id);
+      });
+    });
+  }
+
+  initRoleLists();
+  document.addEventListener("astro:page-load", initRoleLists);
+</script>

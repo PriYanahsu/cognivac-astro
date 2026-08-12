@@ -257,7 +257,7 @@ const paddedTotal = String(TOTAL).padStart(2, "0");
 </section>
 
 <script>
-  const DWELL = 5.2;
+  const DWELL = 5;
   const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
   const TOTAL = 5;
   const LAST = TOTAL - 1;
@@ -274,8 +274,6 @@ const paddedTotal = String(TOTAL).padStart(2, "0");
     "text-[11px] font-semibold leading-tight tracking-[-0.01em] transition-colors duration-500 sm:text-[14px] text-muted-light group-hover:text-muted";
   const ARROW_ON =
     "flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-white";
-  const ARROW_OFF =
-    "flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors duration-300 cursor-default text-muted-light opacity-45";
 
   function initProcess() {
     const section = document.querySelector<HTMLElement>("[data-process]");
@@ -303,12 +301,11 @@ const paddedTotal = String(TOTAL).padStart(2, "0");
     let inView = false;
     let timer = 0;
 
-    const playing = () =>
-      inView && !locked && !hovered && !reduceMotion && active < LAST;
+    const playing = () => inView && !locked && !hovered && !reduceMotion;
 
     const paintFill = () => {
       if (!fill) return;
-      const value = playing() ? (active + 1) / LAST : active / LAST;
+      const value = Math.min(1, playing() ? (active + 1) / LAST : active / LAST);
       fill.style.transition = playing()
         ? `transform ${DWELL}s linear`
         : reduceMotion
@@ -357,12 +354,12 @@ const paddedTotal = String(TOTAL).padStart(2, "0");
       }
 
       if (prev) {
-        prev.disabled = active === 0;
-        prev.className = active === 0 ? ARROW_OFF : ARROW_ON;
+        prev.disabled = false;
+        prev.className = ARROW_ON;
       }
       if (next) {
-        next.disabled = active === LAST;
-        next.className = active === LAST ? ARROW_OFF : ARROW_ON;
+        next.disabled = false;
+        next.className = ARROW_ON;
       }
 
       paintFill();
@@ -372,14 +369,20 @@ const paddedTotal = String(TOTAL).padStart(2, "0");
       window.clearTimeout(timer);
       if (!playing()) return;
       timer = window.setTimeout(() => {
-        active += 1;
+        const nextIndex = (active + 1) % TOTAL;
+        if (nextIndex === 0 && fill) {
+          fill.style.transition = "none";
+          fill.style.transform = "scaleX(0)";
+          void fill.offsetWidth;
+        }
+        active = nextIndex;
         paint();
         schedule();
       }, DWELL * 1000);
     };
 
     const select = (index: number) => {
-      active = Math.max(0, Math.min(LAST, index));
+      active = ((index % TOTAL) + TOTAL) % TOTAL;
       locked = true;
       window.clearTimeout(timer);
       paint();
@@ -411,6 +414,16 @@ const paddedTotal = String(TOTAL).padStart(2, "0");
       paintFill();
       schedule();
     });
+    section.addEventListener(
+      "pointerdown",
+      () => {
+        locked = true;
+        window.clearTimeout(timer);
+        paintFill();
+      },
+      { capture: true },
+    );
+
     section.addEventListener(
       "focusin",
       () => {

@@ -11,6 +11,8 @@ interface Props {
   type?: "button" | "submit";
   ariaLabel?: string;
   id?: string;
+  /** Button form only — a link cannot be disabled. */
+  disabled?: boolean;
 }
 
 const SIZE_CLASSES = {
@@ -27,12 +29,14 @@ const {
   type = "button",
   ariaLabel,
   id,
+  disabled = false,
 } = Astro.props;
 
 const classes = cn(
   "inline-flex items-center justify-center gap-2 transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2",
   size === "sm" ? "shadow-none" : "shadow-glow hover:bg-ink hover:shadow-none",
   SIZE_CLASSES[size],
+  disabled && "cursor-not-allowed opacity-60 hover:bg-transparent",
   className,
 );
 ---
@@ -44,7 +48,13 @@ const classes = cn(
       {showArrow && <ArrowRight class="h-4 w-4" />}
     </a>
   ) : (
-    <button type={type} class={classes} aria-label={ariaLabel} id={id}>
+    <button
+      type={type}
+      class={classes}
+      aria-label={ariaLabel}
+      id={id}
+      disabled={disabled}
+    >
       <slot />
       {showArrow && <ArrowRight class="h-4 w-4" />}
     </button>

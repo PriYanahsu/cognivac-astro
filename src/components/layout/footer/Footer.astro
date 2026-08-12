@@ -148,15 +148,15 @@ const year = new Date().getFullYear();
           ] as const
         ).map((column) => (
           <div>
-            <p class="mb-4 text-mono-eyebrow uppercase tracking-[0.12em] text-white/50">
+            <p class="mb-4 text-eyebrow uppercase tracking-[0.12em] text-white/50">
               {column.title}
             </p>
-            <ul class="space-y-3">
+            <ul class="space-y-0.5">
               {column.links.map((link) => (
                 <li>
                   <a
                     href={link.href}
-                    class="group inline-flex items-center gap-1 text-body-md text-white/75 transition-colors hover:text-white"
+                    class="group inline-flex min-h-9 items-center gap-1 text-body-md text-white/75 transition-colors hover:text-white sm:min-h-0 sm:py-1"
                   >
                     {link.label}
                     <ArrowUpRight class="h-3 w-3 opacity-0 transition-[opacity,transform] duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-60" />
@@ -168,7 +168,7 @@ const year = new Date().getFullYear();
         ))
       }
       <div class="col-span-2 sm:col-span-1">
-        <p class="mb-4 text-mono-eyebrow uppercase tracking-[0.12em] text-white/50">
+        <p class="mb-4 text-eyebrow uppercase tracking-[0.12em] text-white/50">
           Start a project
         </p>
         <p class="mb-4 max-w-[28ch] text-body-md text-white/65">
@@ -193,13 +193,13 @@ const year = new Date().getFullYear();
       </p>
 
       <div class="flex flex-wrap items-center gap-x-5 gap-y-3">
-        <ul class="flex flex-wrap items-center gap-x-5 gap-y-2">
+        <ul class="flex flex-wrap items-center gap-x-5">
           {
             LEGAL.map((link) => (
               <li>
                 <a
                   href={link.href}
-                  class="text-body-sm text-white/50 transition-colors hover:text-white/85"
+                  class="inline-flex min-h-9 items-center text-body-sm text-white/50 transition-colors hover:text-white/85 sm:min-h-0"
                 >
                   {link.label}
                 </a>

@@ -1,0 +1,103 @@
+---
+import SectionLabel from "@/components/shared/SectionLabel.astro";
+import { cn } from "@/lib/utils";
+
+/**
+ * Port of components/shared/section-intro.tsx.
+ *
+ * The section header for every route outside the home scroll. Framer stagger
+ * (0.09s between children, 0.04s lead-in) is a `data-reveal-stagger` container.
+ */
+interface Props {
+  label?: string;
+  title: string;
+  /** Set when the surrounding `<section>` points at this heading with
+   *  `aria-labelledby` — without it that reference dangles. */
+  titleId?: string;
+  description?: string;
+  /** `dark` is the near-black chapter break; `light` is canvas or card. */
+  tone?: "light" | "dark";
+  align?: "left" | "center";
+  class?: string;
+  titleClass?: string;
+  descriptionClass?: string;
+}
+
+const {
+  label,
+  title,
+  titleId,
+  description,
+  tone = "light",
+  align = "left",
+  class: className,
+  titleClass,
+  descriptionClass,
+} = Astro.props;
+
+const dark = tone === "dark";
+---
+
+<div
+  data-reveal-stagger
+  data-reveal-margin="-15% 0px -10% 0px"
+  data-stagger="0.09"
+  data-delay-children="0.04"
+  style="--reveal-item-y:16px;--reveal-item-duration:0.55s"
+  class={cn(
+    align === "center" ? "mx-auto max-w-3xl text-center" : "max-w-3xl",
+    className,
+  )}
+>
+  {
+    label && (
+      <div data-reveal-item>
+        {/* Colour only. Size, weight and tracking belong to `text-eyebrow`,
+            which ramps at `sm` on its own — restating them per component is
+            how the eyebrow ended up a different size on every page. */}
+        <SectionLabel class={cn("mb-0", dark && "text-accent-on-dark")}>
+          {label}
+        </SectionLabel>
+      </div>
+    )
+  }
+
+  <h2
+    id={titleId}
+    data-reveal-item
+    class={cn(
+      "font-bold tracking-[-0.02em]",
+      dark
+        ? "text-[clamp(1.625rem,3.5vw+0.75rem,3.5rem)] leading-[1.08] text-white"
+        : "text-section text-foreground",
+      label ? "mt-3 sm:mt-5" : "mt-0",
+      titleClass,
+    )}
+  >
+    {title}
+  </h2>
+
+  {
+    description && (
+      <p
+        data-reveal-item
+        class={cn(
+          "lede mt-2.5 sm:mt-4",
+          dark && "text-white/75",
+          align === "center" && "mx-auto",
+          descriptionClass,
+        )}
+      >
+        {description}
+      </p>
+    )
+  }
+
+  {
+    Astro.slots.has("default") && (
+      <div data-reveal-item>
+        <slot />
+      </div>
+    )
+  }
+</div>

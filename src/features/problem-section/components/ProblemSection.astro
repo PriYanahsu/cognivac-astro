@@ -17,11 +17,23 @@ import { PROBLEM_CONTENT, PROBLEM_POINTS } from "../constants";
 const total = String(PROBLEM_POINTS.length).padStart(2, "0");
 ---
 
-<section class="relative bg-lavender/30 py-12 sm:py-20 lg:py-28">
-  <Container>
+<section class="relative overflow-hidden bg-lavender/30 py-12 sm:py-20 lg:py-28">
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-0 bg-cover bg-center opacity-[0.22]"
+    style="background-image: url(/images/problem-section-bg.png)"
+  >
+  </div>
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-0 bg-linear-to-b from-lavender/80 via-lavender/55 to-lavender/80"
+  >
+  </div>
+
+  <Container class="relative z-10">
     <div class="grid items-start gap-6 sm:gap-10 lg:grid-cols-12 lg:gap-16">
       <FadeIn class="lg:sticky lg:top-28 lg:col-span-5 lg:self-start">
-        <SectionLabel class="mb-0 text-[11px] tracking-[0.08em] sm:text-sm">
+        <SectionLabel class="mb-0">
           {PROBLEM_CONTENT.label}
         </SectionLabel>
         {/* Sized against the 5-column sidebar, not the viewport: `text-section`

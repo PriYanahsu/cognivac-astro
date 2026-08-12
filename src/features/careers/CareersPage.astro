@@ -1,87 +1,16 @@
 ---
-import { ArrowUpRight, MapPin } from "@lucide/astro";
 import JsonLd from "@/lib/seo/JsonLd.astro";
 import { breadcrumbSchema } from "@/lib/seo";
 import PageHero from "@/components/shared/PageHero.astro";
 import Container from "@/components/shared/Container.astro";
-import SectionLabel from "@/components/shared/SectionLabel.astro";
+import SectionIntro from "@/components/shared/SectionIntro.astro";
 import FadeIn from "@/components/animations/FadeIn.astro";
 import CtaSection from "@/features/cta-section/components/CtaSection.astro";
 import { NAV_ROUTES } from "@/constants/site";
+import RoleList from "./components/RoleList.astro";
+import { BENEFITS, ROLES, WHAT_ITS_LIKE } from "./constants";
 
 /** Port of features/careers/index.tsx. */
-
-const ROLES = [
-  {
-    id: "ml-engineer",
-    title: "Senior ML Engineer",
-    location: "Remote / San Francisco",
-    type: "Full-time",
-    discipline: "Applied ML",
-    summary:
-      "Own model design, evaluation, and production deployment for client engagements across risk, forecasting, and document intelligence.",
-  },
-  {
-    id: "frontend",
-    title: "Staff Frontend Engineer",
-    location: "Remote / New York",
-    type: "Full-time",
-    discipline: "Product Engineering",
-    summary:
-      "Lead the interface layer on enterprise platforms — design systems, accessibility, and the performance budget that keeps them fast.",
-  },
-  {
-    id: "architect",
-    title: "AI Solutions Architect",
-    location: "Remote",
-    type: "Full-time",
-    discipline: "Architecture",
-    summary:
-      "Sit with clients in discovery, shape the technical approach, and stay accountable for it through delivery.",
-  },
-  {
-    id: "platform",
-    title: "Platform / DevOps Engineer",
-    location: "Remote / Bengaluru",
-    type: "Full-time",
-    discipline: "Infrastructure",
-    summary:
-      "Build the deployment, observability, and cost controls that let small teams run production systems for large clients.",
-  },
-];
-
-const WHAT_ITS_LIKE = [
-  {
-    id: "ownership",
-    title: "You own systems, not tickets",
-    description:
-      "Engineers here talk directly to the client, shape the approach, and stay with the system after launch. No layer of translation in between.",
-    art: "linear-gradient(135deg,#1e4fd8,#163db0)",
-  },
-  {
-    id: "variety",
-    title: "New domain every few quarters",
-    description:
-      "Services work means fintech risk one year and plant-floor vision the next. The engineering compounds; the boredom does not set in.",
-    art: "linear-gradient(135deg,#3f7bb0,#bfe3ff)",
-  },
-  {
-    id: "standards",
-    title: "Standards are not negotiable",
-    description:
-      "Tests, docs, and reviews are part of delivery. You will not be asked to ship something you would be embarrassed to hand over.",
-    art: "linear-gradient(135deg,#1a1a1c,#3a3a40)",
-  },
-];
-
-const BENEFITS = [
-  "Remote-first with optional hubs",
-  "Annual learning and conference budget",
-  "Hardware of your choice",
-  "Paid certification for cloud and ML tracks",
-  "Flexible hours across time zones",
-  "Health cover for you and dependents",
-];
 ---
 
 <JsonLd
@@ -98,37 +27,29 @@ const BENEFITS = [
   breadcrumbs={[{ label: "Careers" }]}
   primaryCta={{ label: "See open roles", href: "#open-roles" }}
   secondaryCta={{ label: "Ask us anything", href: NAV_ROUTES.contact }}
-  highlights={["Remote-first", "4 open roles", "No take-home marathons"]}
+  highlights={["Remote-first", `${ROLES.length} open roles`, "No take-home marathons"]}
 />
 
-{/* What it's like */}
 <section class="bg-background section-padding">
   <Container>
-    <FadeIn>
-      <div class="max-w-3xl">
-        <SectionLabel class="mb-0">
-          What It Is Like
-        </SectionLabel>
-        <h2 class="text-section stack-sm max-w-[24ch] text-foreground">
-          Client work, without the agency compromises
-        </h2>
-      </div>
-    </FadeIn>
+    <SectionIntro
+      label="What It Is Like"
+      title="Client work, without the agency compromises"
+      titleClass="max-w-[24ch]"
+    />
 
     <div class="card-grid md:grid-cols-3">
       {
         WHAT_ITS_LIKE.map((item, i) => (
-          <FadeIn delay={0.08 * (i + 1)}>
-            <div class="flex h-full flex-col overflow-hidden rounded-md border border-border bg-card sm:rounded-md">
+          <FadeIn delay={0.08 * (i + 1)} class="h-full">
+            <div class="group flex h-full flex-col overflow-hidden rounded-md border border-border bg-card transition-[border-color,box-shadow] duration-300 hover:border-accent/40 hover:shadow-soft">
               <div
-                class="h-[120px] w-full sm:h-[140px]"
+                class="h-22 w-full transition-transform duration-500 ease-out group-hover:scale-105 sm:h-35"
                 style={`background:${item.art}`}
               />
-              <div class="flex flex-1 flex-col p-6 sm:p-7">
-                <h3 class="text-heading-md text-foreground">{item.title}</h3>
-                <p class="stack-sm copy-md">
-                  {item.description}
-                </p>
+              <div class="flex flex-1 flex-col p-5 sm:p-7">
+                <h3 class="text-card-title text-foreground">{item.title}</h3>
+                <p class="mt-2.5 copy-md sm:mt-3">{item.description}</p>
               </div>
             </div>
           </FadeIn>
@@ -138,74 +59,24 @@ const BENEFITS = [
   </Container>
 </section>
 
-{/* Open roles — dark band so it reads as the page's main event */}
 <section
   id="open-roles"
   class="relative scroll-mt-28 overflow-hidden bg-[#1a1a1c] section-padding text-white"
 >
   <div class="dot-grid pointer-events-none absolute inset-0 opacity-60"></div>
   <Container class="relative z-10">
-    <FadeIn>
-      <div class="max-w-3xl">
-        <SectionLabel
-          tone="accent"
-          class="mb-0"
-        >
-          Open Roles
-        </SectionLabel>
-        <h2
-          class="mt-5 text-[clamp(1.625rem,3.5vw+0.75rem,3.25rem)] font-bold leading-[1.1] tracking-[-0.02em] text-white"
-        >
-          Four roles open right now
-        </h2>
-        <p
-          class="mt-4 max-w-[52ch] text-[16px] leading-[1.6] text-white/75 sm:text-[18px]"
-        >
-          Two conversations and one paired working session. No unpaid take-home
-          projects, and we tell you where you stand either way.
-        </p>
-      </div>
-    </FadeIn>
+    <SectionIntro
+      tone="dark"
+      label="Open Roles"
+      title={`${ROLES.length} roles open right now`}
+      description="Two conversations and one paired working session. No unpaid take-home projects, and we tell you where you stand either way."
+      descriptionClass="max-w-[52ch]"
+    />
 
-    <div class="mt-10 space-y-4 sm:mt-12">
-      {
-        ROLES.map((role, i) => (
-          <FadeIn delay={0.06 * (i + 1)}>
-            <a
-              href={NAV_ROUTES.contact}
-              class="group flex flex-col gap-5 rounded-md border border-white/12 bg-white/[0.04] p-6 transition-colors duration-300 hover:border-accent/50 hover:bg-white/[0.07] sm:rounded-md sm:p-8 lg:flex-row lg:items-center lg:justify-between"
-            >
-              <div class="min-w-0">
-                <p class="text-[12px] font-semibold uppercase tracking-[0.16em] text-teal">
-                  {role.discipline}
-                </p>
-                <h3 class="mt-2.5 text-[20px] font-bold leading-tight text-white sm:text-[23px]">
-                  {role.title}
-                </h3>
-                <p class="mt-2.5 max-w-[62ch] text-[14.5px] leading-[1.6] text-white/70 sm:text-[15.5px]">
-                  {role.summary}
-                </p>
-                <p class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[13.5px] text-white/55">
-                  <span class="flex items-center gap-1.5">
-                    <MapPin class="h-3.5 w-3.5" />
-                    {role.location}
-                  </span>
-                  <span>{role.type}</span>
-                </p>
-              </div>
-
-              <span class="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-white/25 px-5 py-2.5 text-[13.5px] font-semibold text-white transition-colors group-hover:border-accent group-hover:bg-accent">
-                Apply
-                <ArrowUpRight class="h-4 w-4" />
-              </span>
-            </a>
-          </FadeIn>
-        ))
-      }
-    </div>
+    <RoleList roles={ROLES} />
 
     <FadeIn delay={0.2}>
-      <p class="mt-10 text-[15px] text-white/60">
+      <p class="mt-8 text-[14px] leading-[1.6] text-white/60 sm:mt-10 sm:text-[15px]">
         Nothing matching your skills?{" "}
         <a
           href={NAV_ROUTES.contact}
@@ -219,27 +90,21 @@ const BENEFITS = [
   </Container>
 </section>
 
-{/* Benefits */}
 <section class="border-b border-border bg-card section-padding">
   <Container>
-    <FadeIn>
-      <div class="max-w-3xl">
-        <SectionLabel class="mb-0">
-          The Practical Part
-        </SectionLabel>
-        <h2 class="text-section stack-sm max-w-[20ch] text-foreground">
-          What we actually provide
-        </h2>
-      </div>
-    </FadeIn>
+    <SectionIntro
+      label="The Practical Part"
+      title="What we actually provide"
+      titleClass="max-w-[20ch]"
+    />
 
-    <div class="mt-10 grid gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="mt-7 grid gap-x-8 gap-y-3 sm:mt-10 sm:grid-cols-2 sm:gap-y-4 lg:grid-cols-3">
       {
         BENEFITS.map((benefit, i) => (
           <FadeIn delay={0.04 * (i + 1)}>
-            <div class="flex gap-3 border-t border-border pt-4">
-              <span class="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-              <p class="text-[15.5px] leading-[1.6] text-foreground/80">
+            <div class="flex gap-3 border-t border-border pt-3 sm:pt-4">
+              <span class="mt-2.25 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+              <p class="text-[14.5px] leading-[1.55] text-foreground/80 sm:text-[15.5px] sm:leading-[1.6]">
                 {benefit}
               </p>
             </div>
