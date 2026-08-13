@@ -11,7 +11,7 @@ const ICONS = { ShieldCheck, Database, KeyRound, ScrollText } as const;
 ---
 
 <section
-  class="relative overflow-hidden bg-[#1a1a1c] section-padding text-white"
+  class="relative overflow-hidden bg-[#0f0f12] section-padding text-white"
 >
   <Container class="relative z-10">
     <FadeIn>
@@ -27,7 +27,7 @@ const ICONS = { ShieldCheck, Database, KeyRound, ScrollText } as const;
         >
           {SECURITY_CONTENT.title}
         </h2>
-        <p class="mx-auto stack-md lede max-w-[640px] text-white/75">
+        <p class="mx-auto stack-md lede max-w-[640px] text-white/85">
           {SECURITY_CONTENT.description}
         </p>
       </div>
@@ -51,7 +51,7 @@ const ICONS = { ShieldCheck, Database, KeyRound, ScrollText } as const;
                   {pillar.points.map((point) => (
                     <li class="flex gap-2.5">
                       <Check class="mt-0.5 h-4 w-4 shrink-0 text-teal" />
-                      <span class="text-[14px] leading-[1.55] text-white/70">
+                      <span class="text-[14px] leading-[1.55] text-white/80">
                         {point}
                       </span>
                     </li>

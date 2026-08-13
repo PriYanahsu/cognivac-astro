@@ -10,13 +10,13 @@ import { CTA_CONTENT } from "../constants";
 /** Port of features/cta-section/components/cta-section.tsx. */
 ---
 
-<section class="bg-background section-padding">
+<section class="border-t border-border bg-card section-padding">
   <Container>
     <FadeIn>
       {/* Inset dark card rather than a full-bleed band — keeps this
           distinct from the gradient-dark footer directly below. */}
       <div
-        class="dot-grid relative overflow-hidden rounded-lg bg-[#1a1a1c] px-5 py-10 text-center sm:px-10 sm:py-16 lg:px-16 lg:py-20"
+        class="dot-grid relative overflow-hidden rounded-lg bg-[#0f0f12] px-5 py-10 text-center sm:px-10 sm:py-16 lg:px-16 lg:py-20"
       >
         <div class="relative z-10 mx-auto max-w-3xl">
           <SectionLabel
@@ -31,7 +31,7 @@ import { CTA_CONTENT } from "../constants";
             {CTA_CONTENT.title}
           </h2>
           <p
-            class="mx-auto mt-3.5 max-w-[56ch] text-[14.5px] leading-[1.55] text-white/75 sm:mt-5 sm:text-[18px] sm:leading-[1.6]"
+            class="mx-auto mt-3.5 max-w-[56ch] text-[14.5px] leading-[1.55] text-white/85 sm:mt-5 sm:text-[18px] sm:leading-[1.6]"
           >
             {CTA_CONTENT.description}
           </p>
@@ -63,7 +63,7 @@ import { CTA_CONTENT } from "../constants";
               CTA_CONTENT.reassurances.map((item) => (
                 <li class="flex items-start gap-2 sm:items-center">
                   <Check class="mt-0.5 h-4 w-4 shrink-0 text-teal sm:mt-0" />
-                  <span class="text-[13.5px] leading-snug text-white/70 sm:text-[14px]">
+                  <span class="text-[13.5px] leading-snug text-white/80 sm:text-[14px]">
                     {item}
                   </span>
                 </li>

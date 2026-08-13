@@ -24,11 +24,14 @@ import { FAQS, SERVICES } from "./constants/content";
  * the five sections that previously filled that gap are parked below.
  *
  * Background rhythm is preserved — no two adjacent sections share a surface,
- * and the three dark bands still land on every third section:
+ * and each boundary is a visible step in value, not a 3-point drift:
  *   hero #FAFAFA (+ dark proof strip flush to viewport floor) · problem lavender
- *   · SERVICES DARK · selected work background · process card · PLATFORM DARK
- *   · stats card · why background · SECURITY DARK · industries background
- *   · testimonials card · faq lavender · cta background · footer gradient-dark
+ *   · SERVICES DARK · selected work background · process card · FOUNDERS DARK
+ *   · testimonials lavender · faq background · cta card · footer gradient-dark
+ *
+ * The tail (8–10) steps back up out of the founders band one value at a time —
+ * full lavender, then cream, then white — so the dark CTA panel lands on the
+ * lightest surface on the page and the footer's dark closes against white.
  */
 ---
 
@@ -79,13 +82,6 @@ import { FAQS, SERVICES } from "./constants/content";
     then the bench behind them, handed off to /team. */}
 <FoundersSection />
 
-{/* The five sections below have no wireframe slot; they filled this gap
-    before slot 7 existed. */}
-{/* <PlatformSection />
-<StatsBand />
-<WhyCognivac />
-<SecuritySection />
-<IndustriesShowcase /> */}
 
 {/* Wireframe 8 · Testimonials */}
 <TestimonialsSection />

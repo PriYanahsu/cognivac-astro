@@ -22,7 +22,7 @@ export const PLATFORM_LAYERS = [
     subtitle: "Pipelines & Quality",
     description:
       "Ingestion, lineage, and validation so what reaches the model is what you think it is.",
-    gradient: "from-[#3a3a3e] to-[#1a1a1c]",
+    gradient: "from-[#232327] to-[#0f0f12]",
   },
   {
     id: "workflow",

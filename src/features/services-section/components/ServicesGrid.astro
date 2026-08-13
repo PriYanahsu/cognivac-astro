@@ -42,18 +42,7 @@ const RING_SLOTS = CARD_COUNT * Math.max(1, Math.ceil(10 / CARD_COUNT));
 const initialIndex = Math.min(2, CARD_COUNT - 1);
 ---
 
-<section class="relative overflow-hidden bg-[#1a1a1c] py-12 text-white sm:py-16 lg:py-24">
-  <div
-    aria-hidden="true"
-    class="pointer-events-none absolute inset-0 bg-cover bg-center opacity-45"
-    style="background-image: url(/images/services-section-bg.png)"
-  >
-  </div>
-  <div
-    aria-hidden="true"
-    class="pointer-events-none absolute inset-0 bg-linear-to-b from-[#1a1a1c]/70 via-[#1a1a1c]/40 to-[#1a1a1c]/85"
-  >
-  </div>
+<section class="relative overflow-hidden bg-[#0f0f12] py-12 text-white sm:py-16 lg:py-24">
   <Container class="relative z-10 w-full">
     <div
       data-reveal-stagger
@@ -79,7 +68,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
       </h2>
       <p
         data-reveal-item
-        class="mx-auto stack-sm lede max-w-[640px] px-1 text-white/75 sm:stack-md"
+        class="mx-auto stack-sm lede max-w-[640px] px-1 text-white/85 sm:stack-md"
       >
         {SERVICES_HEADER.description}
       </p>
@@ -194,7 +183,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
               </h3>
             </div>
 
-            <p class="m-0 mt-3 text-[13.5px] leading-normal text-[#0b0b0f]/72">
+            <p class="m-0 mt-3 text-[13.5px] leading-normal text-[#0b0b0f]/85">
               {service.description}
             </p>
 
@@ -204,7 +193,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
                   <b class="block text-[15px] font-semibold tracking-[-0.02em] text-[#0b0b0f]">
                     {stat.value}
                   </b>
-                  <span class="mt-0.5 block text-[10.5px] leading-snug text-[#0b0b0f]/55">
+                  <span class="mt-0.5 block text-[10.5px] leading-snug text-[#0b0b0f]/70">
                     {stat.label}
                   </span>
                 </div>
@@ -277,7 +266,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
                       {service.title}
                     </h3>
                   </div>
-                  <p class="m-0 mb-3 line-clamp-2 max-w-[30ch] text-[12.5px] leading-[1.5] text-[#0b0b0f]/72 sm:mb-5 sm:line-clamp-3 sm:max-w-none sm:text-[14.5px] sm:leading-[1.55] md:text-[15.5px]">
+                  <p class="m-0 mb-3 line-clamp-2 max-w-[30ch] text-[12.5px] leading-[1.5] text-[#0b0b0f]/85 sm:mb-5 sm:line-clamp-3 sm:max-w-none sm:text-[14.5px] sm:leading-[1.55] md:text-[15.5px]">
                     {service.description}
                   </p>
                   <div class="mb-2 hidden gap-5 border-t border-black/10 pt-3.5 sm:mb-0 sm:flex md:gap-7 md:pt-4">
@@ -286,7 +275,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
                         <b class="block text-[16px] font-semibold tracking-[-0.02em] text-[#0b0b0f] md:text-[18px]">
                           {stat.value}
                         </b>
-                        <span class="mt-0.5 block line-clamp-1 text-[11px] leading-snug text-[#0b0b0f]/55 md:text-[12px]">
+                        <span class="mt-0.5 block line-clamp-1 text-[11px] leading-snug text-[#0b0b0f]/70 md:text-[12px]">
                           {stat.label}
                         </span>
                       </div>
@@ -336,7 +325,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
         See all services
       </GradientButton>
       <p
-        class="text-center text-[13px] leading-snug text-white/55 sm:text-left sm:text-[13.5px]"
+        class="text-center text-[13px] leading-snug text-white/72 sm:text-left sm:text-[13.5px]"
       >
         {CARD_COUNT} capabilities, with what each one ships.
       </p>
@@ -396,7 +385,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
   const CLICK_SLOP = 8;
   const CARD_CLEARANCE = 72;
   const ANGLE_STEP = 360 / RING_SLOTS;
-  const SECTION_BG = "#1a1a1c";
+  const SECTION_BG = "#0f0f12";
   const HORIZON_SCRIM = `linear-gradient(to bottom, rgba(26,26,28,0) 0%, rgba(26,26,28,0.55) 45%, rgba(26,26,28,0.9) 78%, ${SECTION_BG} 100%)`;
 
   const clamp = (v, min, max) => Math.max(min, Math.min(max, v));

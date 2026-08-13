@@ -25,22 +25,31 @@
   --warm: #f5a623;
   --lavender: #efeae3;
   --indigo: #163db0;
-  --muted: #6b6560;
-  --muted-light: #9a938a;
+  /* Secondary text, not decorative text. #6b6560 landed at 5.3:1 on the canvas
+     — a pass on paper, but next to #22201c headings every paragraph on the
+     site read as switched off. #4a443e is ~8:1: still plainly a step under
+     ink, no longer grey. */
+  --muted: #4a443e;
+  /* The tier under `--muted`, carrying the 10–11px uppercase labels. At
+     #9a938a it was 2.9:1 — under the 4.5:1 floor, and at that size and
+     tracking effectively unreadable. #6f685f is ~5:1, which is where the old
+     `--muted` sat, so the two tiers shifted down together and kept their
+     distance from each other. */
+  --muted-light: #6f685f;
   --border: #e5dfd6;
   --card: #ffffff;
-  --dark: #2b2b2e;
-  --dark-mid: #3a3a3e;
-  /* The floor of the page. One step below the #1a1a1c the dark bands and the
+  --dark: #171719;
+  --dark-mid: #232327;
+  /* The floor of the page. One step below the #0f0f12 the dark bands and the
      CTA card sit on, so the footer reads as ground under them rather than as
-     one more band — the old radial grey topped out at #3a3a3e and washed the
+     one more band — the old radial grey topped out at #232327 and washed the
      top of the footer out to a flat slate. */
-  --ink-deep: #0e0e11;
+  --ink-deep: #030305;
 
   /* DESIGN-vercel.md — tokens not already on site */
-  --body: #4d4d4d;
-  --mute: #8f8f8f;
-  --faint: #a1a1a1;
+  --body: #333333;
+  --mute: #6a6a6a;
+  --faint: #7d7d7d;
   --hairline: #ebebeb;
   --hairline-soft: #f2f2f2;
   --canvas: var(--background);
@@ -606,8 +615,8 @@ h6 {
    *
    * Two changes, both doing the same job. The field is now recessed against
    * the card rather than being the same white, and the edge is `--muted-light`
-   * (#9a938a) — 3.0:1 on white, the first value on this palette that clears
-   * the bar. `--border` (#e5dfd6) was the obvious pick and is still only
+   * (#6f685f) — comfortably clear of the bar now that the token darkened;
+   * `--border` (#e5dfd6) was the obvious pick and is still only
    * 1.3:1 against a card: a hairline for separating rows, not for drawing the
    * boundary of something you are asked to click into.
    *
@@ -739,9 +748,9 @@ h6 {
 .gradient-dark {
   background: radial-gradient(
     ellipse at top center,
-    #3a3a3e 0%,
-    #2b2b2e 45%,
-    #1a1a1c 100%
+    #232327 0%,
+    #191a1d 45%,
+    #0f0f12 100%
   );
 }
 
@@ -897,7 +906,7 @@ h6 {
 }
 
 .gradient-dark ::selection,
-.bg-\[\#1a1a1c\] ::selection {
+.bg-\[\#0f0f12\] ::selection {
   background: rgba(30, 79, 216, 0.45);
   color: #fff;
 }
@@ -1060,7 +1069,11 @@ h6 {
 
 [data-reveal].is-visible {
   opacity: 1;
-  transform: translate3d(0, 0, 0);
+  /* `none`, not translate3d(0,0,0): a resting transform (and will-change)
+     makes the element a containing block, which kills `position: sticky`
+     on it or any descendant — the Problem section sidebar is the case. */
+  transform: none;
+  will-change: auto;
 }
 
 /* Stagger container: children inherit an index-derived delay. */

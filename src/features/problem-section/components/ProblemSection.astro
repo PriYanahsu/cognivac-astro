@@ -17,7 +17,16 @@ import { PROBLEM_CONTENT, PROBLEM_POINTS } from "../constants";
 const total = String(PROBLEM_POINTS.length).padStart(2, "0");
 ---
 
-<section class="relative overflow-hidden bg-lavender/30 py-12 sm:py-20 lg:py-28">
+<section
+  data-problem
+  class="relative bg-lavender/30 py-12 sm:py-20 lg:py-28"
+>
+  {/*
+    Next has no overflow-hidden here on purpose: it would turn this section
+    into a scroll container and kill `lg:sticky` on the left column — which
+    is the whole scroll-linked composition. The bg sits in a non-clipping
+    absolute layer instead.
+  */}
   <div
     aria-hidden="true"
     class="pointer-events-none absolute inset-0 bg-cover bg-center opacity-[0.22]"
@@ -32,7 +41,14 @@ const total = String(PROBLEM_POINTS.length).padStart(2, "0");
 
   <Container class="relative z-10">
     <div class="grid items-start gap-6 sm:gap-10 lg:grid-cols-12 lg:gap-16">
-      <FadeIn class="lg:sticky lg:top-28 lg:col-span-5 lg:self-start">
+      {/*
+        Sticky lives on THIS wrapper, not on FadeIn. `[data-reveal]` keeps a
+        transform (and will-change: transform) which makes the element a
+        containing block — sticky then sticks to itself and never pins.
+        Next's FadeIn clears transform to `none` at rest, so sticky works.
+      */}
+      <div class="lg:sticky lg:top-28 lg:col-span-5 lg:self-start">
+        <FadeIn>
         <SectionLabel class="mb-0">
           {PROBLEM_CONTENT.label}
         </SectionLabel>
@@ -67,7 +83,7 @@ const total = String(PROBLEM_POINTS.length).padStart(2, "0");
           <div class="relative h-px w-32 bg-border">
             <div
               data-problem-bar
-              class="absolute inset-0 origin-left bg-accent"
+              class="absolute inset-0 origin-left bg-accent will-change-transform"
               style="transform: scaleX(0)"
             >
             </div>
@@ -78,7 +94,8 @@ const total = String(PROBLEM_POINTS.length).padStart(2, "0");
             {total}
           </span>
         </div>
-      </FadeIn>
+        </FadeIn>
+      </div>
 
       <div data-problem-list class="relative lg:col-span-7">
         {/* Rail: static track with a scroll-driven accent fill */}
@@ -88,7 +105,7 @@ const total = String(PROBLEM_POINTS.length).padStart(2, "0");
         >
           <div
             data-problem-rail
-            class="absolute inset-0 origin-top bg-accent"
+            class="absolute inset-0 origin-top bg-accent will-change-transform"
             style="transform: scaleY(0)"
           >
           </div>
@@ -171,31 +188,16 @@ const total = String(PROBLEM_POINTS.length).padStart(2, "0");
     color: var(--accent);
   }
 
+  /*
+    No dim-on-inactive at any width. The rail, the marker and the tag carry
+    the reading position; fading the copy made every row but one hard to read
+    on desktop while mobile stayed full-strength — this keeps both the same.
+  */
   [data-problem-title] {
     color: var(--foreground);
   }
 
-  @media (min-width: 640px) {
-    [data-problem-title] {
-      color: color-mix(in srgb, var(--foreground) 60%, transparent);
-    }
-  }
-
-  [data-problem-point][data-active="true"] [data-problem-title] {
-    color: var(--foreground);
-  }
-
   [data-problem-desc] {
-    color: var(--muted);
-  }
-
-  @media (min-width: 640px) {
-    [data-problem-desc] {
-      color: color-mix(in srgb, var(--muted) 60%, transparent);
-    }
-  }
-
-  [data-problem-point][data-active="true"] [data-problem-desc] {
     color: var(--muted);
   }
 
@@ -207,25 +209,32 @@ const total = String(PROBLEM_POINTS.length).padStart(2, "0");
 </style>
 
 <script>
+  /**
+   * Framer `useSpring({ stiffness: 90, damping: 28, restDelta: 0.001 })`.
+   * Mass is 1 — the default on that hook.
+   */
   const STIFFNESS = 90;
   const DAMPING = 28;
   const REST_DELTA = 0.001;
 
   function initProblemSection() {
+    const section = document.querySelector<HTMLElement>("[data-problem]");
     const list = document.querySelector<HTMLElement>("[data-problem-list]");
-    if (!list || list.dataset.problemReady === "true") return;
+    if (!section || !list || list.dataset.problemReady === "true") return;
     list.dataset.problemReady = "true";
 
     const rail = list.querySelector<HTMLElement>("[data-problem-rail]");
     const bar = document.querySelector<HTMLElement>("[data-problem-bar]");
     const counter = document.querySelector<HTMLElement>(
-      "[data-problem-counter]"
+      "[data-problem-counter]",
     );
     const points = Array.from(
-      list.querySelectorAll<HTMLElement>("[data-problem-point]")
+      list.querySelectorAll<HTMLElement>("[data-problem-point]"),
     );
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
 
     /* ---- active row: framer's useInView with a -48% band ---- */
     const observer = new IntersectionObserver(
@@ -244,31 +253,40 @@ const total = String(PROBLEM_POINTS.length).padStart(2, "0");
           }
         }
       },
-      { rootMargin: "-48% 0px -48% 0px" }
+      { rootMargin: "-48% 0px -48% 0px" },
     );
 
     points.forEach((point) => observer.observe(point));
 
-    /* ---- rail fill: useScroll offset ["start 65%", "end 80%"] ---- */
     if (!rail && !bar) return;
 
     if (reduced) {
-      rail?.style.setProperty("transform", "scaleY(1)");
-      bar?.style.setProperty("transform", "scaleX(1)");
+      if (rail) rail.style.transform = "scaleY(1)";
+      if (bar) bar.style.transform = "scaleX(1)";
       return;
     }
 
+    /*
+     * Same loop Framer runs: read scroll progress every frame (so Lenis's
+     * interpolated scroll is visible), then spring it. Listening to `scroll`
+     * only sampled native ticks and missed the 1.1s Lenis lerp — that's why
+     * the rail stepped instead of filling.
+     */
     let target = 0;
     let value = 0;
     let velocity = 0;
-    let frame = 0;
-    let last = 0;
+    let last = performance.now();
+    let running = true;
+
+    const paint = (v: number) => {
+      if (rail) rail.style.transform = `scaleY(${v})`;
+      if (bar) bar.style.transform = `scaleX(${v})`;
+    };
 
     const readProgress = () => {
       const rect = list.getBoundingClientRect();
       const vh = window.innerHeight;
-      // 0 when the list top reaches 65% of the viewport;
-      // 1 when the list bottom reaches 80% of it.
+      // useScroll offset ["start 65%", "end 80%"]
       const span = rect.height - 0.15 * vh;
       if (span <= 0) {
         target = 1;
@@ -278,14 +296,15 @@ const total = String(PROBLEM_POINTS.length).padStart(2, "0");
     };
 
     const step = (now: number) => {
+      if (!running) return;
+
       const dt = Math.min((now - last) / 1000, 1 / 30);
       last = now;
 
+      readProgress();
+
       velocity += (-STIFFNESS * (value - target) - DAMPING * velocity) * dt;
       value += velocity * dt;
-
-      rail?.style.setProperty("transform", `scaleY(${value})`);
-      bar?.style.setProperty("transform", `scaleX(${value})`);
 
       if (
         Math.abs(value - target) < REST_DELTA &&
@@ -293,38 +312,20 @@ const total = String(PROBLEM_POINTS.length).padStart(2, "0");
       ) {
         value = target;
         velocity = 0;
-        rail?.style.setProperty("transform", `scaleY(${value})`);
-        bar?.style.setProperty("transform", `scaleX(${value})`);
-        frame = 0;
-        return;
       }
 
-      frame = requestAnimationFrame(step);
-    };
-
-    const start = () => {
-      if (frame) return;
-      last = performance.now();
-      frame = requestAnimationFrame(step);
+      paint(value);
+      requestAnimationFrame(step);
     };
 
     readProgress();
     value = target;
-    rail?.style.setProperty("transform", `scaleY(${value})`);
-    bar?.style.setProperty("transform", `scaleX(${value})`);
+    paint(value);
+    requestAnimationFrame(step);
 
-    window.addEventListener(
-      "scroll",
-      () => {
-        readProgress();
-        start();
-      },
-      { passive: true }
-    );
-    window.addEventListener("resize", () => {
-      readProgress();
-      start();
-    });
+    document.addEventListener("astro:before-swap", () => {
+      running = false;
+    }, { once: true });
   }
 
   initProblemSection();

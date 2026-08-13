@@ -128,6 +128,6 @@ export const WHAT_ITS_LIKE = [
     title: "Standards are not negotiable",
     description:
       "Tests, docs, and reviews are part of delivery. You will not be asked to ship something you would be embarrassed to hand over.",
-    art: "linear-gradient(135deg,#1a1a1c,#3a3a40)",
+    art: "linear-gradient(135deg,#0f0f12,#252529)",
   },
 ];

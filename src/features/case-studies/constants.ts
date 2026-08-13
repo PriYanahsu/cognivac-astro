@@ -62,7 +62,7 @@ export const STUDY_DETAIL: Record<
 export const STUDY_ART: Record<string, string> = {
   "1": "linear-gradient(135deg,#1e4fd8,#163db0)",
   "2": "linear-gradient(135deg,#3f7bb0,#bfe3ff)",
-  "3": "linear-gradient(135deg,#1a1a1c,#3a3a40)",
+  "3": "linear-gradient(135deg,#0f0f12,#252529)",
   "4": "linear-gradient(135deg,#1e4fd8,#0b2a6f)",
   "5": "linear-gradient(135deg,#0f766e,#134e4a)",
   "6": "linear-gradient(135deg,#7c3aed,#261a5a)",
