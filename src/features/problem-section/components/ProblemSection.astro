@@ -334,6 +334,13 @@ const total = String(PROBLEM_POINTS.length).padStart(2, "0");
         if (!alive) return;
         if (entry.isIntersecting) {
           if (running) return;
+          /* Re-entering with a stale spring would play the whole fill again
+             as a catch-up. The gate has 200px of margin, so landing on the
+             live value here happens before the rail is on screen. */
+          readProgress();
+          value = target;
+          velocity = 0;
+          paint(value);
           running = true;
           last = performance.now();
           requestAnimationFrame(step);
