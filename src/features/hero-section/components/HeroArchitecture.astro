@@ -1,145 +1,100 @@
 ---
-/**
- * Port of features/hero-section/components/hero-architecture.tsx.
- * Pure SVG + SMIL + the CSS keyframes already in globals.css, so this renders
- * fully server-side with no client JS at all. React's `useId` is replaced by a
- * fixed gradient id — only one instance exists per page.
- */
-const STAGES = [
-  { id: "discover", label: "Discover", detail: "Scope · Requirements", x: 80 },
-  { id: "design", label: "Design", detail: "Architecture · UX", x: 360 },
-  { id: "build", label: "Build", detail: "Frontend · Backend · AI", x: 640 },
-  { id: "deliver", label: "Deliver", detail: "Deploy · Support · Scale", x: 920 },
-] as const;
+import { Cpu, Layers, Rocket, ScanSearch } from "@lucide/astro";
+import {
+  HERO_PIPELINE,
+  HERO_STAGES,
+} from "@/features/hero-section/constants";
 
-const flowId = "hero-architecture-flow";
+/**
+ * Glanceable delivery path under the hero. Distinct icons, a cobalt rail,
+ * and a live last stage — not four identical bullseyes on a dashed line.
+ * The five-step engagement story still lives in ProcessSection.
+ */
+const ICONS = {
+  ScanSearch,
+  Layers,
+  Cpu,
+  Rocket,
+} as const;
+
+const lastIndex = HERO_STAGES.length - 1;
 ---
 
-<div class="relative mx-auto mt-4 w-full max-w-5xl sm:mt-5" aria-hidden="true">
-  <ol class="flex items-start justify-between gap-1 px-1 sm:hidden">
-    {
-      STAGES.map((stage, i) => (
-        <li class="relative flex min-w-0 flex-1 flex-col items-center">
-          {i < STAGES.length - 1 && (
-            <span class="absolute left-1/2 top-[5px] h-px w-full bg-foreground/15" />
-          )}
-          <span class="relative z-10 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-[#FAFAFA]">
-            <span class="h-1.5 w-1.5 rounded-full bg-foreground/70" />
-          </span>
-          <span class="mt-2 text-[11px] font-semibold leading-tight tracking-[-0.01em] text-foreground/75">
-            {stage.label}
-          </span>
-        </li>
-      ))
-    }
-  </ol>
+<div class="relative mx-auto mt-6 w-full max-w-5xl sm:mt-8 lg:mt-10">
+  <div
+    data-hero-pipeline
+    class="overflow-hidden rounded-md border border-border/90 bg-white/80 shadow-soft backdrop-blur-md"
+  >
+    <div
+      class="flex items-center justify-between gap-3 border-b border-border/70 px-4 py-3 sm:px-6"
+    >
+      <p class="text-eyebrow text-muted-light">{HERO_PIPELINE.label}</p>
+      <a
+        href={HERO_PIPELINE.cta.href}
+        data-hero-hash
+        class="shrink-0 text-[12.5px] font-semibold text-foreground/70 transition-colors duration-300 hover:text-accent sm:text-[13px]"
+      >
+        {HERO_PIPELINE.cta.label}
+        <span aria-hidden="true"> →</span>
+      </a>
+    </div>
 
-  <svg viewBox="0 0 1000 156" class="hidden h-auto w-full overflow-visible sm:block" fill="none">
-    <defs>
-      <linearGradient id={flowId} x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="#22201c" stop-opacity="0"></stop>
-        <stop offset="30%" stop-color="#22201c" stop-opacity="0.55"></stop>
-        <stop offset="70%" stop-color="#22201c" stop-opacity="0.55"></stop>
-        <stop offset="100%" stop-color="#22201c" stop-opacity="0"></stop>
-      </linearGradient>
-    </defs>
+    <div class="px-3 py-5 sm:px-4 sm:py-7 lg:px-8">
+      <div class="relative">
+        <div
+          aria-hidden="true"
+          class="pointer-events-none absolute top-6 right-[12.5%] left-[12.5%] hidden h-0.5 -translate-y-1/2 overflow-hidden rounded-full sm:block"
+        >
+          <span class="absolute inset-0 bg-foreground/12"></span>
+          <span class="hero-rail-fill absolute inset-y-0 left-0 rounded-full"></span>
+          <span class="hero-rail-sheen absolute inset-y-0 rounded-full"></span>
+          <span
+            class="hero-rail-packet absolute top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-accent"
+          ></span>
+          <span
+            class="hero-rail-packet hero-rail-packet-2 absolute top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-ink"
+          ></span>
+        </div>
 
-    <path
-      d="M 80 78 H 920"
-      stroke="rgba(34,32,28,0.14)"
-      stroke-width="1.75"
-      stroke-linecap="round"></path>
-    <path
-      d="M 80 78 H 920"
-      stroke={`url(#${flowId})`}
-      stroke-width="2.25"
-      stroke-linecap="round"
-      class="hero-flow"></path>
-    <path
-      d="M 80 78 H 920"
-      stroke="rgba(34,32,28,0.22)"
-      stroke-width="1.25"
-      stroke-linecap="round"
-      class="hero-flow hero-flow-delay-2"></path>
+        <ol class="relative grid grid-cols-2 gap-x-2 gap-y-7 sm:grid-cols-4 sm:gap-0">
+          {
+            HERO_STAGES.map((stage, i) => {
+              const Icon = ICONS[stage.icon];
+              const isLast = i === lastIndex;
 
-    {
-      STAGES.map((stage, i) => {
-        const cx = stage.x;
-        const cy = 78;
-        const next = STAGES[i + 1];
-
-        return (
-          <g>
-            <circle
-              cx={cx}
-              cy={cy}
-              r="22"
-              class="hero-node-halo"
-              fill="rgba(34,32,28,0.06)"
-              style={`animation-delay:${i * 0.35}s`}
-            />
-            <circle
-              cx={cx}
-              cy={cy}
-              r="10"
-              class="hero-node-core"
-              fill="#FAFAFA"
-              stroke="#22201c"
-              stroke-width="2"
-              style={`animation-delay:${i * 0.35}s`}
-            />
-            <circle
-              cx={cx}
-              cy={cy}
-              r="4"
-              fill="#22201c"
-              class="hero-node"
-              style={`animation-delay:${i * 0.35}s`}
-            />
-
-            {next && (
-              <circle r="3" fill="#22201c" class="hero-pulse-dot">
-                <animateMotion
-                  dur={`${2.8 + i * 0.35}s`}
-                  repeatCount="indefinite"
-                  begin={`${i * 0.55}s`}
-                  path={`M ${cx} ${cy} L ${next.x} ${cy}`}
-                />
-                <animate
-                  attributeName="opacity"
-                  values="0;1;1;0"
-                  keyTimes="0;0.12;0.88;1"
-                  dur={`${2.8 + i * 0.35}s`}
-                  repeatCount="indefinite"
-                  begin={`${i * 0.55}s`}
-                />
-              </circle>
-            )}
-
-            <text
-              x={cx}
-              y={28}
-              text-anchor="middle"
-              fill="#22201c"
-              font-size="14"
-              font-weight="600"
-              style="font-family: var(--font-sans)"
-            >
-              {stage.label}
-            </text>
-            <text
-              x={cx}
-              y={128}
-              text-anchor="middle"
-              fill="#6f685f"
-              font-size="12"
-              style="font-family: var(--font-sans)"
-            >
-              {stage.detail}
-            </text>
-          </g>
-        );
-      })
-    }
-  </svg>
+              return (
+                <li class="relative z-10 flex flex-col items-center text-center">
+                  <span
+                    class:list={[
+                      "relative flex h-11 w-11 items-center justify-center rounded-full ring-4 ring-white sm:h-12 sm:w-12",
+                      isLast
+                        ? "bg-accent text-white shadow-glow"
+                        : "border border-foreground/12 bg-white text-foreground",
+                    ]}
+                  >
+                    {isLast && (
+                      <span
+                        aria-hidden="true"
+                        class="hero-node-halo absolute -inset-1 rounded-full bg-accent/20"
+                      />
+                    )}
+                    <Icon class="relative h-[18px] w-[18px] sm:h-5 sm:w-5" />
+                  </span>
+                  <span class="mt-3 text-[10px] font-semibold tracking-[0.14em] text-muted-light uppercase">
+                    {stage.index}
+                  </span>
+                  <span class="mt-1 text-[14px] font-semibold tracking-[-0.02em] text-foreground sm:text-[15px]">
+                    {stage.label}
+                  </span>
+                  <span class="mt-0.5 max-w-[18ch] text-[11.5px] leading-snug text-muted-light sm:text-[12.5px]">
+                    {stage.detail}
+                  </span>
+                </li>
+              );
+            })
+          }
+        </ol>
+      </div>
+    </div>
+  </div>
 </div>

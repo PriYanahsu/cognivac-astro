@@ -213,6 +213,7 @@ export const TESTIMONIALS: TestimonialItem[] = [
     name: "Priya Raman",
     role: "Chief Digital Officer",
     company: "Northline Financial",
+    image: "/images/testimonials/priya.webp",
   },
   {
     id: "2",
@@ -221,6 +222,7 @@ export const TESTIMONIALS: TestimonialItem[] = [
     name: "Marcus Chen",
     role: "VP of Engineering",
     company: "Orbit Commerce",
+    image: "/images/testimonials/marcus.webp",
   },
   {
     id: "3",
@@ -229,6 +231,7 @@ export const TESTIMONIALS: TestimonialItem[] = [
     name: "Elena Voss",
     role: "Head of AI Strategy",
     company: "Helix Manufacturing",
+    image: "/images/testimonials/elena.webp",
   },
   {
     id: "4",
@@ -237,6 +240,7 @@ export const TESTIMONIALS: TestimonialItem[] = [
     name: "Sofia Almeida",
     role: "Director of Data Platform",
     company: "Meridian Logistics",
+    image: "/images/testimonials/sofia.webp",
   },
   {
     id: "5",
@@ -245,6 +249,7 @@ export const TESTIMONIALS: TestimonialItem[] = [
     name: "James Okonkwo",
     role: "Chief Operating Officer",
     company: "Verity Insurance",
+    image: "/images/testimonials/james.webp",
   },
   {
     id: "6",
@@ -253,6 +258,7 @@ export const TESTIMONIALS: TestimonialItem[] = [
     name: "Hannah Brill",
     role: "Head of Platform Engineering",
     company: "Larkspur Retail",
+    image: "/images/testimonials/hannah.webp",
   },
 ];
 

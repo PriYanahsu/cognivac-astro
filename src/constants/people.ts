@@ -3,10 +3,11 @@
  * home page and the team page both render from this file, so a hire is added
  * once and a title is corrected once.
  *
- * ⚠️ PLACEHOLDER DATA. The two founders' credentials come from the wireframe
- * ($200k+ delivered / Top Rated, and 25 years in tech); the names, titles and
- * bios around them are stand-ins, and every teammate below is invented. Replace
- * both before this goes live — this is the one file to edit.
+ * ⚠️ PART PLACEHOLDER. The two founders are real — Manoj Singh and Saurabh
+ * Singh — and their credentials come from the wireframe ($200k+ delivered /
+ * Top Rated, and 25 years in tech). The titles, focus lines and bios around
+ * them are still stand-ins, and every teammate below is invented. Replace the
+ * rest before this goes live — this is the one file to edit.
  *
  * `image` is optional everywhere on purpose: with no file the avatar renders a
  * monogram, which is a deliberate design, not a broken state. Drop real
@@ -44,10 +45,7 @@ export const FOUNDERS: readonly Founder[] = [
     name: "Manoj Singh",
     role: "Founder & Principal Engineer",
     focus: "Discovery, architecture, and the build itself",
-    // ⚠️ DEMO IMAGE — a case-study graphic standing in for a headshot, so the
-    // photo slot can be checked against the monogram Ritu still renders.
-    // Replace with /images/team/manoj.webp, or delete this line to go back.
-    image: "/images/case-studies/case-1.webp",
+    image: "/images/team/manoj.webp",
     bio: "Runs discovery and architecture on every engagement, then stays on the build rather than handing it down. The scope you agree is the scope he is accountable for shipping.",
     credentials: [
       { value: "$200k+", label: "Delivered" },
@@ -58,12 +56,10 @@ export const FOUNDERS: readonly Founder[] = [
   },
   {
     id: "cofounder",
-    name: "Ritu Sharma",
+    name: "Saurabh Singh",
     role: "Co-founder & Head of Delivery",
     focus: "Team shape, schedule, and what happens when either changes",
-    // ⚠️ DEMO IMAGE — see the note on the founder above. Replace with
-    // /images/team/ritu.webp, or delete this line to fall back to a monogram.
-    image: "/images/case-studies/case-2.webp",
+    image: "/images/team/saurabh.webp",
     bio: "Twenty-five years across engineering leadership and enterprise delivery. Decides how a pod is staffed, holds the schedule honest week to week, and is the escalation path that does not route through a support queue.",
     credentials: [
       { value: "25+ yrs", label: "In tech" },
@@ -94,18 +90,21 @@ export const TEAM_GROUPS: readonly TeamGroup[] = [
         name: "Arjun Mehta",
         role: "Principal Engineer",
         focus: "Platform architecture and the hard parts of integration",
+        image: "/images/team/arjun.webp",
       },
       {
         id: "sofia-almeida",
         name: "Sofia Almeida",
         role: "Senior Full-Stack Engineer",
         focus: "Product surfaces, from API contract to interface",
+        image: "/images/team/sofia.webp",
       },
       {
         id: "daniel-okoye",
         name: "Daniel Okoye",
         role: "Senior Backend Engineer",
         focus: "Data pipelines and the systems that carry load",
+        image: "/images/team/daniel.webp",
       },
     ],
   },
@@ -120,12 +119,14 @@ export const TEAM_GROUPS: readonly TeamGroup[] = [
         name: "Neha Kapoor",
         role: "Lead ML Engineer",
         focus: "Retrieval, evaluation, and models that stay honest in production",
+        image: "/images/team/neha.webp",
       },
       {
         id: "tomas-lindqvist",
         name: "Tomas Lindqvist",
         role: "MLOps Engineer",
         focus: "Training, serving, and the running cost of both",
+        image: "/images/team/tomas.webp",
       },
     ],
   },
@@ -140,6 +141,7 @@ export const TEAM_GROUPS: readonly TeamGroup[] = [
         name: "Aisha Rahman",
         role: "Product Design Lead",
         focus: "Interfaces teams adopt without being told to",
+        image: "/images/team/aisha.webp",
       },
     ],
   },
@@ -154,12 +156,14 @@ export const TEAM_GROUPS: readonly TeamGroup[] = [
         name: "Marco Bianchi",
         role: "Delivery Lead",
         focus: "Scope, schedule, and the weekly truth about both",
+        image: "/images/team/marco.webp",
       },
       {
         id: "grace-liu",
         name: "Grace Liu",
         role: "QA & Reliability Lead",
         focus: "Finding what breaks before your users do",
+        image: "/images/team/grace.webp",
       },
     ],
   },

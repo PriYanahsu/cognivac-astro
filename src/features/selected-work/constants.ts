@@ -10,19 +10,20 @@ import { CASE_STUDIES } from "@/features/home/constants";
  * what happened. Same plain voice: no technology names in the header, no
  * capability words a CFO would have to translate.
  *
- * Each card follows the wireframe's three beats in order — the problem, what
- * we built, the number that moved. Never reorder them; the metric only means
- * anything after the reader knows what it is a metric of.
+ * The wireframe's three beats — the problem, what we built, the number that
+ * moved — are told in full on the case study page. The home card carries the
+ * engagement and the number only: the track drifts, and a reader who wants the
+ * middle of the story clicks through for it.
  */
 export const SELECTED_WORK_CONTENT = {
   label: "Selected work",
   title: "What we were handed, and what changed",
   description:
-    "Each engagement, told the same way every time: the situation we walked into, the thing we built, and the number it moved once real people were using it.",
+    "Each engagement, and the number it moved.",
   cta: { label: "See all our work", href: NAV_ROUTES.caseStudies },
 } as const;
 
-/** The three beats, labelled on the card so the structure reads at a glance. */
+/** The three beats, labelled on the case study page so the structure reads. */
 export const STORY_STEPS = {
   problem: "The problem",
   built: "What we built",

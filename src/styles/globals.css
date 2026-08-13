@@ -436,16 +436,25 @@ h6 {
  * two-line desktop lede out to five lines, and five lines of grey is what a
  * reader skips — it is the same copy, set at the density the column can hold.
  */
-.lede {
-  font-size: 15px;
-  line-height: 1.55;
-  color: var(--muted);
-}
-
-@media (min-width: 640px) {
+/**
+ * In `@layer components` for its colour, not for tidiness. Unlayered CSS beats
+ * every layered utility regardless of specificity, so a bare `.lede` rule
+ * meant `text-white/85` next to it was silently dropped and every lede on a
+ * dark band rendered in `--muted` — #4a443e on near-black. Layered, the
+ * utility wins and the four dark sections that ask for white get it.
+ */
+@layer components {
   .lede {
-    font-size: var(--font-body-lg-size);
-    line-height: var(--font-body-lg-line-height);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+
+  @media (min-width: 640px) {
+    .lede {
+      font-size: var(--font-body-lg-size);
+      line-height: var(--font-body-lg-line-height);
+    }
   }
 }
 
@@ -961,72 +970,86 @@ h6 {
   }
 }
 
-/* Hero AI network backdrop */
-@keyframes hero-flow-dash {
-  to {
-    stroke-dashoffset: -180;
-  }
-}
-
-@keyframes hero-node-breathe {
-  0%,
-  100% {
-    opacity: 0.55;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
+/* Hero pipeline rail */
 @keyframes hero-halo-pulse {
   0%,
   100% {
-    opacity: 0.35;
+    opacity: 0.28;
+    transform: scale(1);
   }
   50% {
     opacity: 0.7;
+    transform: scale(1.08);
   }
 }
 
-.hero-flow {
-  stroke-dasharray: 8 14;
-  animation: hero-flow-dash 4.5s linear infinite;
+@keyframes hero-rail-fill {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
 }
 
-.hero-flow-delay-1 {
-  animation-duration: 5.5s;
-  animation-delay: -1.2s;
+@keyframes hero-rail-sheen {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(280%);
+  }
 }
 
-.hero-flow-delay-2 {
-  animation-duration: 6.2s;
-  animation-delay: -2.4s;
-}
-
-.hero-flow-delay-3 {
-  animation-duration: 7s;
-  animation-delay: -0.8s;
-  stroke-dasharray: 4 18;
-}
-
-.hero-node {
-  animation: hero-node-breathe 5s ease-in-out infinite;
-}
-
-.hero-node-core {
-  animation: hero-node-breathe 3.8s ease-in-out infinite;
+@keyframes hero-rail-packet {
+  0% {
+    left: 0%;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    left: calc(100% - 6px);
+    opacity: 0;
+  }
 }
 
 .hero-node-halo {
-  animation: hero-halo-pulse 3.8s ease-in-out infinite;
+  animation: hero-halo-pulse 3.2s ease-in-out infinite;
 }
 
-.hero-pulse-dot {
-  opacity: 0.85;
+.hero-rail-fill {
+  width: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(30, 79, 216, 0.15),
+    rgba(30, 79, 216, 0.55)
+  );
+  animation: hero-rail-fill 2.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.hero-pulse-dot-delay {
-  opacity: 0.65;
+.hero-rail-sheen {
+  width: 28%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(30, 79, 216, 0.55),
+    transparent
+  );
+  animation: hero-rail-sheen 2.8s ease-in-out 2.2s infinite;
+}
+
+.hero-rail-packet {
+  animation: hero-rail-packet 3.2s ease-in-out 2.4s infinite;
+}
+
+.hero-rail-packet-2 {
+  animation-delay: 4s;
+  animation-duration: 3.6s;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1034,18 +1057,17 @@ h6 {
     animation: none;
   }
 
-  .hero-flow,
-  .hero-flow-delay-1,
-  .hero-flow-delay-2,
-  .hero-flow-delay-3,
-  .hero-node,
-  .hero-node-core,
-  .hero-node-halo {
+  .hero-node-halo,
+  .hero-rail-fill,
+  .hero-rail-sheen,
+  .hero-rail-packet,
+  .hero-rail-packet-2 {
     animation: none;
   }
 
-  .hero-pulse-dot,
-  .hero-pulse-dot-delay {
+  .hero-rail-packet,
+  .hero-rail-packet-2,
+  .hero-rail-sheen {
     display: none;
   }
 }

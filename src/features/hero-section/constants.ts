@@ -17,9 +17,55 @@ export const HERO_CONTENT = {
     "COGNIVAC designs, builds, and scales the AI systems that carry enterprise teams from pilot to production — faster decisions, less operational friction, measurable growth.",
   primaryCta: { label: "Schedule Consultation", href: NAV_ROUTES.contact },
   secondaryCta: { label: "Explore Solutions", href: NAV_ROUTES.services },
-  trustedAvatars: ["AR", "SM", "DK", "NT"],
+  trustedAvatars: [
+    { initials: "AR", image: "/images/clients/ar.webp", name: "Client AR" },
+    { initials: "SM", image: "/images/clients/sm.webp", name: "Client SM" },
+    { initials: "DK", image: "/images/clients/dk.webp", name: "Client DK" },
+    { initials: "NT", image: "/images/clients/nt.webp", name: "Client NT" },
+  ],
   trustedText: "Trusted by 100+ clients worldwide",
+  trustedHref: "#testimonials",
 };
+
+/**
+ * Decorative pipeline under the hero copy. Kept to four stages on purpose —
+ * this is a glanceable path, not the five-step engagement rail in ProcessSection.
+ */
+export const HERO_PIPELINE = {
+  label: "From brief to production",
+  cta: { label: "How we work", href: "#process" },
+} as const;
+
+export const HERO_STAGES = [
+  {
+    id: "discover",
+    index: "01",
+    label: "Discover",
+    detail: "Scope · Requirements",
+    icon: "ScanSearch",
+  },
+  {
+    id: "design",
+    index: "02",
+    label: "Design",
+    detail: "Architecture · UX",
+    icon: "Layers",
+  },
+  {
+    id: "build",
+    index: "03",
+    label: "Build",
+    detail: "Frontend · Backend · AI",
+    icon: "Cpu",
+  },
+  {
+    id: "deliver",
+    index: "04",
+    label: "Deliver",
+    detail: "Deploy · Support · Scale",
+    icon: "Rocket",
+  },
+] as const;
 
 /**
  * Delivery figures under the hero — infinite RTL marquee, no heading.

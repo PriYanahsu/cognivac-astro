@@ -50,26 +50,41 @@ import ProofStrip from "./ProofStrip.astro";
               {HERO_CONTENT.secondaryCta.label}
             </GhostButton>
           </div>
-          <div
-            class="stack-md flex flex-row flex-wrap items-center justify-center gap-x-3 gap-y-2 text-foreground/80 sm:stack-lg sm:gap-4"
-          >
-            <div class="flex -space-x-2">
-              {
-                HERO_CONTENT.trustedAvatars.map((avatar) => (
-                  <span class="flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-linear-to-br from-[#c5d4f5] via-[#e8e2d9] to-[#f7f4ef] text-[10px] font-semibold text-foreground shadow-sm sm:h-10 sm:w-10 sm:text-xs">
-                    {avatar}
-                  </span>
-                ))
-              }
-              <span
-                class="flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-white text-foreground shadow-sm sm:h-10 sm:w-10"
-              >
-                <Plus class="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              </span>
-            </div>
-            <p class="text-center text-[12.5px] sm:text-body-md">
-              {HERO_CONTENT.trustedText}
-            </p>
+          <div class="stack-md flex justify-center sm:stack-lg">
+            <a
+              href={HERO_CONTENT.trustedHref}
+              data-hero-hash
+              class="group inline-flex max-w-full flex-row flex-wrap items-center justify-center gap-x-3 gap-y-2 rounded-full border border-border/80 bg-white/70 px-3 py-2 text-foreground/80 shadow-sm backdrop-blur-sm transition-colors duration-300 hover:border-accent/35 hover:text-foreground sm:gap-3.5 sm:px-4 sm:py-2"
+            >
+              <div class="flex -space-x-2">
+                {
+                  HERO_CONTENT.trustedAvatars.map((avatar) => (
+                    <span
+                      class="relative flex h-7 w-7 overflow-hidden rounded-full border-2 border-white shadow-sm transition-transform duration-300 group-hover:-translate-y-0.5 sm:h-9 sm:w-9"
+                      title={avatar.name}
+                    >
+                      <img
+                        src={avatar.image}
+                        alt=""
+                        class="absolute inset-0 h-full w-full object-cover"
+                        width="36"
+                        height="36"
+                        loading="eager"
+                        decoding="async"
+                      />
+                    </span>
+                  ))
+                }
+                <span
+                  class="flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-white text-foreground shadow-sm transition-transform duration-300 group-hover:-translate-y-0.5 sm:h-9 sm:w-9"
+                >
+                  <Plus class="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                </span>
+              </div>
+              <p class="text-center text-[12.5px] sm:text-body-md">
+                {HERO_CONTENT.trustedText}
+              </p>
+            </a>
           </div>
         </FadeIn>
       </div>
@@ -82,3 +97,26 @@ import ProofStrip from "./ProofStrip.astro";
     <ProofStrip />
   </div>
 </section>
+
+<script>
+  function initHeroHashes() {
+    document.querySelectorAll<HTMLAnchorElement>("[data-hero-hash]").forEach((link) => {
+      if (link.dataset.ready === "true") return;
+      link.dataset.ready = "true";
+
+      link.addEventListener("click", (event) => {
+        const id = link.hash.slice(1);
+        const target = id ? document.getElementById(id) : null;
+        if (!target) return;
+
+        event.preventDefault();
+        const lenis = (window as Window & { lenis?: { scrollTo: (el: HTMLElement) => void } }).lenis;
+        if (lenis) lenis.scrollTo(target);
+        else target.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+  }
+
+  initHeroHashes();
+  document.addEventListener("astro:page-load", initHeroHashes);
+</script>

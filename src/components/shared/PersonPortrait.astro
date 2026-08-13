@@ -32,10 +32,13 @@ const initials = initialsOf(name);
   {
     image ? (
       <>
+        {/* Photographed colour, not a greyscale treatment. These are the only
+            faces on the site; desaturating them was the one place the
+            editorial styling cost more than it bought. */}
         <img
           src={image}
           alt={name}
-          class="absolute inset-0 h-full w-full object-cover grayscale contrast-[1.05] brightness-[0.92]"
+          class="absolute inset-0 h-full w-full object-cover"
           loading="lazy"
           decoding="async"
         />

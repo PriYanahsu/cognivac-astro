@@ -116,6 +116,7 @@ const ogImage = new URL(metadata.image, SITE_CONFIG.url).href;
         };
 
         requestAnimationFrame(raf);
+        (window as Window & { lenis?: typeof lenis }).lenis = lenis;
       }
     </script>
   </body>
