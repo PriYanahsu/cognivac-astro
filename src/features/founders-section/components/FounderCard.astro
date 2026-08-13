@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * Port of FounderCard in founders-section.tsx.
- * Panel material is a 1px gradient frame around a glass fill.
+ * Grid: portrait spans rows beside name/focus/bio from `sm` up.
  */
 interface Props {
   founder: Founder;
@@ -21,7 +21,7 @@ const total = String(FOUNDERS.length).padStart(2, "0");
   class="group relative h-full rounded-lg bg-linear-to-b from-white/[0.16] via-white/[0.06] to-white/[0.03] p-px transition-[background-image] duration-700 hover:from-accent/55 hover:via-accent/12"
 >
   <div
-    class="relative flex h-full flex-col overflow-hidden rounded-[15px] bg-[#212124] p-5 sm:p-6"
+    class="relative flex h-full flex-col overflow-hidden rounded-[15px] bg-[#212124] p-5 sm:p-7"
   >
     <span
       aria-hidden="true"
@@ -32,20 +32,26 @@ const total = String(FOUNDERS.length).padStart(2, "0");
       class="pointer-events-none absolute -right-28 -top-24 h-64 w-64 rounded-full bg-white/8 opacity-60 blur-[80px] transition-opacity duration-700 group-hover:opacity-100"
     ></span>
 
-    <div class="relative flex gap-3.5 sm:gap-5">
+    <div
+      class="relative grid grid-cols-[auto_1fr] items-start gap-x-4 gap-y-4 sm:gap-x-6 sm:gap-y-5"
+    >
       <PersonPortrait
         name={founder.name}
         image={founder.image}
-        class="aspect-[4/5] w-20 shrink-0 self-start sm:w-[112px]"
+        class="aspect-[4/5] w-24 shrink-0 self-start sm:row-span-3 sm:w-44"
       />
 
-      <div class="flex min-w-0 flex-1 flex-col">
+      <div class="flex min-w-0 flex-col">
         <div class="flex items-start justify-between gap-3">
           <div class="min-w-0">
-            <h3 class="text-[19px] font-bold leading-tight tracking-[-0.025em] text-white sm:text-[22px]">
+            <h3
+              class="text-[20px] font-bold leading-[1.1] tracking-[-0.025em] text-white sm:text-[27px]"
+            >
               {founder.name}
             </h3>
-            <p class="mt-1 text-[13px] font-semibold text-accent-on-dark sm:text-[13.5px]">
+            <p
+              class="mt-1.5 text-balance text-[13px] font-semibold leading-snug text-accent-on-dark sm:text-[15px]"
+            >
               {founder.role}
             </p>
           </div>
@@ -73,16 +79,20 @@ const total = String(FOUNDERS.length).padStart(2, "0");
             }
           </div>
         </div>
-
-        <p class="mt-3 text-[14.5px] font-medium leading-[1.35] tracking-[-0.015em] text-white sm:mt-4 sm:text-[16px] sm:leading-[1.45]">
-          {founder.focus}
-        </p>
       </div>
-    </div>
 
-    <p class="relative mt-4 text-[13.5px] leading-[1.55] text-white/72 sm:mt-5 sm:text-[14.5px] sm:leading-[1.65]">
-      {founder.bio}
-    </p>
+      <p
+        class="col-span-2 text-[15.5px] font-medium leading-[1.4] tracking-[-0.015em] text-white sm:col-span-1 sm:col-start-2 sm:text-[17.5px] sm:leading-[1.45]"
+      >
+        {founder.focus}
+      </p>
+
+      <p
+        class="col-span-2 text-[14px] leading-[1.6] text-white/72 sm:col-span-1 sm:col-start-2 sm:text-[15.5px] sm:leading-[1.65]"
+      >
+        {founder.bio}
+      </p>
+    </div>
 
     <div class="relative mt-auto pt-5 sm:pt-6">
       <span
@@ -92,11 +102,17 @@ const total = String(FOUNDERS.length).padStart(2, "0");
       <dl class="mt-3.5 grid grid-cols-3 sm:mt-4">
         {
           founder.credentials.map((credential, i) => (
-            <div class={cn(i > 0 ? "border-l border-white/10 pl-3 sm:pl-4" : "pr-3 sm:pr-4")}>
-              <dt class="text-[13.5px] font-bold leading-none tracking-[-0.02em] text-white sm:text-[16px]">
+            <div
+              class={cn(
+                i > 0
+                  ? "border-l border-white/10 pl-3 sm:pl-4"
+                  : "pr-3 sm:pr-4",
+              )}
+            >
+              <dt class="text-[15px] font-bold leading-none tracking-[-0.02em] text-white sm:text-[18.5px]">
                 {credential.value}
               </dt>
-              <dd class="mt-1.5 text-[10px] font-semibold uppercase leading-tight tracking-[0.1em] text-white/55 sm:text-[10.5px]">
+              <dd class="mt-1.5 min-h-7 text-[10px] font-semibold uppercase leading-tight tracking-[0.06em] text-white/55 sm:min-h-0 sm:text-[11px] sm:tracking-[0.1em]">
                 {credential.label}
               </dd>
             </div>

@@ -13,7 +13,9 @@ import {
   ChevronRight,
 } from "@lucide/astro";
 import Container from "@/components/shared/Container.astro";
+import GradientButton from "@/components/shared/GradientButton.astro";
 import SectionLabel from "@/components/shared/SectionLabel.astro";
+import { NAV_ROUTES } from "@/constants/site";
 import {
   SERVICE_OFFERS,
   SERVICES_HEADER,
@@ -321,6 +323,25 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
       }
     </div>
   </div>
+
+  <Container class="relative z-10">
+    <div
+      class="mt-9 flex flex-col items-center gap-3 sm:mt-12 sm:flex-row sm:justify-center sm:gap-5"
+    >
+      <GradientButton
+        href={NAV_ROUTES.services}
+        size="lg"
+        class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto"
+      >
+        See all services
+      </GradientButton>
+      <p
+        class="text-center text-[13px] leading-snug text-white/55 sm:text-left sm:text-[13.5px]"
+      >
+        {CARD_COUNT} capabilities, with what each one ships.
+      </p>
+    </div>
+  </Container>
 </section>
 
 <style>
@@ -635,19 +656,36 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
     );
     revealObserver.observe(stage);
 
+    /**
+     * Capture only after the pointer travels past CLICK_SLOP. Capturing on
+     * pointerdown sends pointerup to the stage and swallows "View service"
+     * clicks on the crown card.
+     */
+    let capturedId = null;
+
     stage.addEventListener("pointerdown", (event) => {
       stopAnimation();
       drag.active = true;
       drag.startX = event.clientX;
       drag.startRotation = userRotation;
       drag.moved = false;
-      stage.setPointerCapture(event.pointerId);
+      capturedId = null;
     });
 
     stage.addEventListener("pointermove", (event) => {
       if (!drag.active) return;
       const dx = event.clientX - drag.startX;
-      if (Math.abs(dx) > CLICK_SLOP) drag.moved = true;
+      if (Math.abs(dx) > CLICK_SLOP) {
+        drag.moved = true;
+        if (capturedId === null) {
+          try {
+            stage.setPointerCapture(event.pointerId);
+            capturedId = event.pointerId;
+          } catch {
+            /* pointer already gone */
+          }
+        }
+      }
       pendingRotation = drag.startRotation + dx * degPerPx;
       if (rafId === null) {
         rafId = requestAnimationFrame(() => {
@@ -665,10 +703,13 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
       userRotation = pendingRotation;
       render();
       goToSlot(-Math.round(rotation / ANGLE_STEP));
-      try {
-        stage.releasePointerCapture(event.pointerId);
-      } catch {
-        /* already released */
+      if (capturedId !== null) {
+        try {
+          stage.releasePointerCapture(event.pointerId);
+        } catch {
+          /* already released */
+        }
+        capturedId = null;
       }
     };
 

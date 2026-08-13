@@ -1,7 +1,7 @@
 ---
 import { ArrowLeft, ArrowRight } from "@lucide/astro";
 import Container from "@/components/shared/Container.astro";
-import SectionLabel from "@/components/shared/SectionLabel.astro";
+import SectionIntro from "@/components/shared/SectionIntro.astro";
 import PersonAvatar from "@/components/shared/PersonAvatar.astro";
 import FadeIn from "@/components/animations/FadeIn.astro";
 import { TESTIMONIALS } from "@/features/home/constants/content";
@@ -9,44 +9,39 @@ import { TESTIMONIALS_CONTENT, TRUST_STRIP } from "../constants";
 
 /**
  * Port of features/testimonials-section/components/testimonials-section.tsx.
- * One quote on screen, cycling itself. All six occupy the same grid cell so
- * the page never jumps when quote length changes.
+ * Editorial pull-quote sheet on a lavender band — left-aligned quote, bar
+ * progress footer, dwell ring on the forward control.
  */
+const TOTAL = TESTIMONIALS.length;
 ---
 
 <section
   data-testimonials
-  class="relative overflow-hidden border-y border-border bg-card section-padding"
+  class="relative overflow-hidden border-y border-border bg-lavender/30 py-12 sm:py-16 lg:py-20"
   aria-labelledby="testimonials-title"
 >
   <div
     aria-hidden="true"
-    class="pointer-events-none absolute -top-32 left-[-10%] h-120 w-120 rounded-full bg-[radial-gradient(circle,rgba(30,79,216,0.07),transparent_68%)]"
-  >
-  </div>
-  <div
-    aria-hidden="true"
-    class="pointer-events-none absolute -bottom-40 right-[-8%] h-130 w-130 rounded-full bg-[radial-gradient(circle,rgba(30,79,216,0.05),transparent_68%)]"
+    class="pointer-events-none absolute -top-40 left-1/2 h-150 w-250 -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse,rgba(30,79,216,0.07),transparent_65%)]"
   >
   </div>
 
   <Container class="relative z-10">
-    <FadeIn>
-      <div class="mx-auto max-w-3xl text-center">
-        <SectionLabel class="mb-0">
-          {TESTIMONIALS_CONTENT.label}
-        </SectionLabel>
-        <h2
-          id="testimonials-title"
-          class="text-section stack-sm text-foreground"
-        >
-          {TESTIMONIALS_CONTENT.title}
-        </h2>
-        <p class="mx-auto stack-md lede max-w-[52ch]">
-          {TESTIMONIALS_CONTENT.description}
-        </p>
-      </div>
-    </FadeIn>
+    <SectionIntro
+      align="center"
+      label={TESTIMONIALS_CONTENT.label}
+      title={TESTIMONIALS_CONTENT.title}
+      titleId="testimonials-title"
+      description={TESTIMONIALS_CONTENT.description}
+      class="max-w-3xl"
+      titleClass="text-balance text-[clamp(1.625rem,2.4vw+0.9rem,2.5rem)] leading-[1.12] sm:whitespace-nowrap"
+      descriptionClass="max-w-[52ch] text-balance"
+    >
+      <span
+        aria-hidden="true"
+        class="mx-auto mt-6 block h-0.5 w-12 rounded-full bg-linear-to-r from-accent to-indigo sm:mt-7"
+      ></span>
+    </SectionIntro>
 
     <FadeIn delay={0.1}>
       <div
@@ -55,121 +50,152 @@ import { TESTIMONIALS_CONTENT, TRUST_STRIP } from "../constants";
         aria-roledescription="carousel"
         aria-label="Client testimonials"
         tabindex="0"
-        class="mx-auto mt-8 max-w-6xl outline-none sm:mt-14"
+        class="relative mx-auto mt-8 max-w-5xl overflow-hidden rounded-2xl border border-border bg-card shadow-soft-lg outline-none sm:mt-12"
       >
-        <div class="relative grid grid-cols-1">
-          {
-            TESTIMONIALS.map((testimonial, i) => (
-              <figure
-                data-testimonials-slide
-                data-index={i}
-                data-state={i === 0 ? "active" : "waiting"}
-                class="col-start-1 row-start-1"
-                aria-hidden={i === 0 ? "false" : "true"}
-              >
-                <div class="mx-auto flex max-w-212 flex-col items-center text-center">
+        <span
+          aria-hidden="true"
+          class="pointer-events-none absolute inset-y-0 left-0 w-1 bg-linear-to-b from-accent via-indigo to-accent/30 sm:w-1.5"
+        ></span>
+
+        <div class="relative p-6 pl-7 sm:p-10 sm:pl-12 lg:p-14 lg:pl-16">
+          <div class="relative grid grid-cols-1">
+            {
+              TESTIMONIALS.map((testimonial, i) => (
+                <figure
+                  data-testimonials-slide
+                  data-index={i}
+                  data-state={i === 0 ? "active" : "waiting"}
+                  class="col-start-1 row-start-1"
+                  aria-hidden={i === 0 ? "false" : "true"}
+                >
                   <span
                     aria-hidden="true"
-                    class="block select-none font-serif text-[52px] leading-[0.5] text-accent/20 sm:text-[76px]"
+                    class="block h-6 select-none font-serif text-[58px] leading-[0.78] text-accent/45 sm:h-7 sm:text-[72px]"
                   >
                     &ldquo;
                   </span>
 
-                  <blockquote class="mt-5 text-[20px] font-medium leading-[1.35] tracking-[-0.02em] text-balance text-foreground sm:mt-7 sm:text-[26px] sm:leading-[1.4] lg:text-[30px]">
+                  <blockquote class="mt-4 max-w-[36ch] text-[21px] font-medium leading-[1.35] tracking-tight text-foreground sm:mt-5 sm:max-w-[30ch] sm:text-[30px] sm:leading-[1.3] lg:text-[36px]">
                     {testimonial.quote}
                   </blockquote>
 
-                  <span
-                    aria-hidden="true"
-                    class="mt-6 block h-px w-12 bg-border sm:mt-9"
-                  />
-
-                  <figcaption class="mt-5 flex flex-col items-center sm:mt-8">
+                  <figcaption class="mt-6 flex items-center gap-3.5 sm:mt-9 sm:gap-4">
                     <PersonAvatar
                       name={testimonial.name}
                       image={testimonial.image}
-                      size={64}
+                      size={44}
                       tone="light"
-                      class="ring-4 ring-accent/10"
+                      class="shrink-0"
                     />
-                    <p class="mt-4 text-[17px] font-bold leading-tight tracking-[-0.02em] text-foreground sm:text-[18px]">
-                      {testimonial.name}
-                    </p>
-                    <p class="mt-1.5 text-[14px] leading-snug text-muted sm:text-[14.5px]">
-                      {testimonial.role}
-                      <span class="mx-1.5 text-border">·</span>
-                      <span class="font-semibold text-accent">
+                    <div class="min-w-0">
+                      <p class="text-[15px] font-bold leading-tight tracking-[-0.02em] text-foreground sm:text-[16.5px]">
+                        {testimonial.name}
+                      </p>
+                      <p class="mt-0.5 text-[13px] leading-snug text-muted sm:text-[14px]">
+                        {testimonial.role}
+                      </p>
+                      <p class="mt-0.5 text-[13px] font-semibold leading-snug text-accent sm:text-[14px]">
                         {testimonial.company}
-                      </span>
-                    </p>
+                      </p>
+                    </div>
                   </figcaption>
-                </div>
-              </figure>
-            ))
-          }
+                </figure>
+              ))
+            }
+          </div>
         </div>
 
-        <div class="mt-7 flex items-center justify-center gap-4 sm:mt-12 sm:gap-6">
-          <button
-            type="button"
-            data-testimonials-prev
-            aria-label="Previous testimonial"
-            class="hidden h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-white sm:flex"
-          >
-            <ArrowLeft class="h-4 w-4" aria-hidden="true" />
-          </button>
-
-          <div class="flex items-center gap-3 sm:gap-3.5">
+        <div class="relative flex items-center justify-between gap-4 border-t border-border px-6 py-4 sm:px-10 sm:py-5 lg:px-14">
+          <div class="flex min-w-0 items-center gap-1.5 sm:gap-2">
             {
               TESTIMONIALS.map((testimonial, i) => (
                 <button
                   type="button"
-                  data-testimonials-dot
+                  data-testimonials-bar
                   data-index={i}
                   aria-label={`Read what ${testimonial.name} said`}
                   aria-current={i === 0 ? "true" : undefined}
-                  class:list={[
-                    "rounded-full transition duration-500 ease-out",
-                    i === 0
-                      ? "ring-2 ring-accent ring-offset-2 ring-offset-card"
-                      : "opacity-40 grayscale hover:opacity-100 hover:grayscale-0",
-                  ]}
+                  class="group flex h-6 items-center"
                 >
                   <span
-                    data-testimonials-face
+                    data-testimonials-track
                     class:list={[
-                      "inline-flex transition-transform duration-500 ease-out",
-                      i === 0 && "scale-110",
+                      "block h-[3px] overflow-hidden rounded-full transition-all duration-500 ease-out",
+                      i === 0
+                        ? "w-10 bg-border sm:w-14"
+                        : "w-4 bg-border group-hover:bg-muted-light sm:w-6",
                     ]}
                   >
-                    <PersonAvatar
-                      name={testimonial.name}
-                      image={testimonial.image}
-                      size={40}
-                      tone="light"
-                    />
+                    {i === 0 && (
+                      <span
+                        data-testimonials-fill
+                        class="block h-full origin-left rounded-full bg-accent"
+                      />
+                    )}
                   </span>
                 </button>
               ))
             }
           </div>
 
-          <button
-            type="button"
-            data-testimonials-next
-            aria-label="Next testimonial"
-            class="hidden h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-white sm:flex"
-          >
-            <ArrowRight class="h-4 w-4" aria-hidden="true" />
-          </button>
-        </div>
+          <div class="flex shrink-0 items-center gap-2 sm:gap-3">
+            <span
+              data-testimonials-counter
+              aria-hidden="true"
+              class="hidden text-[12.5px] font-semibold tabular-nums text-muted-light sm:inline"
+            >
+              01<span class="mx-1 text-border">—</span>{String(TOTAL).padStart(2, "0")}
+            </span>
 
-        <div class="mx-auto mt-7 h-px w-40 overflow-hidden bg-border sm:w-56">
-          <span
-            data-testimonials-fill
-            class="block h-full origin-left bg-accent"
-          >
-          </span>
+            <button
+              type="button"
+              data-testimonials-prev
+              aria-label="Previous testimonial"
+              class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-white sm:h-10 sm:w-10"
+            >
+              <ArrowLeft class="h-4 w-4" aria-hidden="true" />
+            </button>
+
+            <span class="relative flex shrink-0 items-center justify-center">
+              <svg
+                data-testimonials-ring
+                aria-hidden="true"
+                viewBox="0 0 52 52"
+                class="pointer-events-none absolute -inset-1.5 h-[calc(100%+0.75rem)] w-[calc(100%+0.75rem)] -rotate-90"
+              >
+                <circle
+                  cx="26"
+                  cy="26"
+                  r="24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  class="text-border"
+                ></circle>
+                <circle
+                  data-testimonials-ring-fill
+                  cx="26"
+                  cy="26"
+                  r="24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  class="text-accent"
+                  stroke-dasharray="150.79644737231007"
+                  stroke-dashoffset="0"
+                ></circle>
+              </svg>
+              <button
+                type="button"
+                data-testimonials-next
+                aria-label="Next testimonial"
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-white shadow-glow transition-colors duration-300 hover:bg-indigo sm:h-10 sm:w-10"
+              >
+                <ArrowRight class="h-4 w-4" aria-hidden="true" />
+              </button>
+            </span>
+          </div>
         </div>
       </div>
     </FadeIn>
@@ -180,14 +206,14 @@ import { TESTIMONIALS_CONTENT, TRUST_STRIP } from "../constants";
           <span
             aria-hidden="true"
             class="h-px flex-1 bg-linear-to-r from-transparent to-border"
-          />
+          ></span>
           <p class="text-eyebrow shrink-0 text-center text-muted-light">
             {TRUST_STRIP.label}
           </p>
           <span
             aria-hidden="true"
             class="h-px flex-1 bg-linear-to-l from-transparent to-border"
-          />
+          ></span>
         </div>
 
         <ul class="mt-6 grid grid-cols-3 items-center gap-x-4 gap-y-5 sm:mt-8 sm:grid-cols-6 sm:gap-x-6">
@@ -205,16 +231,14 @@ import { TESTIMONIALS_CONTENT, TRUST_STRIP } from "../constants";
 </section>
 
 <script>
-  const DWELL = 6.5;
-  const TRAVEL = 72;
+  const DWELL = 3;
+  const TRAVEL = 56;
   const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
-  const DOT_ON =
-    "rounded-full transition duration-500 ease-out ring-2 ring-accent ring-offset-2 ring-offset-card";
-  const DOT_OFF =
-    "rounded-full transition duration-500 ease-out opacity-40 grayscale hover:opacity-100 hover:grayscale-0";
-  const FACE_ON =
-    "inline-flex transition-transform duration-500 ease-out scale-110";
-  const FACE_OFF = "inline-flex transition-transform duration-500 ease-out";
+  const RING_C = 2 * Math.PI * 24;
+  const TRACK_ON =
+    "block h-[3px] overflow-hidden rounded-full transition-all duration-500 ease-out w-10 bg-border sm:w-14";
+  const TRACK_OFF =
+    "block h-[3px] overflow-hidden rounded-full transition-all duration-500 ease-out w-4 bg-border group-hover:bg-muted-light sm:w-6";
 
   function initTestimonials() {
     const section = document.querySelector<HTMLElement>("[data-testimonials]");
@@ -228,10 +252,15 @@ import { TESTIMONIALS_CONTENT, TRUST_STRIP } from "../constants";
     const slides = Array.from(
       section.querySelectorAll<HTMLElement>("[data-testimonials-slide]"),
     );
-    const dots = Array.from(
-      section.querySelectorAll<HTMLButtonElement>("[data-testimonials-dot]"),
+    const bars = Array.from(
+      section.querySelectorAll<HTMLButtonElement>("[data-testimonials-bar]"),
     );
-    const fill = section.querySelector<HTMLElement>("[data-testimonials-fill]");
+    const counter = section.querySelector<HTMLElement>(
+      "[data-testimonials-counter]",
+    );
+    const ringFill = section.querySelector<SVGCircleElement>(
+      "[data-testimonials-ring-fill]",
+    );
     const prev = section.querySelector<HTMLButtonElement>(
       "[data-testimonials-prev]",
     );
@@ -250,6 +279,8 @@ import { TESTIMONIALS_CONTENT, TRUST_STRIP } from "../constants";
 
     const playing = () => inView && !held && !reduceMotion;
 
+    const pad = (n: number) => String(n).padStart(2, "0");
+
     const offsetFor = (i: number) => {
       if (reduceMotion) return 0;
       const isActive = i === index;
@@ -259,17 +290,51 @@ import { TESTIMONIALS_CONTENT, TRUST_STRIP } from "../constants";
       return dir > 0 ? TRAVEL : -TRAVEL;
     };
 
-    const paintFill = () => {
-      if (!fill) return;
-      fill.style.transition = "none";
-      fill.style.transform = playing() ? "scaleX(0)" : "scaleX(1)";
-      if (!playing()) return;
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          fill.style.transition = `transform ${DWELL}s linear`;
-          fill.style.transform = "scaleX(1)";
-        });
+    const paintProgress = () => {
+      bars.forEach((bar, i) => {
+        const isActive = i === index;
+        const track = bar.querySelector<HTMLElement>("[data-testimonials-track]");
+        if (!track) return;
+        track.className = isActive ? TRACK_ON : TRACK_OFF;
+
+        let fill = track.querySelector<HTMLElement>("[data-testimonials-fill]");
+        if (isActive) {
+          if (!fill) {
+            fill = document.createElement("span");
+            fill.setAttribute("data-testimonials-fill", "");
+            fill.className = "block h-full origin-left rounded-full bg-accent";
+            track.appendChild(fill);
+          }
+          fill.style.transition = "none";
+          fill.style.transform = playing() ? "scaleX(0)" : "scaleX(1)";
+          if (playing()) {
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                fill!.style.transition = `transform ${DWELL}s linear`;
+                fill!.style.transform = "scaleX(1)";
+              });
+            });
+          }
+        } else if (fill) {
+          fill.remove();
+        }
+
+        if (isActive) bar.setAttribute("aria-current", "true");
+        else bar.removeAttribute("aria-current");
       });
+
+      if (ringFill) {
+        ringFill.style.transition = "none";
+        ringFill.style.strokeDashoffset = playing() ? String(RING_C) : "0";
+        if (playing()) {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              ringFill.style.transition = `stroke-dashoffset ${DWELL}s linear`;
+              ringFill.style.strokeDashoffset = "0";
+            });
+          });
+        }
+      }
     };
 
     const paint = () => {
@@ -285,31 +350,25 @@ import { TESTIMONIALS_CONTENT, TRUST_STRIP } from "../constants";
         slide.style.pointerEvents = isActive ? "auto" : "none";
 
         const x = offsetFor(i);
-        const scale = reduceMotion || isActive ? 1 : 0.985;
         const moving = isActive || isLeaving;
 
         if (reduceMotion) {
           slide.style.transition = "none";
         } else if (moving) {
-          slide.style.transition = `opacity ${isActive ? 0.5 : 0.32}s ease-out, transform 0.75s ${EASE}`;
+          slide.style.transition = `opacity ${isActive ? 0.45 : 0.28}s ease-out, transform 0.7s ${EASE}`;
         } else {
           slide.style.transition = "none";
         }
 
         slide.style.opacity = isActive ? "1" : "0";
-        slide.style.transform = `translateX(${x}px) scale(${scale})`;
+        slide.style.transform = `translateX(${x}px)`;
       });
 
-      dots.forEach((dot, i) => {
-        const isActive = i === index;
-        dot.className = isActive ? DOT_ON : DOT_OFF;
-        if (isActive) dot.setAttribute("aria-current", "true");
-        else dot.removeAttribute("aria-current");
-        const face = dot.querySelector<HTMLElement>("[data-testimonials-face]");
-        if (face) face.className = isActive ? FACE_ON : FACE_OFF;
-      });
+      if (counter) {
+        counter.innerHTML = `${pad(index + 1)}<span class="mx-1 text-border">—</span>${pad(total)}`;
+      }
 
-      paintFill();
+      paintProgress();
     };
 
     const go = (nextIndex: number, direction: number) => {
@@ -330,30 +389,30 @@ import { TESTIMONIALS_CONTENT, TRUST_STRIP } from "../constants";
 
     prev?.addEventListener("click", () => go(index - 1, -1));
     next?.addEventListener("click", () => go(index + 1, 1));
-    dots.forEach((dot, i) => {
-      dot.addEventListener("click", () => go(i, i > index ? 1 : -1));
+    bars.forEach((bar, i) => {
+      bar.addEventListener("click", () => go(i, i > index ? 1 : -1));
     });
 
     section.addEventListener("pointerenter", () => {
       held = true;
-      paintFill();
+      paintProgress();
       schedule();
     });
     section.addEventListener("pointerleave", () => {
       held = false;
-      paintFill();
+      paintProgress();
       schedule();
     });
 
     stage?.addEventListener("focusin", () => {
       held = true;
-      paintFill();
+      paintProgress();
       schedule();
     });
     stage?.addEventListener("focusout", (event) => {
       if (stage.contains((event as FocusEvent).relatedTarget as Node)) return;
       held = false;
-      paintFill();
+      paintProgress();
       schedule();
     });
     stage?.addEventListener("keydown", (event) => {
@@ -367,7 +426,7 @@ import { TESTIMONIALS_CONTENT, TRUST_STRIP } from "../constants";
     const observer = new IntersectionObserver(
       ([entry]) => {
         inView = entry.isIntersecting;
-        paintFill();
+        paintProgress();
         schedule();
       },
       { threshold: 0.3 },
@@ -376,9 +435,13 @@ import { TESTIMONIALS_CONTENT, TRUST_STRIP } from "../constants";
 
     slides.forEach((slide, i) => {
       slide.style.opacity = i === 0 ? "1" : "0";
-      slide.style.transform = `translateX(${i === 0 ? 0 : TRAVEL}px) scale(${i === 0 ? 1 : 0.985})`;
+      slide.style.transform = `translateX(${i === 0 ? 0 : TRAVEL}px)`;
     });
-    paintFill();
+    if (ringFill) {
+      ringFill.style.strokeDasharray = String(RING_C);
+      ringFill.style.strokeDashoffset = "0";
+    }
+    paintProgress();
   }
 
   initTestimonials();

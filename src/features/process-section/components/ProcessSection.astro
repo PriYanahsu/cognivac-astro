@@ -404,15 +404,19 @@ const paddedTotal = String(TOTAL).padStart(2, "0");
       tabs[nextIndex]?.focus();
     });
 
-    section.addEventListener("pointerenter", () => {
-      hovered = true;
-      window.clearTimeout(timer);
-      paintFill();
-    });
-    section.addEventListener("pointerleave", () => {
-      hovered = false;
-      paintFill();
-      schedule();
+    // Pause only while the pointer is on the step panel — hovering empty
+    // band margin used to freeze the whole rail.
+    panels.forEach((panel) => {
+      panel.addEventListener("pointerenter", () => {
+        hovered = true;
+        window.clearTimeout(timer);
+        paintFill();
+      });
+      panel.addEventListener("pointerleave", () => {
+        hovered = false;
+        paintFill();
+        schedule();
+      });
     });
     section.addEventListener(
       "pointerdown",
