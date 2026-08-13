@@ -4,11 +4,22 @@ import { PROOF_STRIP } from "@/features/hero-section/constants";
 /**
  * Port of features/hero-section/components/proof-strip.tsx.
  *
- * Full-bleed dark proof band. Stats scroll RTL in an infinite loop;
- * the track is duplicated so -50% translate loops cleanly.
+ * Full-bleed dark proof band.
+ *
+ * Below `lg` the stats scroll RTL in an infinite loop and the track is
+ * duplicated so a -50% translate loops cleanly. From `lg` up the loop stops
+ * and the real stats sit still as an evenly divided row: a stat caught
+ * half-past the edge of a moving band reads as decoration, and these numbers
+ * are the page's only evidence for the claim directly above them. Five of
+ * them fit a desktop row without scrolling, so nothing is gained by moving.
+ *
+ * The clones stay in the DOM and are hidden by CSS at `lg` — one server
+ * render has to serve every viewport.
  */
 
-const loop = [...PROOF_STRIP.stats, ...PROOF_STRIP.stats];
+const { stats } = PROOF_STRIP;
+const loop = [...stats, ...stats];
+const lastRealIndex = stats.length - 1;
 ---
 
 <div
@@ -28,13 +39,15 @@ const loop = [...PROOF_STRIP.stats, ...PROOF_STRIP.stats];
   </div>
 
   <div class="proof-strip-marquee relative z-10">
-    <dl class="proof-strip-track flex w-max items-stretch">
+    <dl class="proof-strip-track flex w-max items-stretch lg:w-full">
       {
         loop.map((stat, index) => {
-          const isClone = index >= PROOF_STRIP.stats.length;
+          const isClone = index >= stats.length;
           return (
             <div
-              class="flex w-43 shrink-0 flex-col justify-center border-r border-white/15 px-3 text-center sm:w-104 sm:px-14"
+              class="flex w-43 shrink-0 flex-col justify-center border-r border-white/15 px-3 text-center sm:w-104 sm:px-14 lg:w-auto lg:flex-1 lg:shrink lg:px-6"
+              data-proof-clone={isClone ? "" : undefined}
+              data-proof-last={index === lastRealIndex ? "" : undefined}
               aria-hidden={isClone ? "true" : undefined}
             >
               <dt class="text-[12.5px] font-bold tracking-tight text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.65)] sm:text-xl lg:text-2xl">

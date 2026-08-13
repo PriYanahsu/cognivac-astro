@@ -26,7 +26,9 @@ import ProofStrip from "./ProofStrip.astro";
             <span class="sm:hidden">{HERO_CONTENT.labelShort}</span>
             <span class="hidden sm:inline">{HERO_CONTENT.label}</span>
           </SectionLabel>
-          <h1 class="text-hero stack-sm mx-auto max-w-[19ch] leading-[1.05] text-foreground sm:max-w-[36ch] sm:leading-[1.08]">
+          <h1
+            class="text-hero stack-sm mx-auto max-w-[19ch] leading-[1.05] text-balance text-foreground sm:max-w-[36ch] sm:leading-[1.08]"
+          >
             {HERO_CONTENT.title}
           </h1>
           <p class="stack-sm mx-auto max-w-[44ch] text-[14.5px] leading-[1.5] text-muted sm:stack-md sm:max-w-2xl sm:text-body-lg">
@@ -50,18 +52,23 @@ import ProofStrip from "./ProofStrip.astro";
               {HERO_CONTENT.secondaryCta.label}
             </GhostButton>
           </div>
+          <p class="stack-xs text-center text-[12.5px] leading-snug text-muted-light sm:text-[13px]">
+            {HERO_CONTENT.ctaNote}
+          </p>
           <div class="stack-md flex justify-center sm:stack-lg">
             <a
               href={HERO_CONTENT.trustedHref}
               data-hero-hash
               class="group inline-flex max-w-full flex-row flex-wrap items-center justify-center gap-x-3 gap-y-2 rounded-full border border-border/80 bg-white/70 px-3 py-2 text-foreground/80 shadow-sm backdrop-blur-sm transition-colors duration-300 hover:border-accent/35 hover:text-foreground sm:gap-3.5 sm:px-4 sm:py-2"
             >
-              <div class="flex -space-x-2">
+              {/* Decorative. The names behind these faces are not public, so
+                  `title` was announcing nothing on desktop and nothing at all
+                  on touch — the sentence beside it carries the whole claim. */}
+              <div class="flex -space-x-2" aria-hidden="true">
                 {
                   HERO_CONTENT.trustedAvatars.map((avatar) => (
                     <span
                       class="relative flex h-7 w-7 overflow-hidden rounded-full border-2 border-white shadow-sm transition-transform duration-300 group-hover:-translate-y-0.5 sm:h-9 sm:w-9"
-                      title={avatar.name}
                     >
                       <img
                         src={avatar.image}

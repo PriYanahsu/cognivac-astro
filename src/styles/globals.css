@@ -970,6 +970,43 @@ h6 {
   }
 }
 
+/*
+ * From `lg` the band stops being a marquee and becomes a static row: the
+ * loop halts, the duplicate track is dropped, and the edge fade goes with it
+ * (nothing runs past the edge any more, so fading there would just dim two
+ * real stats). The trailing divider on the last stat comes off too — it
+ * only made sense when the row continued.
+ */
+@media (min-width: 1024px) {
+  .proof-strip-track {
+    animation: none;
+  }
+
+  .proof-strip-marquee {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  [data-proof-clone] {
+    display: none;
+  }
+
+  [data-proof-last] {
+    border-right-width: 0;
+  }
+}
+
+/*
+ * Short-laptop escape hatch. Width is not the problem here — height is, so
+ * this keys off viewport height, and only above `sm` so phones (short and
+ * narrow, but scrolled rather than fitted) keep the card.
+ */
+@media (min-width: 640px) and (max-height: 800px) {
+  [data-hero-pipeline] {
+    display: none;
+  }
+}
+
 /* Hero pipeline rail */
 @keyframes hero-halo-pulse {
   0%,

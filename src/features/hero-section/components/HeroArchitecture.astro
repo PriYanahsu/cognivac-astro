@@ -20,10 +20,16 @@ const ICONS = {
 const lastIndex = HERO_STAGES.length - 1;
 ---
 
-<div class="relative mx-auto mt-6 w-full max-w-5xl sm:mt-8 lg:mt-10">
+{/*
+  `data-hero-pipeline` is the hook globals.css uses to drop this card on short
+  laptop viewports. The hero is a full `min-h-dvh` column — eyebrow, headline,
+  subline, CTAs, trust pill, this card, then the proof strip — and under about
+  800px of height the last two start fighting for the fold. This is the one
+  that gives way: ProcessSection tells the same story further down, at length.
+*/}
+<div data-hero-pipeline class="relative mx-auto mt-6 w-full max-w-5xl sm:mt-8 lg:mt-10">
   <div
-    data-hero-pipeline
-    class="overflow-hidden rounded-md border border-border/90 bg-white/80 shadow-soft backdrop-blur-md"
+    class="overflow-hidden rounded-2xl border border-border/90 bg-white/80 shadow-soft backdrop-blur-md"
   >
     <div
       class="flex items-center justify-between gap-3 border-b border-border/70 px-4 py-3 sm:px-6"
