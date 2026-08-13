@@ -930,8 +930,14 @@ h6 {
   }
 }
 
+/*
+ * Slow enough to read in passing. At 40s this was a scroll — the eye had to
+ * track a number while parsing it, and these five figures are the only
+ * evidence the hero offers for the claim above them. At 70s it drifts: the
+ * band still has life, but a stat sits under the eye long enough to land.
+ */
 .proof-strip-track {
-  animation: proof-strip-marquee 40s linear infinite;
+  animation: proof-strip-marquee 70s linear infinite;
 }
 
 .proof-strip-marquee {
@@ -971,28 +977,13 @@ h6 {
 }
 
 /*
- * From `lg` the band stops being a marquee and becomes a static row: the
- * loop halts, the duplicate track is dropped, and the edge fade goes with it
- * (nothing runs past the edge any more, so fading there would just dim two
- * real stats). The trailing divider on the last stat comes off too — it
- * only made sense when the row continued.
+ * Hold still for anyone who stops to read. Scoped to real pointers — a touch
+ * device has no hover to offer, and `(hover: hover)` keeps phones from
+ * latching the paused state onto a tap and stranding the band mid-slide.
  */
-@media (min-width: 1024px) {
-  .proof-strip-track {
-    animation: none;
-  }
-
-  .proof-strip-marquee {
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
-
-  [data-proof-clone] {
-    display: none;
-  }
-
-  [data-proof-last] {
-    border-right-width: 0;
+@media (hover: hover) and (pointer: fine) {
+  .proof-strip-marquee:hover .proof-strip-track {
+    animation-play-state: paused;
   }
 }
 
