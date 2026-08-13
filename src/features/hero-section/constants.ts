@@ -17,6 +17,13 @@ export const HERO_CONTENT = {
     "COGNIVAC designs, builds, and scales the AI systems that carry enterprise teams from pilot to production — faster decisions, less operational friction, measurable growth.",
   primaryCta: { label: "Schedule Consultation", href: NAV_ROUTES.contact },
   secondaryCta: { label: "Explore Solutions", href: NAV_ROUTES.services },
+  /**
+   * "Schedule Consultation" is a bigger ask than it looks — the reader does
+   * not know whether it costs them a call or a sales pipeline. This is the
+   * `<24h response` figure from the proof strip, moved to the point of
+   * decision instead of left 400px below it.
+   */
+  ctaNote: "We reply within 24 hours.",
   trustedAvatars: [
     { initials: "AR", image: "/images/clients/ar.webp", name: "Client AR" },
     { initials: "SM", image: "/images/clients/sm.webp", name: "Client SM" },
@@ -68,18 +75,22 @@ export const HERO_STAGES = [
 ] as const;
 
 /**
- * Delivery figures under the hero — infinite RTL marquee, no heading.
+ * Delivery figures under the hero. Static row from `lg` up; marquee only on
+ * the narrow viewports where five stats genuinely cannot sit side by side.
  *
- * ⚠️ `projects` is still the brief's placeholder. Fill it from the real
- * shipped count before this goes live.
+ * Every entry here has to be a number we can defend on a call. The brief's
+ * `N projects` placeholder was pulled rather than shipped — one visibly fake
+ * stat makes a reader discount the five real ones next to it. Add it back
+ * with the true shipped count and it earns its slot again.
  */
 export const PROOF_STRIP = {
   /** Not rendered — the row carries no heading, so this labels it for screen readers. */
   label: "Delivery record",
   stats: [
-    { id: "delivered", value: "$200k+ delivered", detail: "founder, Top Rated" },
+    /** Marketplace badges ("Top Rated") read as freelancer, not as the
+     *  enterprise partner the hero label claims. Same figure, own framing. */
+    { id: "delivered", value: "$200k+ delivered", detail: "in client engagements" },
     { id: "experience", value: "25+ yrs", detail: "senior leadership" },
-    { id: "projects", value: "N projects", detail: "shipped to production" },
     { id: "team", value: "6–8 engineers", detail: "senior only" },
     { id: "uptime", value: "99.9% uptime", detail: "production SLAs" },
     { id: "response", value: "<24h response", detail: "engagement kickoff" },

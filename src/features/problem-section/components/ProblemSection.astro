@@ -276,7 +276,8 @@ const total = String(PROBLEM_POINTS.length).padStart(2, "0");
     let value = 0;
     let velocity = 0;
     let last = performance.now();
-    let running = true;
+    let running = false;
+    let alive = true;
 
     const paint = (v: number) => {
       if (rail) rail.style.transform = `scaleY(${v})`;
@@ -321,10 +322,33 @@ const total = String(PROBLEM_POINTS.length).padStart(2, "0");
     readProgress();
     value = target;
     paint(value);
-    requestAnimationFrame(step);
+
+    /**
+     * The loop only runs while the rail is on screen. `readProgress` calls
+     * getBoundingClientRect every frame — a forced layout — and left running
+     * for the life of the page it charged that reflow against whatever
+     * section the visitor was actually looking at.
+     */
+    const gate = new IntersectionObserver(
+      ([entry]) => {
+        if (!alive) return;
+        if (entry.isIntersecting) {
+          if (running) return;
+          running = true;
+          last = performance.now();
+          requestAnimationFrame(step);
+        } else {
+          running = false;
+        }
+      },
+      { rootMargin: "200px 0px" },
+    );
+    gate.observe(list);
 
     document.addEventListener("astro:before-swap", () => {
+      alive = false;
       running = false;
+      gate.disconnect();
     }, { once: true });
   }
 

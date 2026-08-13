@@ -30,7 +30,10 @@ const story = WORK_STORIES[study.id];
       href={study.href}
       tabindex={duplicate ? -1 : undefined}
       class={cn(
-        "group relative flex w-[calc(100vw-4.5rem)] shrink-0 snap-start flex-col overflow-hidden surface-card p-5",
+        /* Layout containment keeps the count-up's text writes inside the card:
+           without it every frame of the animation re-lays-out the whole
+           multi-thousand-pixel track behind the marquee. */
+        "group relative flex w-[calc(100vw-4.5rem)] shrink-0 snap-start flex-col overflow-hidden surface-card p-5 [contain:layout_style]",
         "sm:w-[21rem] sm:snap-align-none sm:p-6 lg:w-[24rem]",
         "transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)]",
         "hover:border-accent/45 hover:shadow-soft [@media(hover:hover)]:hover:-translate-y-1",

@@ -207,11 +207,18 @@ const gap = "flex w-max items-stretch gap-5 sm:gap-6 lg:gap-7";
       counted = true;
       const duration = 1100;
       const start = performance.now();
+      /* Every write here dirties layout for the whole rail, so a value that
+         formats to the same string as last frame is not written at all —
+         with tabular numbers most frames of a two-digit count-up repeat. */
+      const shown = new Map<HTMLElement, string>();
       const tick = (now: number) => {
         const t = Math.min(1, (now - start) / duration);
         const eased = EASE(t);
         for (const m of metrics) {
-          m.display.textContent = formatMetric(m, m.target * eased);
+          const next = formatMetric(m, m.target * eased);
+          if (shown.get(m.display) === next) continue;
+          shown.set(m.display, next);
+          m.display.textContent = next;
         }
         if (t < 1) requestAnimationFrame(tick);
       };

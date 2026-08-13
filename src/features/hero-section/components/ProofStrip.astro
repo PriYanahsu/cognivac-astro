@@ -4,11 +4,17 @@ import { PROOF_STRIP } from "@/features/hero-section/constants";
 /**
  * Port of features/hero-section/components/proof-strip.tsx.
  *
- * Full-bleed dark proof band. Stats scroll RTL in an infinite loop;
- * the track is duplicated so -50% translate loops cleanly.
+ * Full-bleed dark proof band. Stats scroll RTL in an infinite loop; the track
+ * is duplicated so a -50% translate loops cleanly.
+ *
+ * The motion is deliberate and deliberately slow — see `.proof-strip-track`
+ * in globals.css, which also parks the loop on hover. These numbers are the
+ * page's only evidence for the claim above them, so they have to stay
+ * readable; the drift is there for life, not to move content past an edge.
  */
 
-const loop = [...PROOF_STRIP.stats, ...PROOF_STRIP.stats];
+const { stats } = PROOF_STRIP;
+const loop = [...stats, ...stats];
 ---
 
 <div
@@ -31,7 +37,7 @@ const loop = [...PROOF_STRIP.stats, ...PROOF_STRIP.stats];
     <dl class="proof-strip-track flex w-max items-stretch">
       {
         loop.map((stat, index) => {
-          const isClone = index >= PROOF_STRIP.stats.length;
+          const isClone = index >= stats.length;
           return (
             <div
               class="flex w-43 shrink-0 flex-col justify-center border-r border-white/15 px-3 text-center sm:w-104 sm:px-14"

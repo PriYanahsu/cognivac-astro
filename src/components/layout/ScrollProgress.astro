@@ -29,9 +29,21 @@
     let frame = 0;
     let last = 0;
 
+    /**
+     * `scrollHeight` is a forced synchronous layout. Reading it inside the
+     * scroll handler meant one full-document reflow per scroll event — and
+     * Lenis fires one every frame — so any section that dirties layout while
+     * it animates (the work rail's count-up) paid for a whole re-layout each
+     * frame. The page height only changes on resize or when content grows,
+     * so it is measured there instead and cached.
+     */
+    let scrollable = 0;
+
+    const measure = () => {
+      scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    };
+
     const readProgress = () => {
-      const scrollable =
-        document.documentElement.scrollHeight - window.innerHeight;
       target = scrollable > 0 ? window.scrollY / scrollable : 0;
     };
 
@@ -64,6 +76,7 @@
       frame = requestAnimationFrame(step);
     };
 
+    measure();
     readProgress();
     value = target;
     bar.style.transform = `scaleX(${value})`;
@@ -78,9 +91,28 @@
     );
 
     window.addEventListener("resize", () => {
+      measure();
       readProgress();
       start();
     });
+
+    /* Content that grows the page (reveals, the FAQ accordion) — the callback
+       runs after layout, so this measurement is free. */
+    const growth = new ResizeObserver(() => {
+      measure();
+      readProgress();
+      start();
+    });
+    growth.observe(document.documentElement);
+
+    document.addEventListener(
+      "astro:before-swap",
+      () => {
+        growth.disconnect();
+        cancelAnimationFrame(frame);
+      },
+      { once: true }
+    );
   }
 
   initScrollProgress();

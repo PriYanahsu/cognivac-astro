@@ -930,8 +930,14 @@ h6 {
   }
 }
 
+/*
+ * Slow enough to read in passing. At 40s this was a scroll — the eye had to
+ * track a number while parsing it, and these five figures are the only
+ * evidence the hero offers for the claim above them. At 70s it drifts: the
+ * band still has life, but a stat sits under the eye long enough to land.
+ */
 .proof-strip-track {
-  animation: proof-strip-marquee 40s linear infinite;
+  animation: proof-strip-marquee 70s linear infinite;
 }
 
 .proof-strip-marquee {
@@ -967,6 +973,28 @@ h6 {
       #000 90%,
       transparent 100%
     );
+  }
+}
+
+/*
+ * Hold still for anyone who stops to read. Scoped to real pointers — a touch
+ * device has no hover to offer, and `(hover: hover)` keeps phones from
+ * latching the paused state onto a tap and stranding the band mid-slide.
+ */
+@media (hover: hover) and (pointer: fine) {
+  .proof-strip-marquee:hover .proof-strip-track {
+    animation-play-state: paused;
+  }
+}
+
+/*
+ * Short-laptop escape hatch. Width is not the problem here — height is, so
+ * this keys off viewport height, and only above `sm` so phones (short and
+ * narrow, but scrolled rather than fitted) keep the card.
+ */
+@media (min-width: 640px) and (max-height: 800px) {
+  [data-hero-pipeline] {
+    display: none;
   }
 }
 
@@ -1086,16 +1114,19 @@ h6 {
       var(--reveal-delay, 0s),
     transform var(--reveal-duration, 0.6s) cubic-bezier(0.22, 1, 0.36, 1)
       var(--reveal-delay, 0s);
-  will-change: opacity, transform;
+  /* No `will-change` here. It held a composited layer open for every
+     unrevealed element on the page at once — the compositor then rebuilt
+     that layer tree on each scrolled frame (Layerize was the single most
+     expensive thing on the timeline). Blink promotes an opacity/transform
+     transition on its own while it runs, which is the only moment it helps. */
 }
 
 [data-reveal].is-visible {
   opacity: 1;
-  /* `none`, not translate3d(0,0,0): a resting transform (and will-change)
-     makes the element a containing block, which kills `position: sticky`
-     on it or any descendant — the Problem section sidebar is the case. */
+  /* `none`, not translate3d(0,0,0): a resting transform makes the element a
+     containing block, which kills `position: sticky` on it or any
+     descendant — the Problem section sidebar is the case. */
   transform: none;
-  will-change: auto;
 }
 
 /* Stagger container: children inherit an index-derived delay. */
