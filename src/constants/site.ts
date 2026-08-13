@@ -1,5 +1,6 @@
 export const SITE_CONFIG = {
   name: "Cognivac",
+  legalName: "Cognivac Technologies, Inc.",
   tagline: "Enterprise AI & Software Development",
   description:
     "Cognivac builds intelligent software, AI agents, and enterprise platforms that turn complexity into competitive advantage.",
@@ -8,10 +9,22 @@ export const SITE_CONFIG = {
   phone: "+1 (555) 010-2400",
   address: "San Francisco, CA",
   social: {
-    linkedin: "https://linkedin.com/company/cognivac",
-    github: "https://github.com/cognivac",
-    youtube: "https://youtube.com/@cognivac",
-    x: "https://x.com/cognivac",
+    linkedin: {
+      href: "https://linkedin.com/company/cognivac",
+      handle: "company/cognivac",
+    },
+    github: {
+      href: "https://github.com/cognivac",
+      handle: "cognivac",
+    },
+    youtube: {
+      href: "https://youtube.com/@cognivac",
+      handle: "@cognivac",
+    },
+    x: {
+      href: "https://x.com/cognivac",
+      handle: "@cognivac",
+    },
   },
 } as const;
 

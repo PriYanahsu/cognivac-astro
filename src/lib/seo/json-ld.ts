@@ -9,7 +9,7 @@ export function organizationSchema() {
     logo: `${SITE_CONFIG.url}/icons/logo.svg`,
     description: SITE_CONFIG.description,
     email: SITE_CONFIG.email,
-    sameAs: Object.values(SITE_CONFIG.social),
+    sameAs: Object.values(SITE_CONFIG.social).map((profile) => profile.href),
     contactPoint: {
       "@type": "ContactPoint",
       telephone: SITE_CONFIG.phone,
