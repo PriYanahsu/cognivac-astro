@@ -14,6 +14,30 @@ import {
 } from "./constants";
 import NewsletterForm from "./NewsletterForm.astro";
 
+/**
+ * Three bands: a sign-off CTA, the directory, and a bottom rule.
+ *
+ * The previous footer put six outlined `bg-white/5` panels on the page — the
+ * newsletter, four social cards, and a CTA box — at four different sizes and
+ * three different corner radii. Every one of them was the same value, so
+ * nothing led, and a grid of near-identical grey rectangles is the specific
+ * thing that makes a footer look assembled rather than designed. There is one
+ * panel left in here now, the newsletter, because a form is the only element
+ * on the page that has to advertise where to type.
+ *
+ * The ground is `.gradient-dark`, the site's own dark surface — the same
+ * radial the CTA card and the dark bands are cut from, which is why the
+ * comment in CtaSection calls this "the gradient-dark footer". It carries its
+ * own light: #232327 at the top through #0f0f12 at the floor, so the sign-off
+ * sits in the lit part and the legal line settles into the dark. That is the
+ * whole texture budget — no lattice, no dot field. A ruled grid behind a
+ * copyright line is decoration where the page is meant to be ending.
+ *
+ * Labels sit at `white/55`, not lower. Against the middle of that gradient 45%
+ * lands around 4.1:1 — under the floor for 11px uppercase, which is exactly
+ * the size and treatment that can least afford it.
+ */
+
 const SOCIAL: Array<{
   label: string;
   href: string;
@@ -52,43 +76,75 @@ const LINK_COLUMNS = [
   { title: "Resources", links: FOOTER_RESOURCE_LINKS },
 ] as const;
 
+const CONTACT = [
+  {
+    icon: Mail,
+    label: SITE_CONFIG.email,
+    href: `mailto:${SITE_CONFIG.email}`,
+  },
+  {
+    icon: Phone,
+    label: SITE_CONFIG.phone,
+    href: `tel:${SITE_CONFIG.phone.replace(/\D/g, "")}`,
+  },
+  { icon: MapPin, label: SITE_CONFIG.address, href: undefined },
+];
+
 const year = new Date().getFullYear();
 ---
 
-<footer class="relative overflow-hidden bg-ink-deep text-white">
+<footer class="gradient-dark relative overflow-hidden text-white">
   <div
     aria-hidden="true"
-    class="dot-grid pointer-events-none absolute inset-0 opacity-70"
+    class="pointer-events-none absolute -left-56 -top-64 h-160 w-200 rounded-full bg-[radial-gradient(ellipse,rgba(30,79,216,0.16),rgba(30,79,216,0.05)_45%,transparent_72%)]"
   >
   </div>
   <div
     aria-hidden="true"
-    class="pointer-events-none absolute inset-x-0 top-0 h-80 bg-linear-to-b from-white/6 to-transparent"
+    class="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-accent/60 to-transparent"
   >
   </div>
   <div
     aria-hidden="true"
-    class="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-accent/55 to-transparent"
-  >
-  </div>
-  <div
-    aria-hidden="true"
-    class="pointer-events-none absolute -left-32 -top-24 h-100 w-100 rounded-full bg-[radial-gradient(circle,rgba(30,79,216,0.20),transparent_66%)]"
-  >
-  </div>
-  <div
-    aria-hidden="true"
-    class="pointer-events-none absolute -right-24 bottom-0 h-90 w-90 rounded-full bg-[radial-gradient(circle,rgba(14,165,233,0.10),transparent_68%)]"
+    class="pointer-events-none absolute inset-x-0 bottom-0 h-64 bg-linear-to-t from-black/35 to-transparent"
   >
   </div>
 
   <Container class="relative py-12 sm:py-16 lg:py-20">
-    {/* Top band — brand, link columns, newsletter */}
+    {/* Sign-off — the last thing the page asks for */}
     <div
-      class="grid gap-10 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,2fr)_minmax(0,1fr)] lg:gap-x-12 xl:gap-x-16"
+      class="flex flex-col gap-7 border-b border-white/10 pb-10 sm:pb-12 lg:flex-row lg:items-end lg:justify-between lg:gap-16"
     >
-      {/* Brand + contact */}
-      <div class="max-w-sm">
+      <div>
+        <p
+          class="text-[11px] font-semibold uppercase tracking-[0.16em] text-accent-on-dark"
+        >
+          Start a project
+        </p>
+        <p
+          class="mt-3.5 max-w-[16ch] text-[clamp(1.75rem,3vw,2.75rem)] font-bold leading-[1.1] tracking-[-0.03em] text-white"
+        >
+          Tell us what you&apos;re building
+        </p>
+        <p class="mt-3 max-w-[44ch] text-body-md leading-relaxed text-white/60">
+          We&apos;ll reply with a clear next step.
+        </p>
+      </div>
+
+      <a
+        href={NAV_ROUTES.contact}
+        class="group inline-flex h-13 w-fit shrink-0 items-center gap-2 rounded-full bg-white px-7 text-button-lg font-semibold text-[#06090f] shadow-[0_18px_40px_-18px_rgba(255,255,255,0.35)] transition-[background-color,color,box-shadow,transform] duration-300 hover:bg-accent hover:text-white hover:shadow-glow active:scale-[0.985]"
+      >
+        Contact {SITE_CONFIG.name}
+        <ArrowUpRight
+          class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+        />
+      </a>
+    </div>
+
+    {/* Directory */}
+    <div class="grid gap-10 pt-10 sm:pt-12 lg:grid-cols-12 lg:gap-x-12 xl:gap-x-16">
+      <div class="lg:col-span-4">
         <a
           href={NAV_ROUTES.home}
           class="inline-flex flex-col gap-1"
@@ -100,69 +156,61 @@ const year = new Date().getFullYear();
           </span>
         </a>
 
-        <p
-          class="mt-4 text-[14.5px] leading-[1.55] text-white/78 sm:mt-5 sm:text-body-md sm:leading-relaxed"
-        >
+        <p class="mt-5 max-w-[42ch] text-body-md leading-relaxed text-white/65">
           {SITE_CONFIG.description}
         </p>
 
-        <ul class="mt-5 space-y-2.5 sm:mt-6">
-          <li>
-            <a
-              href={`mailto:${SITE_CONFIG.email}`}
-              class="group inline-flex items-center gap-2.5 text-body-md text-white/85 transition-colors hover:text-white"
-            >
-              <span
-                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/12 bg-white/6 transition-colors group-hover:border-white/20 group-hover:bg-white/10"
-              >
-                <Mail class="h-3.5 w-3.5" />
-              </span>
-              {SITE_CONFIG.email}
-            </a>
-          </li>
-          <li>
-            <a
-              href={`tel:${SITE_CONFIG.phone.replace(/\D/g, "")}`}
-              class="group inline-flex items-center gap-2.5 text-body-md text-white/85 transition-colors hover:text-white"
-            >
-              <span
-                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/12 bg-white/6 transition-colors group-hover:border-white/20 group-hover:bg-white/10"
-              >
-                <Phone class="h-3.5 w-3.5" />
-              </span>
-              {SITE_CONFIG.phone}
-            </a>
-          </li>
-          <li class="inline-flex items-center gap-2.5 text-body-md text-white/75">
-            <span
-              class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/12 bg-white/6"
-            >
-              <MapPin class="h-3.5 w-3.5" />
-            </span>
-            {SITE_CONFIG.address}
-          </li>
+        <ul class="mt-6 space-y-1">
+          {
+            CONTACT.map(({ icon: Icon, label, href }) => {
+              const inner = (
+                <>
+                  <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/12 text-white/45 transition-colors duration-300 group-hover:border-accent/50 group-hover:text-accent-on-dark">
+                    <Icon class="h-3.5 w-3.5" />
+                  </span>
+                  {label}
+                </>
+              );
+              return (
+                <li>
+                  {href ? (
+                    <a
+                      href={href}
+                      class="group inline-flex min-h-9 items-center gap-3 text-body-md text-white/72 transition-colors duration-300 hover:text-white"
+                    >
+                      {inner}
+                    </a>
+                  ) : (
+                    <span class="group inline-flex min-h-9 items-center gap-3 text-body-md text-white/72">
+                      {inner}
+                    </span>
+                  )}
+                </li>
+              );
+            })
+          }
         </ul>
       </div>
 
-      {/* Link columns */}
-      <div
-        class="grid grid-cols-2 gap-8 sm:grid-cols-3 sm:gap-10 lg:col-start-2 lg:row-start-1"
-      >
+      <div class="grid grid-cols-2 gap-8 sm:grid-cols-3 sm:gap-10 lg:col-span-5">
         {
           LINK_COLUMNS.map((column) => (
             <div>
-              <p class="mb-3.5 text-eyebrow uppercase tracking-[0.12em] text-white/70">
+              <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/55">
                 {column.title}
               </p>
-              <ul class="space-y-0.5">
+              <ul class="mt-4 space-y-0.5">
                 {column.links.map((link) => (
                   <li>
                     <a
                       href={link.href}
-                      class="group inline-flex min-h-9 items-center gap-1 text-body-md text-white/82 transition-colors hover:text-white sm:min-h-0 sm:py-1"
+                      class="group relative inline-flex min-h-9 items-center text-body-md text-white/72 transition-colors duration-300 hover:text-white sm:min-h-0 sm:py-1.5"
                     >
                       {link.label}
-                      <ArrowUpRight class="h-3 w-3 opacity-0 transition-[opacity,transform] duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-60" />
+                      <span
+                        aria-hidden="true"
+                        class="pointer-events-none absolute -bottom-0.5 left-0 h-px w-full origin-left scale-x-0 bg-accent-on-dark/60 transition-transform duration-300 ease-out group-hover:scale-x-100 sm:bottom-1"
+                      />
                     </a>
                   </li>
                 ))}
@@ -172,28 +220,31 @@ const year = new Date().getFullYear();
         }
       </div>
 
-      {/* Newsletter */}
       <div
-        class="relative overflow-hidden rounded-lg border border-white/12 bg-white/5 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.07)] backdrop-blur-sm sm:p-6 lg:col-start-3 lg:row-start-1"
+        class="relative overflow-hidden rounded-lg border border-white/12 bg-[linear-gradient(165deg,rgba(255,255,255,0.075),rgba(255,255,255,0.025))] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.09)] backdrop-blur-sm sm:p-6 lg:col-span-3 lg:self-start"
       >
         <span
           aria-hidden="true"
-          class="pointer-events-none absolute inset-x-8 top-0 h-px bg-linear-to-r from-transparent via-accent/45 to-transparent"
+          class="pointer-events-none absolute inset-x-8 top-0 h-px bg-linear-to-r from-transparent via-accent/50 to-transparent"
         >
         </span>
         <NewsletterForm />
       </div>
     </div>
 
-    {/* Social + CTA strip */}
+    {/* Bottom rule */}
     <div
-      class="mt-10 grid gap-8 border-t border-white/10 pt-10 sm:mt-12 sm:pt-12 lg:mt-14 lg:grid-cols-[1fr_auto] lg:items-center lg:gap-12"
+      class="mt-10 flex flex-col gap-6 border-t border-white/10 pt-7 sm:mt-12 sm:pt-8 lg:flex-row lg:items-center lg:justify-between lg:gap-10"
     >
-      <div>
-        <p class="text-eyebrow uppercase tracking-[0.12em] text-white/70">
-          Follow {SITE_CONFIG.name}
-        </p>
-        <ul class="mt-4 grid gap-2 sm:grid-cols-2 lg:max-w-xl">
+      <p class="order-2 text-body-sm text-white/55 lg:order-1">
+        © {year}
+        {SITE_CONFIG.legalName}. All rights reserved.
+      </p>
+
+      <div
+        class="order-1 flex flex-wrap items-center gap-x-6 gap-y-4 lg:order-2 lg:justify-end"
+      >
+        <ul class="flex items-center gap-2">
           {
             SOCIAL.map(({ label, href, handle, icon }) => (
               <li>
@@ -201,69 +252,27 @@ const year = new Date().getFullYear();
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="group flex items-center gap-3 rounded-lg border border-white/10 bg-white/4 px-3 py-2.5 transition-[background-color,border-color,transform] duration-300 hover:border-white/20 hover:bg-white/8 hover:scale-[1.01]"
+                  aria-label={`${label} — ${handle}`}
+                  title={`${label} — ${handle}`}
+                  class="flex h-9 w-9 items-center justify-center rounded-full border border-white/12 text-white/60 transition-[color,border-color,background-color,transform] duration-300 hover:-translate-y-0.5 hover:border-accent/55 hover:bg-white/6 hover:text-white"
                 >
-                  <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/12 bg-white/6 text-white/85 transition-colors group-hover:border-white/22 group-hover:bg-white/10 group-hover:text-white">
-                    <SocialIcon name={icon} class="h-4 w-4" />
-                  </span>
-                  <span class="min-w-0">
-                    <span class="block text-body-sm font-medium text-white/90">
-                      {label}
-                    </span>
-                    <span class="block truncate text-body-sm text-white/55">
-                      {handle}
-                    </span>
-                  </span>
-                  <ArrowUpRight class="ml-auto h-3.5 w-3.5 shrink-0 text-white/35 transition-[opacity,transform] duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-white/70" />
+                  <SocialIcon name={icon} class="h-4 w-4" />
                 </a>
               </li>
             ))
           }
         </ul>
-      </div>
 
-      <div
-        class="rounded-lg border border-white/12 bg-white/5 p-5 sm:p-6 lg:min-w-[18rem]"
-      >
-        <p class="text-eyebrow uppercase tracking-[0.12em] text-white/70">
-          Start a project
-        </p>
-        <p class="mt-2 max-w-[28ch] text-body-md text-white/78">
-          Tell us what you&apos;re building — we&apos;ll reply with a clear next
-          step.
-        </p>
-        <a
-          href={NAV_ROUTES.contact}
-          class="group mt-4 inline-flex h-10 items-center gap-1.5 overflow-hidden rounded-full bg-accent px-4 text-button-md font-semibold text-white transition-[background-color,box-shadow,transform] duration-300 hover:bg-indigo hover:shadow-glow active:scale-[0.98]"
-        >
-          Contact {SITE_CONFIG.name}
-          <ArrowUpRight class="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-        </a>
-      </div>
-    </div>
+        <span aria-hidden="true" class="hidden h-4 w-px bg-white/12 sm:block">
+        </span>
 
-    {/* Bottom bar */}
-    <div
-      class="mt-10 flex flex-col gap-5 border-t border-white/10 pt-6 sm:mt-12 sm:flex-row sm:items-center sm:justify-between sm:pt-8"
-    >
-      <div class="space-y-1">
-        <p class="text-body-sm text-white/75">
-          © {year}
-          {SITE_CONFIG.legalName}. All rights reserved.
-        </p>
-        <p class="text-body-sm text-white/50">
-          {SITE_CONFIG.name} — {SITE_CONFIG.tagline}
-        </p>
-      </div>
-
-      <div class="flex flex-wrap items-center gap-x-5 gap-y-3">
         <ul class="flex flex-wrap items-center gap-x-5">
           {
             FOOTER_LEGAL_LINKS.map((link) => (
               <li>
                 <a
                   href={link.href}
-                  class="inline-flex min-h-9 items-center text-body-sm text-white/70 transition-colors hover:text-white/90 sm:min-h-0"
+                  class="inline-flex min-h-9 items-center text-body-sm text-white/55 transition-colors duration-300 hover:text-white sm:min-h-0"
                 >
                   {link.label}
                 </a>
@@ -274,13 +283,14 @@ const year = new Date().getFullYear();
 
         <a
           href="#main-content"
-          class="group inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/6 px-3 py-1.5 text-body-sm text-white/80 transition-colors duration-300 hover:border-white/25 hover:bg-white/10 hover:text-white"
+          class="group inline-flex items-center gap-1.5 text-body-sm text-white/55 transition-colors duration-300 hover:text-white"
         >
           Back to top
-          <ArrowUp
-            class="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5"
-            aria-hidden="true"
-          />
+          <span
+            class="flex h-7 w-7 items-center justify-center rounded-full border border-white/12 transition-[border-color,transform] duration-300 group-hover:-translate-y-0.5 group-hover:border-accent/55"
+          >
+            <ArrowUp class="h-3.5 w-3.5" aria-hidden="true" />
+          </span>
         </a>
       </div>
     </div>

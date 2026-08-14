@@ -118,7 +118,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
         }
       </div>
 
-      <div class="hidden items-center justify-center gap-2.5 sm:flex">
+      <div class="hidden w-full items-center gap-2 sm:flex">
         <button
           type="button"
           data-deck-prev
@@ -130,9 +130,9 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
 
         <div
           data-deck-tabs-viewport
-          class="mx-auto w-max min-w-0 max-w-[min(1040px,calc(100%_-_5.5rem))] overflow-x-auto overflow-y-hidden [scrollbar-width:none] [mask-image:linear-gradient(to_right,transparent_0,black_28px,black_calc(100%_-_28px),transparent_100%)] [&::-webkit-scrollbar]:hidden"
+          class="min-w-0 flex-1 overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          <div class="flex w-max gap-2 px-1">
+          <div class="flex w-max min-w-full justify-center gap-2">
             {
               SERVICE_OFFERS.map((service, i) => (
                 <button
@@ -320,7 +320,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
       <GradientButton
         href={NAV_ROUTES.services}
         size="lg"
-        class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto"
+        class="h-12 min-h-12 w-full justify-center transition-[background-color,color,box-shadow] hover:bg-white hover:text-accent hover:shadow-[0_8px_32px_rgba(255,255,255,0.4)] sm:h-14 sm:min-h-14 sm:w-auto"
       >
         See all services
       </GradientButton>
@@ -619,10 +619,20 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
       if (activeTitle) activeTitle.textContent = shorts[activeSlot] ?? "";
       if (isSm && tabsViewport) {
         const tab = tabs[activeIndex];
-        if (tab) {
-          const left =
-            tab.offsetLeft - (tabsViewport.clientWidth - tab.offsetWidth) / 2;
-          tabsViewport.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
+        if (tab instanceof HTMLElement) {
+          const pad = 8;
+          const left = tab.offsetLeft;
+          const right = left + tab.offsetWidth;
+          const viewLeft = tabsViewport.scrollLeft;
+          const viewRight = viewLeft + tabsViewport.clientWidth;
+          if (left < viewLeft + pad) {
+            tabsViewport.scrollTo({ left: Math.max(0, left - pad), behavior: "smooth" });
+          } else if (right > viewRight - pad) {
+            tabsViewport.scrollTo({
+              left: right - tabsViewport.clientWidth + pad,
+              behavior: "smooth",
+            });
+          }
         }
       }
     };
