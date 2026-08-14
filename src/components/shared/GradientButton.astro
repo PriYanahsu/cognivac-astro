@@ -11,14 +11,22 @@ interface Props {
   type?: "button" | "submit";
   ariaLabel?: string;
   id?: string;
+  /**
+   * Which band the button is sitting on, not what colour it is. Cobalt on
+   * near-black needs a stronger ambient glow and inverts to white on hover;
+   * cobalt on near-white needs a contact shadow and deepens to ink. Sections
+   * used to hand-roll the dark case as `hover:bg-white hover:text-accent`
+   * overrides at each call site, which is why no two of them matched.
+   */
+  surface?: "light" | "dark";
   /** Button form only — a link cannot be disabled. */
   disabled?: boolean;
 }
 
 const SIZE_CLASSES = {
   sm: "button-primary-sm h-9 min-h-9 px-1.5 text-button-md",
-  default: "button-primary h-11 min-h-11 px-[14px] text-button-lg rounded-pill",
-  lg: "button-primary h-14 min-h-14 px-8 text-button-lg rounded-pill",
+  default: "cta-fill h-11 min-h-11 px-6",
+  lg: "cta-fill h-14 min-h-14 px-8",
 } as const;
 
 const {
@@ -29,16 +37,17 @@ const {
   type = "button",
   ariaLabel,
   id,
+  surface = "light",
   disabled = false,
 } = Astro.props;
 
+const isSm = size === "sm";
+
 const classes = cn(
-  "inline-flex items-center justify-center gap-2 transition-[background-color,color,box-shadow] duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2",
-  size === "sm"
-    ? "shadow-none"
-    : "shadow-glow hover:bg-ink hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)]",
+  "inline-flex items-center justify-center gap-2 focus-visible:outline-none",
   SIZE_CLASSES[size],
-  disabled && "cursor-not-allowed opacity-60 hover:bg-transparent",
+  !isSm && surface === "dark" && "cta-fill-on-dark",
+  disabled && "cursor-not-allowed opacity-60",
   className,
 );
 ---
@@ -47,7 +56,7 @@ const classes = cn(
   href ? (
     <a href={href} class={classes} aria-label={ariaLabel} id={id}>
       <slot />
-      {showArrow && <ArrowRight class="h-4 w-4" />}
+      {showArrow && <ArrowRight class={isSm ? "h-4 w-4" : "cta-arrow"} />}
     </a>
   ) : (
     <button
@@ -58,7 +67,7 @@ const classes = cn(
       disabled={disabled}
     >
       <slot />
-      {showArrow && <ArrowRight class="h-4 w-4" />}
+      {showArrow && <ArrowRight class={isSm ? "h-4 w-4" : "cta-arrow"} />}
     </button>
   )
 }

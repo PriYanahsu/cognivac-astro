@@ -561,6 +561,232 @@ h6 {
     transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
   }
 
+  /**
+   * The CTA treatment — every full-size primary and secondary button on the
+   * site, on both light and dark bands.
+   *
+   * What this replaces, and why. `.button-primary` was a flat fill under one
+   * wide soft halo (`0 8px 32px rgba(30,79,216,.35)`), and `.button-secondary`
+   * drew its edge with `--hairline` (#ebebeb) — about a 2% step against the
+   * near-white the hero and the page heroes sit on, so the secondary button
+   * had no visible boundary at all and read as floating text.
+   *
+   * Three things fix it, and they are the same three at every size:
+   *
+   * 1. Depth is a stack, not a blur. An inset top light draws the pill's own
+   *    edge, a 1–2px contact shadow sits it on the page, and the coloured
+   *    ambient layer carries a negative spread so the glow stays tucked under
+   *    the button instead of hazing out around it. One 32px blur on its own
+   *    reads as a smudge at hero scale, which is what it was doing.
+   * 2. The fill has a vertical gradient. `GradientButton` never had one
+   *    despite the name; the range here is narrow enough to be felt rather
+   *    than seen, and it is the difference between a pill that looks molded
+   *    and one that looks pasted on.
+   * 3. Hover is a state change, not a colour swap. A 1px lift, a deepened
+   *    shadow, and the arrow travelling forward.
+   *
+   * The hover fill is a `::before` at `z-index: -1` rather than a second
+   * `background-image`, because gradients do not interpolate — swapping
+   * `background-image` on hover snaps, and the snap was visible enough to
+   * look like a bug. Opacity on an overlay cross-fades cleanly.
+   *
+   * These live in `@layer components` on purpose: call sites keep the last
+   * word, so a one-off `w-full` or `justify-center` utility still wins.
+   */
+  .cta-fill,
+  .cta-outline {
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: var(--rounded-pill);
+    font-size: var(--font-button-lg-size);
+    line-height: var(--font-button-lg-line-height);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    transition:
+      transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.25s ease,
+      background-color 0.25s ease,
+      border-color 0.25s ease,
+      color 0.25s ease;
+  }
+
+  .cta-fill::before,
+  .cta-outline::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .cta-fill:hover::before,
+  .cta-outline:hover::before {
+    opacity: 1;
+  }
+
+  .cta-fill:focus-visible,
+  .cta-outline:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  /* Primary, on a light band. */
+  .cta-fill {
+    border: none;
+    color: var(--on-primary);
+    background-color: var(--primary);
+    background-image: linear-gradient(180deg, #2c5ce6 0%, #1e4fd8 52%, #1a45c0 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.24),
+      0 1px 2px rgba(16, 24, 40, 0.18),
+      0 10px 26px -10px rgba(30, 79, 216, 0.65);
+  }
+
+  /* Deepening to ink on hover is the site's established primary behaviour.
+     The ambient layer goes neutral with it — a cobalt halo under a black pill
+     was the part that looked wrong, not the colour change. */
+  .cta-fill::before {
+    background-image: linear-gradient(180deg, #302e29 0%, var(--ink) 55%, #16150f 100%);
+  }
+
+  .cta-fill:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      0 2px 4px rgba(16, 24, 40, 0.22),
+      0 14px 32px -12px rgba(34, 32, 28, 0.7);
+  }
+
+  .cta-fill:active {
+    transform: translateY(0);
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.24),
+      0 1px 2px rgba(16, 24, 40, 0.2);
+  }
+
+  /* Primary, on a dark band. Cobalt glows properly against near-black, so the
+     ambient layer gets more of it here, and hover inverts to white — the
+     existing dark-band behaviour, which each section used to hand-roll as a
+     `hover:bg-white hover:text-accent` override. */
+  .cta-fill-on-dark {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      0 1px 2px rgba(0, 0, 0, 0.45),
+      0 14px 34px -12px rgba(46, 98, 240, 0.9);
+  }
+
+  .cta-fill-on-dark::before {
+    background-image: linear-gradient(180deg, #ffffff 0%, #f1f4ff 100%);
+  }
+
+  .cta-fill-on-dark:hover {
+    color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      0 2px 6px rgba(0, 0, 0, 0.5),
+      0 16px 38px -12px rgba(255, 255, 255, 0.4);
+  }
+
+  .cta-fill-on-dark:active {
+    transform: translateY(0);
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.3),
+      0 1px 2px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Secondary, on a light band. Opaque-ish white plus blur rather than a
+     transparent capsule: the hero's network canvas animates directly behind
+     this button, and mesh lines crawling under the label were the other half
+     of why it read as unfinished. */
+  .cta-outline {
+    color: var(--ink);
+    background-color: rgba(255, 255, 255, 0.86);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(34, 32, 28, 0.14);
+    box-shadow:
+      0 1px 2px rgba(16, 24, 40, 0.06),
+      0 6px 16px -8px rgba(16, 24, 40, 0.18);
+  }
+
+  /* It stays a secondary on hover. Flipping to solid accent — the old
+     behaviour — gave both buttons identical weight at the exact moment the
+     reader was choosing between them. */
+  .cta-outline:hover {
+    transform: translateY(-1px);
+    background-color: #ffffff;
+    border-color: rgba(34, 32, 28, 0.28);
+    box-shadow:
+      0 2px 4px rgba(16, 24, 40, 0.08),
+      0 10px 24px -10px rgba(16, 24, 40, 0.24);
+  }
+
+  .cta-outline:active {
+    transform: translateY(0);
+    box-shadow: inset 0 1px 2px rgba(16, 24, 40, 0.08);
+  }
+
+  /* Secondary, on a dark band. */
+  .cta-outline-on-dark {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.22);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09);
+  }
+
+  .cta-outline-on-dark:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.45);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      0 10px 26px -12px rgba(0, 0, 0, 0.7);
+  }
+
+  .cta-outline-on-dark:active {
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+
+  /* The arrow travels on hover. `translate` rather than `transform` so it
+     composes with the icon's own rotation where one is set. */
+  .cta-arrow {
+    height: 1rem;
+    width: 1rem;
+    flex-shrink: 0;
+    transition: translate 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .cta-fill:hover .cta-arrow,
+  .cta-outline:hover .cta-arrow {
+    translate: 3px 0;
+  }
+
+  /* ArrowUpRight points up and out, so it should leave in that direction. */
+  .cta-arrow-diagonal:hover .cta-arrow {
+    translate: 2px -2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cta-fill:hover,
+    .cta-fill:active,
+    .cta-outline:hover,
+    .cta-outline:active {
+      transform: none;
+    }
+
+    .cta-fill:hover .cta-arrow,
+    .cta-outline:hover .cta-arrow,
+    .cta-arrow-diagonal:hover .cta-arrow {
+      translate: none;
+    }
+  }
+
   .button-primary-sm {
     display: inline-flex;
     align-items: center;

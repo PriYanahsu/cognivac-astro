@@ -5,15 +5,25 @@ import { cn } from "@/lib/utils";
 interface Props {
   href?: string;
   class?: string;
+  /**
+   * Kept from the original API, and it names the band rather than the button:
+   * `dark` is the dark-text button that sits on a light band, `light` is the
+   * white-text one on a dark band.
+   */
   tone?: "dark" | "light";
   size?: "default" | "lg" | "sm";
   type?: "button" | "submit";
+  /**
+   * Adds the arrow-travel hover for a slotted `ArrowUpRight`, which leaves up
+   * and to the right rather than straight forward.
+   */
+  diagonalArrow?: boolean;
 }
 
 const SIZE_CLASSES = {
   sm: "h-9 min-h-9 px-1.5 text-button-md",
-  default: "h-11 min-h-11 px-[14px] text-button-lg",
-  lg: "h-14 min-h-14 px-8 text-button-lg",
+  default: "cta-outline h-11 min-h-11 px-6",
+  lg: "cta-outline h-14 min-h-14 px-8",
 } as const;
 
 const {
@@ -22,21 +32,20 @@ const {
   tone = "dark",
   size = "default",
   type = "button",
+  diagonalArrow = false,
 } = Astro.props;
 
 const isSm = size === "sm";
 
 const classes = cn(
-  "inline-flex items-center justify-center gap-2 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2",
+  "inline-flex items-center justify-center gap-2 focus-visible:outline-none",
   SIZE_CLASSES[size],
-  tone === "dark" &&
-    (isSm
-      ? "button-ghost-sm text-ink hover:border-accent hover:bg-accent hover:text-on-primary"
-      : "button-secondary rounded-pill text-ink hover:border-accent hover:bg-accent hover:text-on-primary"),
-  tone === "light" &&
-    (isSm
-      ? "button-ghost-sm border-white/40 bg-transparent text-white hover:border-accent hover:bg-accent hover:text-on-primary"
-      : "rounded-pill border border-white/40 bg-transparent text-button-lg text-white hover:border-accent hover:bg-accent hover:text-on-primary"),
+  isSm &&
+    (tone === "dark"
+      ? "button-ghost-sm text-ink transition-all duration-300 hover:border-accent hover:bg-accent hover:text-on-primary"
+      : "button-ghost-sm border-white/40 bg-transparent text-white transition-all duration-300 hover:border-accent hover:bg-accent hover:text-on-primary"),
+  !isSm && tone === "light" && "cta-outline-on-dark",
+  !isSm && diagonalArrow && "cta-arrow-diagonal",
   className,
 );
 ---
