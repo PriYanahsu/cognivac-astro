@@ -34,25 +34,31 @@ import ProofStrip from "./ProofStrip.astro";
           <p class="stack-sm mx-auto max-w-[36ch] text-[14px] leading-[1.5] text-muted sm:stack-md sm:max-w-2xl sm:text-body-lg">
             {HERO_CONTENT.description}
           </p>
+          {/*
+            `gap-3` rather than `gap-4`, and a shared floor width on the two
+            pills. The labels differ by four characters, and at hero scale two
+            differently-sized capsules a full rem apart read as two unrelated
+            controls instead of as one cluster with a primary in it.
+          */}
           <div
-            class="stack-sm flex w-full flex-col items-stretch justify-center gap-2 sm:stack-lg sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4"
+            class="stack-sm flex w-full flex-col items-stretch justify-center gap-2.5 sm:stack-lg sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-3"
           >
             <GradientButton
               href={HERO_CONTENT.primaryCta.href}
               size="lg"
-              class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto"
+              class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto sm:min-w-[13.75rem]"
             >
               {HERO_CONTENT.primaryCta.label}
             </GradientButton>
             <GhostButton
               href={HERO_CONTENT.secondaryCta.href}
               size="lg"
-              class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto"
+              class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto sm:min-w-[13.75rem]"
             >
               {HERO_CONTENT.secondaryCta.label}
             </GhostButton>
           </div>
-          <p class="stack-xs text-center text-[12px] leading-snug text-muted-light sm:text-[13px]">
+          <p class="stack-sm text-center text-[12px] leading-snug text-muted-light sm:text-[13px]">
             {HERO_CONTENT.ctaNote}
           </p>
           <div class="stack-sm flex justify-center sm:stack-lg">
