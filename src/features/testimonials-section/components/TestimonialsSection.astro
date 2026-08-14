@@ -11,8 +11,60 @@ import { TESTIMONIALS_CONTENT, TRUST_STRIP } from "../constants";
  * Port of features/testimonials-section/components/testimonials-section.tsx.
  * Editorial pull-quote sheet on a lavender band — left-aligned quote, bar
  * progress footer, dwell ring on the forward control.
+ *
+ * The band is built as a lit surface rather than a colour, in four layers under
+ * the content: a warm vertical gradient, a hairline lattice, the drifting trust
+ * names cut into it, and a film of grain over the lot. Size alone was never
+ * going to make oversized type read as expensive — a flat wash with big words
+ * on it is a poster. What sells it is that every layer answers to the same
+ * light: the lattice and the wordmarks are both raked from the upper left and
+ * dissolve toward the lower right (`.trust-drift` in globals.css carries that
+ * three-part mask), and a bloom under the card lifts the sheet off the surface
+ * instead of pasting it on.
+ *
+ * The names are stroked, never filled — an unfilled letter at this scale reads
+ * as engraved, where filled type at a few percent just reads as a smudge of
+ * the same letterforms the quote is set in. One row is stroked in cobalt: the
+ * only colour down here, and the reason the rows read as depth rather than as
+ * one layer repeated.
+ *
+ * The track is four copies of the list so a -50% translate loops on a seam
+ * that lands mid-list, and the rows are parked at percentages rather than
+ * spaced with `justify-between` so the top one clears the section heading at
+ * every height. On a phone that leaves the drift almost entirely behind the
+ * card, which goes near enough edge to edge there — deliberately. The one
+ * strip of free space, between the description and the card, is about 35px
+ * tall; a row of this type wedged into it would read as a collision, and a
+ * band that stays quiet on small screens is the better of the two.
  */
 const TOTAL = TESTIMONIALS.length;
+
+const DRIFT_ROWS = [
+  {
+    names: TRUST_STRIP.names,
+    reverse: false,
+    speed: "",
+    top: "top-[40%]",
+    stroke: "trust-drift-name",
+  },
+  {
+    names: [...TRUST_STRIP.names].reverse(),
+    reverse: true,
+    speed: "trust-drift-row--slow",
+    top: "top-[64%]",
+    stroke: "trust-drift-name trust-drift-name--accent",
+  },
+  {
+    names: TRUST_STRIP.names,
+    reverse: false,
+    speed: "trust-drift-row--slower",
+    top: "top-[88%]",
+    stroke: "trust-drift-name",
+  },
+].map((row) => ({
+  ...row,
+  loop: [...row.names, ...row.names, ...row.names, ...row.names],
+}));
 ---
 
 <section
@@ -23,7 +75,55 @@ const TOTAL = TESTIMONIALS.length;
 >
   <div
     aria-hidden="true"
+    class="pointer-events-none absolute inset-0 bg-[linear-gradient(178deg,#f4f0e9_0%,#efeae3_45%,#e9e3da_100%)]"
+  >
+  </div>
+
+  <div
+    aria-hidden="true"
     class="pointer-events-none absolute -top-40 left-1/2 h-150 w-250 -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse,rgba(30,79,216,0.07),transparent_65%)]"
+  >
+  </div>
+
+  <div class="trust-lattice pointer-events-none absolute inset-0" aria-hidden="true">
+  </div>
+
+  <div
+    aria-hidden="true"
+    class="trust-drift pointer-events-none absolute inset-0"
+  >
+    {
+      DRIFT_ROWS.map((row) => (
+        <div
+          class:list={[
+            "trust-drift-row absolute left-0 flex w-max -translate-y-1/2 items-center",
+            row.top,
+            row.reverse && "trust-drift-row--reverse",
+            row.speed,
+          ]}
+        >
+          {row.loop.map((name) => (
+            <span
+              class:list={[
+                "flex items-center whitespace-nowrap text-[clamp(2.75rem,7.5vw,6rem)] font-extrabold uppercase leading-none tracking-[-0.025em]",
+                row.stroke,
+              ]}
+            >
+              {name}
+              <span class="mx-7 h-2 w-2 shrink-0 rounded-full border border-accent/25 sm:mx-12 sm:h-2.5 sm:w-2.5" />
+            </span>
+          ))}
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="trust-grain pointer-events-none absolute inset-0" aria-hidden="true">
+  </div>
+
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute left-1/2 top-[56%] h-[62%] w-[92%] max-w-6xl -translate-x-1/2 -translate-y-1/2 rounded-[50%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.62),rgba(255,255,255,0.28)_45%,transparent_72%)]"
   >
   </div>
 
@@ -51,11 +151,11 @@ const TOTAL = TESTIMONIALS.length;
         aria-roledescription="carousel"
         aria-label="Client testimonials"
         tabindex="0"
-        class="relative mx-auto mt-8 max-w-5xl overflow-hidden rounded-2xl border border-border bg-card shadow-soft-lg outline-none sm:mt-12"
+        class="relative mx-auto mt-8 max-w-5xl overflow-hidden rounded-2xl border border-border/80 bg-[linear-gradient(174deg,#ffffff_0%,#ffffff_55%,#fdfbf8_100%)] shadow-[0_1px_1px_rgba(34,32,28,0.04),0_8px_16px_-8px_rgba(34,32,28,0.06),0_44px_80px_-32px_rgba(34,32,28,0.3)] outline-none sm:mt-12"
       >
         <span
           aria-hidden="true"
-          class="pointer-events-none absolute inset-y-0 left-0 w-1 bg-linear-to-b from-accent via-indigo to-accent/30 sm:w-1.5"
+          class="pointer-events-none absolute inset-y-0 left-0 w-[3px] bg-[linear-gradient(to_bottom,var(--accent)_0%,var(--indigo)_38%,rgba(30,79,216,0.15)_100%)]"
         ></span>
 
         <div class="relative p-6 pl-7 sm:p-10 sm:pl-12 lg:p-14 lg:pl-16">
@@ -201,38 +301,11 @@ const TOTAL = TESTIMONIALS.length;
       </div>
     </FadeIn>
 
-    <FadeIn delay={0.2}>
-      <div class="mx-auto mt-10 max-w-5xl sm:mt-14">
-        <div class="flex items-center gap-4 sm:gap-6">
-          <span
-            aria-hidden="true"
-            class="h-px flex-1 bg-linear-to-r from-transparent to-border"
-          ></span>
-          <p class="text-eyebrow shrink-0 text-center text-muted-light">
-            {TRUST_STRIP.label}
-          </p>
-          <span
-            aria-hidden="true"
-            class="h-px flex-1 bg-linear-to-l from-transparent to-border"
-          ></span>
-        </div>
-
-        <ul class="mt-6 grid grid-cols-3 items-center gap-x-4 gap-y-5 sm:mt-8 sm:grid-cols-6 sm:gap-x-6">
-          {
-            TRUST_STRIP.names.map((name) => (
-              <li class="text-center text-[14px] font-semibold tracking-[-0.01em] text-muted-light transition-colors duration-300 hover:text-muted sm:text-[16px]">
-                {name}
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-    </FadeIn>
   </Container>
 </section>
 
 <script>
-  const DWELL = 3;
+  const DWELL = 5;
   const TRAVEL = 56;
   const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
   const RING_C = 2 * Math.PI * 24;
@@ -394,27 +467,23 @@ const TOTAL = TESTIMONIALS.length;
       bar.addEventListener("click", () => go(i, i > index ? 1 : -1));
     });
 
-    section.addEventListener("pointerenter", () => {
+    const hold = () => {
       held = true;
       paintProgress();
       schedule();
-    });
-    section.addEventListener("pointerleave", () => {
+    };
+    const release = () => {
       held = false;
       paintProgress();
       schedule();
-    });
+    };
 
-    stage?.addEventListener("focusin", () => {
-      held = true;
-      paintProgress();
-      schedule();
-    });
+    stage?.addEventListener("pointerenter", hold);
+    stage?.addEventListener("pointerleave", release);
+    stage?.addEventListener("focusin", hold);
     stage?.addEventListener("focusout", (event) => {
       if (stage.contains((event as FocusEvent).relatedTarget as Node)) return;
-      held = false;
-      paintProgress();
-      schedule();
+      release();
     });
     stage?.addEventListener("keydown", (event) => {
       const delta =
