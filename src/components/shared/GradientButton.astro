@@ -33,8 +33,10 @@ const {
 } = Astro.props;
 
 const classes = cn(
-  "inline-flex items-center justify-center gap-2 transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2",
-  size === "sm" ? "shadow-none" : "shadow-glow hover:bg-ink hover:shadow-none",
+  "inline-flex items-center justify-center gap-2 transition-[background-color,color,box-shadow] duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2",
+  size === "sm"
+    ? "shadow-none"
+    : "shadow-glow hover:bg-ink hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)]",
   SIZE_CLASSES[size],
   disabled && "cursor-not-allowed opacity-60 hover:bg-transparent",
   className,
