@@ -988,6 +988,153 @@ h6 {
 }
 
 /*
+ * Testimonials band surface — lattice, drift, grain.
+ *
+ * Three layers that only work together. The lattice is the ruled ground, the
+ * drift is what is cut into it, the grain is the film over both, and all three
+ * take their falloff from the same raking light so the band reads as one
+ * material instead of three effects stacked up.
+ *
+ * Nothing here is hover-paused, unlike the proof strip. That band's numbers
+ * are meant to be read; this is surface, and a surface that reacts to the
+ * cursor stops being surface.
+ */
+
+/*
+ * The ruled ground: a 68px lattice at barely over 2% ink. On its own it is
+ * almost subliminal — its whole job is to give the wordmarks something to be
+ * cut into, so the band has an implied plane rather than being a flat wash
+ * with type floating in front of it.
+ */
+.trust-lattice {
+  background-image:
+    linear-gradient(to right, rgba(34, 32, 28, 0.022) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(34, 32, 28, 0.022) 1px, transparent 1px);
+  background-size: 68px 68px;
+  -webkit-mask-image: linear-gradient(
+    118deg,
+    #000 0%,
+    rgba(0, 0, 0, 0.55) 45%,
+    transparent 88%
+  );
+  mask-image: linear-gradient(
+    118deg,
+    #000 0%,
+    rgba(0, 0, 0, 0.55) 45%,
+    transparent 88%
+  );
+}
+
+/*
+ * Grain. The one layer that does the most for the least: a flat colour field
+ * on a screen reads as digital, and a few percent of fractal noise over it
+ * reads as stock. Generated inline rather than shipped as a file — it is one
+ * `feTurbulence`, and a network round trip for a texture nobody consciously
+ * sees is not worth the request.
+ *
+ * `contrast` on the filter tightens the noise into something closer to paper
+ * tooth than to television static, and the whole layer sits at 3.5% so it
+ * never crosses into visible speckle on a wide gamut display.
+ */
+.trust-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+}
+
+/*
+ * The Y half of the transform is carried in the keyframes, not left to the
+ * `-translate-y-1/2` on the row: an animation on `transform` overwrites the
+ * utility's, and the rows would drop half a line off their anchor the moment
+ * the loop started. The class still earns its place — it is what holds the
+ * row centred under `prefers-reduced-motion`, where there is no animation.
+ */
+@keyframes trust-drift {
+  from {
+    transform: translate(0, -50%);
+  }
+  to {
+    transform: translate(-50%, -50%);
+  }
+}
+
+.trust-drift-row {
+  animation: trust-drift 120s linear infinite;
+}
+
+/*
+ * Hairline engraving, not faded copy. `text-stroke` is the whole point of the
+ * treatment: an unfilled letter at this size carries an edge the eye reads as
+ * a drawn mark, so the row can sit under the card without ever reading as text
+ * someone forgot to finish. Kept at 1px on every breakpoint — the stroke is
+ * absolute, so scaling it with the type would thicken the outline into a
+ * second, heavier wordmark on wide screens.
+ *
+ * `-webkit-` prefixed only: that is the sole form shipping engines implement,
+ * and all of them do. On anything that does not, the row renders as nothing at
+ * all — a fine failure for a decorative, aria-hidden layer, and the reason
+ * this is used here and not on type anyone has to read.
+ */
+.trust-drift-name {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(34, 32, 28, 0.19);
+}
+
+/* One row in cobalt. Lighter than the ink rows on purpose — the same stroke
+   value in a saturated hue carries further than it does in near-black. */
+.trust-drift-name--accent {
+  -webkit-text-stroke-color: rgba(30, 79, 216, 0.16);
+}
+
+.trust-drift-row--slow {
+  animation-duration: 150s;
+}
+
+.trust-drift-row--slower {
+  animation-duration: 185s;
+}
+
+/* Left-to-right: same loop, walked backwards, so the seam still lands clean. */
+.trust-drift-row--reverse {
+  animation-direction: reverse;
+}
+
+/*
+ * Three masks intersected, and the third one is the whole difference between
+ * this reading as designed and reading as wallpaper.
+ *
+ * The first two are housekeeping: fade the horizontal so a wordmark is never
+ * cut flush against the band edge, fade the vertical so the rows do not run
+ * into the section's top and bottom borders. Even, symmetrical, and — on their
+ * own — inert. A texture that is equally present everywhere is a repeat, and a
+ * repeat reads as cheap however fine the letterforms are.
+ *
+ * The third rakes the light in at 118deg: full strength at the upper left,
+ * half by the middle, gone before the lower right. The same angle drives the
+ * lattice, so the ground and the engraving are lit from one source, and the
+ * eye gets a direction to travel — into the quote — instead of a flat field.
+ */
+.trust-drift {
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0, #000 14%, #000 86%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%),
+    linear-gradient(118deg, #000 0%, #000 22%, rgba(0, 0, 0, 0.45) 62%, rgba(0, 0, 0, 0.1) 100%);
+  mask-image:
+    linear-gradient(to right, transparent 0, #000 14%, #000 86%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%),
+    linear-gradient(118deg, #000 0%, #000 22%, rgba(0, 0, 0, 0.45) 62%, rgba(0, 0, 0, 0.1) 100%);
+  -webkit-mask-composite: source-in, source-in;
+  mask-composite: intersect, intersect;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trust-drift-row {
+    animation: none;
+  }
+}
+
+/*
  * Short-laptop escape hatch. Width is not the problem here — height is, so
  * this keys off viewport height, and only above `sm` so phones (short and
  * narrow, but scrolled rather than fitted) keep the card.
