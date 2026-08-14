@@ -254,7 +254,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
                 data-deck-card
                 role="button"
                 tabindex="-1"
-                class="group flex h-full w-full flex-col overflow-hidden rounded-md p-4 text-left text-[#0b0b0f] shadow-[0_14px_28px_-12px_rgba(0,0,0,0.7)] transition-[transform,opacity] duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] sm:rounded-md sm:p-6 md:p-[30px]"
+                class="group relative flex h-full w-full flex-col overflow-hidden rounded-md p-4 text-left text-[#0b0b0f] shadow-[0_14px_28px_-12px_rgba(0,0,0,0.7)] transition-[transform,opacity] duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] sm:rounded-md sm:p-6 md:p-[30px]"
                 style={`background:${service.color}`}
               >
                 <div class="flex min-h-0 flex-1 flex-col overflow-hidden">
@@ -299,12 +299,13 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
                     class="absolute inset-0 h-full w-full object-cover"
                   />
                 </div>
-                <span
+                <a
                   data-deck-hover-cta
-                  class="pointer-events-none absolute left-1/2 top-1/2 z-50 hidden -translate-x-1/2 -translate-y-1/2 scale-90 whitespace-nowrap rounded-full bg-black/85 px-[22px] py-3 text-[13px] font-semibold text-white opacity-0 transition-all duration-300 hover:bg-accent"
+                  href={service.href}
+                  class="pointer-events-none absolute left-1/2 top-1/2 z-50 hidden -translate-x-1/2 -translate-y-1/2 scale-90 whitespace-nowrap rounded-full bg-black/85 px-[22px] py-3 text-[13px] font-semibold text-white opacity-0 transition-[opacity,scale,background-color] duration-300 hover:bg-accent group-hover:pointer-events-auto group-hover:scale-100 group-hover:opacity-100"
                 >
-                  View service →
-                </span>
+                  View my service →
+                </a>
               </div>
             </div>
           );
@@ -368,14 +369,8 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
   }
 
   @media (hover: hover) {
-    [data-deck-orbit][data-center="true"] [data-deck-hover-cta] {
+    [data-deck-orbit][data-front="true"] [data-deck-hover-cta] {
       display: block;
-    }
-
-    [data-deck-orbit][data-center="true"]:hover [data-deck-hover-cta] {
-      pointer-events: auto;
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1);
     }
   }
 </style>
@@ -535,6 +530,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
 
         const delta = circularDelta(slot, activeSlot, RING_SLOTS);
         el.dataset.center = delta === 0 ? "true" : "false";
+        el.dataset.front = Math.abs(delta) <= 1 ? "true" : "false";
         const card = el.querySelector("[data-deck-card]");
         if (card) {
           card.tabIndex = revealed && frame.opacity > 0.3 ? 0 : -1;
@@ -730,6 +726,8 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
 
     orbits.forEach((orbit, slot) => {
       const card = orbit.querySelector("[data-deck-card]");
+      const cta = orbit.querySelector("[data-deck-hover-cta]");
+      cta?.addEventListener("click", (event) => event.stopPropagation());
       card?.addEventListener("click", () => onCardActivate(slot));
       card?.addEventListener("keydown", (event) => {
         if (event.key === "Enter" || event.key === " ") {
