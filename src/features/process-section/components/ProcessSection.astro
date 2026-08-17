@@ -319,17 +319,51 @@ const paddedTotal = String(TOTAL).padStart(2, "0");
     let inView = false;
     let timer = 0;
 
+    // The dwell is tracked as consumed milliseconds rather than one fixed
+    // timeout, so pausing (hover, focus, scrolling away) can freeze the rail
+    // mid-step and resume from that exact point instead of restarting it.
+    let elapsed = 0;
+    let startedAt = 0;
+    let running = false;
+
+    const spent = () =>
+      Math.min(
+        DWELL * 1000,
+        elapsed + (running ? performance.now() - startedAt : 0),
+      );
+    const remaining = () => Math.max(0, DWELL * 1000 - spent());
+    const progress = () => spent() / (DWELL * 1000);
+
+    const stopClock = () => {
+      if (running) {
+        elapsed = spent();
+        running = false;
+      }
+      window.clearTimeout(timer);
+    };
+
     const playing = () => inView && !locked && !hovered && !reduceMotion;
 
     const paintFill = () => {
       if (!fill) return;
-      const value = Math.min(1, playing() ? (active + 1) / LAST : active / LAST);
-      fill.style.transition = playing()
-        ? `transform ${DWELL}s linear`
-        : reduceMotion
+      const base = Math.min(1, active / LAST);
+      const target = Math.min(1, (active + 1) / LAST);
+      const at = base + (target - base) * progress();
+
+      if (!playing()) {
+        // Land on wherever the sweep had got to and hold there.
+        fill.style.transition = reduceMotion
           ? "none"
           : `transform 0.45s ${EASE}`;
-      fill.style.transform = `scaleX(${value})`;
+        fill.style.transform = `scaleX(${at})`;
+        return;
+      }
+
+      fill.style.transition = "none";
+      fill.style.transform = `scaleX(${at})`;
+      void fill.offsetWidth;
+      fill.style.transition = `transform ${remaining() / 1000}s linear`;
+      fill.style.transform = `scaleX(${target})`;
     };
 
     const paint = () => {
@@ -384,9 +418,13 @@ const paddedTotal = String(TOTAL).padStart(2, "0");
     };
 
     const schedule = () => {
-      window.clearTimeout(timer);
+      stopClock();
       if (!playing()) return;
+      startedAt = performance.now();
+      running = true;
       timer = window.setTimeout(() => {
+        running = false;
+        elapsed = 0;
         const nextIndex = (active + 1) % TOTAL;
         if (nextIndex === 0 && fill) {
           fill.style.transition = "none";
@@ -396,13 +434,14 @@ const paddedTotal = String(TOTAL).padStart(2, "0");
         active = nextIndex;
         paint();
         schedule();
-      }, DWELL * 1000);
+      }, remaining());
     };
 
     const select = (index: number) => {
       active = ((index % TOTAL) + TOTAL) % TOTAL;
       locked = true;
-      window.clearTimeout(timer);
+      stopClock();
+      elapsed = 0;
       paint();
     };
 
@@ -427,20 +466,20 @@ const paddedTotal = String(TOTAL).padStart(2, "0");
     panels.forEach((panel) => {
       panel.addEventListener("pointerenter", () => {
         hovered = true;
-        window.clearTimeout(timer);
+        stopClock();
         paintFill();
       });
       panel.addEventListener("pointerleave", () => {
         hovered = false;
-        paintFill();
         schedule();
+        paintFill();
       });
     });
     section.addEventListener(
       "pointerdown",
       () => {
         locked = true;
-        window.clearTimeout(timer);
+        stopClock();
         paintFill();
       },
       { capture: true },
@@ -450,7 +489,7 @@ const paddedTotal = String(TOTAL).padStart(2, "0");
       "focusin",
       () => {
         locked = true;
-        window.clearTimeout(timer);
+        stopClock();
         paintFill();
       },
     );
@@ -459,10 +498,10 @@ const paddedTotal = String(TOTAL).padStart(2, "0");
       ([entry]) => {
         inView = entry.isIntersecting && entry.intersectionRatio >= 0.3;
         if (inView) {
-          paintFill();
           schedule();
+          paintFill();
         } else {
-          window.clearTimeout(timer);
+          stopClock();
           paintFill();
         }
       },

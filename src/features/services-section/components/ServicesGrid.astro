@@ -432,8 +432,15 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
     let userRotation = rotation;
     let pendingRotation = rotation;
     let activeSlot = initialIndex;
+    /**
+     * The slot the tabs/dots point at. Kept separate from activeSlot so a
+     * multi-step jump paints the destination pill once instead of chasing
+     * every slot the wheel sweeps through on its way there.
+     */
+    let selectedSlot = initialIndex;
     let revealed = false;
     let rafId = null;
+    let animating = false;
 
     const shown = new Array(RING_SLOTS).fill(false);
     const drag = { active: false, startX: 0, startRotation: 0, moved: false };
@@ -549,13 +556,14 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
       const slot = modulo(-Math.round(value / ANGLE_STEP), RING_SLOTS);
       if (slot !== activeSlot) {
         activeSlot = slot;
-        updateTabs();
+        if (!animating) setSelectedSlot(slot);
       }
     };
 
     const render = () => paint(userRotation);
 
     const stopAnimation = () => {
+      animating = false;
       if (rafId !== null) {
         cancelAnimationFrame(rafId);
         rafId = null;
@@ -574,12 +582,17 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
       const duration = clamp(560 + Math.abs(dist) * 6, 620, 1400);
       const start = performance.now();
 
+      animating = true;
       const tick = (now) => {
         const t = Math.min(1, (now - start) / duration);
         userRotation = from + dist * easeOutCubic(t);
         render();
-        if (t < 1) rafId = requestAnimationFrame(tick);
-        else rafId = null;
+        if (t < 1) {
+          rafId = requestAnimationFrame(tick);
+        } else {
+          rafId = null;
+          animating = false;
+        }
       };
       rafId = requestAnimationFrame(tick);
     };
@@ -589,7 +602,10 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
       return base + Math.round((userRotation - base) / 360) * 360;
     };
 
-    const goToSlot = (slot) => animateTo(rotationForSlot(slot));
+    const goToSlot = (slot) => {
+      setSelectedSlot(modulo(slot, RING_SLOTS));
+      animateTo(rotationForSlot(slot));
+    };
 
     const setActiveIndex = (i) => {
       const index = modulo(i, CARD_COUNT);
@@ -605,15 +621,21 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
       goToSlot(best);
     };
 
+    const setSelectedSlot = (slot) => {
+      if (slot === selectedSlot) return;
+      selectedSlot = slot;
+      updateTabs();
+    };
+
     const updateTabs = () => {
-      const activeIndex = activeSlot % CARD_COUNT;
+      const activeIndex = selectedSlot % CARD_COUNT;
       tabs.forEach((tab, i) => {
         tab.dataset.active = i === activeIndex ? "true" : "false";
       });
       dots.forEach((dot, i) => {
         dot.dataset.active = i === activeIndex ? "true" : "false";
       });
-      if (activeTitle) activeTitle.textContent = shorts[activeSlot] ?? "";
+      if (activeTitle) activeTitle.textContent = shorts[selectedSlot] ?? "";
       if (isSm && tabsViewport) {
         const tab = tabs[activeIndex];
         if (tab instanceof HTMLElement) {
