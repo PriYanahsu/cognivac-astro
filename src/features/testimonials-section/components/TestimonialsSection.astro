@@ -351,6 +351,32 @@ const DRIFT_ROWS = [
     let inView = false;
     let timer = 0;
 
+    // The dwell is tracked as consumed milliseconds rather than one fixed
+    // timeout, so holding the stage (hover, focus, scrolling away) freezes the
+    // bar and ring where they are and resumes from there instead of rewinding.
+    let elapsed = 0;
+    let startedAt = 0;
+    let running = false;
+    // Bumped on every repaint so a queued rAF from an earlier paint can't
+    // restart the sweep after a newer paint has frozen it.
+    let tick = 0;
+
+    const spent = () =>
+      Math.min(
+        DWELL * 1000,
+        elapsed + (running ? performance.now() - startedAt : 0),
+      );
+    const remaining = () => Math.max(0, DWELL * 1000 - spent());
+    const progress = () => spent() / (DWELL * 1000);
+
+    const stopClock = () => {
+      if (running) {
+        elapsed = spent();
+        running = false;
+      }
+      window.clearTimeout(timer);
+    };
+
     const playing = () => inView && !held && !reduceMotion;
 
     const pad = (n: number) => String(n).padStart(2, "0");
@@ -365,6 +391,10 @@ const DRIFT_ROWS = [
     };
 
     const paintProgress = () => {
+      const myTick = ++tick;
+      const at = progress();
+      const rest = remaining() / 1000;
+
       bars.forEach((bar, i) => {
         const isActive = i === index;
         const track = bar.querySelector<HTMLElement>("[data-testimonials-track]");
@@ -380,11 +410,12 @@ const DRIFT_ROWS = [
             track.appendChild(fill);
           }
           fill.style.transition = "none";
-          fill.style.transform = playing() ? "scaleX(0)" : "scaleX(1)";
+          fill.style.transform = `scaleX(${at})`;
           if (playing()) {
             requestAnimationFrame(() => {
               requestAnimationFrame(() => {
-                fill!.style.transition = `transform ${DWELL}s linear`;
+                if (myTick !== tick) return;
+                fill!.style.transition = `transform ${rest}s linear`;
                 fill!.style.transform = "scaleX(1)";
               });
             });
@@ -399,11 +430,12 @@ const DRIFT_ROWS = [
 
       if (ringFill) {
         ringFill.style.transition = "none";
-        ringFill.style.strokeDashoffset = playing() ? String(RING_C) : "0";
+        ringFill.style.strokeDashoffset = String(RING_C * (1 - at));
         if (playing()) {
           requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-              ringFill.style.transition = `stroke-dashoffset ${DWELL}s linear`;
+              if (myTick !== tick) return;
+              ringFill.style.transition = `stroke-dashoffset ${rest}s linear`;
               ringFill.style.strokeDashoffset = "0";
             });
           });
@@ -448,17 +480,21 @@ const DRIFT_ROWS = [
     const go = (nextIndex: number, direction: number) => {
       const target = ((nextIndex % total) + total) % total;
       if (target === index) return;
+      stopClock();
+      elapsed = 0;
       prevIndex = index;
       dir = direction;
       index = target;
-      paint();
       schedule();
+      paint();
     };
 
     const schedule = () => {
-      window.clearTimeout(timer);
+      stopClock();
       if (!playing()) return;
-      timer = window.setTimeout(() => go(index + 1, 1), DWELL * 1000);
+      startedAt = performance.now();
+      running = true;
+      timer = window.setTimeout(() => go(index + 1, 1), remaining());
     };
 
     prev?.addEventListener("click", () => go(index - 1, -1));
@@ -469,13 +505,13 @@ const DRIFT_ROWS = [
 
     const hold = () => {
       held = true;
+      stopClock();
       paintProgress();
-      schedule();
     };
     const release = () => {
       held = false;
-      paintProgress();
       schedule();
+      paintProgress();
     };
 
     stage?.addEventListener("pointerenter", hold);
@@ -496,8 +532,9 @@ const DRIFT_ROWS = [
     const observer = new IntersectionObserver(
       ([entry]) => {
         inView = entry.isIntersecting;
+        if (inView) schedule();
+        else stopClock();
         paintProgress();
-        schedule();
       },
       { threshold: 0.3 },
     );
@@ -509,7 +546,7 @@ const DRIFT_ROWS = [
     });
     if (ringFill) {
       ringFill.style.strokeDasharray = String(RING_C);
-      ringFill.style.strokeDashoffset = "0";
+      ringFill.style.strokeDashoffset = String(RING_C);
     }
     paintProgress();
   }
