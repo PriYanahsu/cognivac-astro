@@ -18,18 +18,18 @@ const loop = [...stats, ...stats];
 ---
 
 <div
-  class="relative w-full overflow-hidden bg-[#f7f4ef] py-3.5 pb-[max(0.875rem,env(safe-area-inset-bottom))] sm:py-7 sm:pb-7 lg:py-9 lg:pb-9"
+  class="relative w-full overflow-hidden border-y border-border bg-card py-3.5 pb-[max(0.875rem,env(safe-area-inset-bottom))] sm:py-7 sm:pb-7 lg:py-9 lg:pb-9"
   aria-label={PROOF_STRIP.label}
 >
+  {/* A wash, where a near-black photograph used to be. The band sits between
+      a near-white hero and a near-white section, so it needs its own colour
+      to read as a band at all — but the same warm off-white as its neighbours
+      would vanish, and the photograph went the other way and turned the one
+      quiet strip on the page into its loudest element. Cobalt at four percent
+      is the step between: visible as a change of ground, not as an object. */}
   <div
     aria-hidden="true"
-    class="pointer-events-none absolute inset-0 bg-cover bg-center "
-    style="background-image: url(/images/proof-strip-bg.webp)"
-  >
-  </div>
-  <div
-    aria-hidden="true"
-    class="pointer-events-none absolute inset-0"
+    class="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(30,79,216,0.05)_0%,rgba(14,165,233,0.03)_50%,rgba(30,79,216,0.05)_100%)]"
   >
   </div>
 
@@ -40,13 +40,13 @@ const loop = [...stats, ...stats];
           const isClone = index >= stats.length;
           return (
             <div
-              class="flex w-43 shrink-0 flex-col justify-center border-r-2 border-white/15 px-3 text-center sm:w-104 sm:px-14"
+              class="flex w-43 shrink-0 flex-col justify-center border-r border-border px-3 text-center sm:w-104 sm:px-14"
               aria-hidden={isClone ? "true" : undefined}
             >
-              <dt class="text-[12.5px] font-bold tracking-tight text-white sm:text-xl lg:text-2xl">
+              <dt class="text-[12.5px] font-bold tracking-tight text-foreground sm:text-xl lg:text-2xl">
                 {stat.value}
               </dt>
-              <dd class="mt-0.5 text-[10.5px] leading-snug text-white sm:mt-1.5 sm:text-sm">
+              <dd class="mt-0.5 text-[10.5px] leading-snug text-muted sm:mt-1.5 sm:text-sm">
                 {stat.detail}
               </dd>
             </div>
