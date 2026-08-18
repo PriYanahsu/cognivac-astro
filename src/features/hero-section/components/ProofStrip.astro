@@ -4,8 +4,9 @@ import { PROOF_STRIP } from "@/features/hero-section/constants";
 /**
  * Port of features/hero-section/components/proof-strip.tsx.
  *
- * Full-bleed light proof band. Stats scroll RTL in an infinite loop; the track
- * is duplicated so a -50% translate loops cleanly.
+ * The hero's closing line of figures. Not a band — it has no ground and no
+ * rule of its own; it sits on the hero's. Stats scroll RTL in an infinite
+ * loop; the track is duplicated so a -50% translate loops cleanly.
  *
  * The motion is deliberate and deliberately slow — see `.proof-strip-track`
  * in globals.css, which also parks the loop on hover. These numbers are the
@@ -18,21 +19,16 @@ const loop = [...stats, ...stats];
 ---
 
 <div
-  class="relative w-full overflow-hidden border-y border-border bg-card py-3.5 pb-[max(0.875rem,env(safe-area-inset-bottom))] sm:py-7 sm:pb-7 lg:py-9 lg:pb-9"
+  class="relative w-full overflow-hidden py-3.5 pb-[max(0.875rem,env(safe-area-inset-bottom))] sm:py-7 sm:pb-7 lg:py-9 lg:pb-9"
   aria-label={PROOF_STRIP.label}
 >
-  {/* A wash, where a near-black photograph used to be. The band sits between
-      a near-white hero and a near-white section, so it needs its own colour
-      to read as a band at all — but the same warm off-white as its neighbours
-      would vanish, and the photograph went the other way and turned the one
-      quiet strip on the page into its loudest element. Cobalt at four percent
-      is the step between: visible as a change of ground, not as an object. */}
-  <div
-    aria-hidden="true"
-    class="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(30,79,216,0.05)_0%,rgba(14,165,233,0.03)_50%,rgba(30,79,216,0.05)_100%)]"
-  >
-  </div>
-
+  {/* No ground of its own, and no rule above it. This sits inside the hero
+      section, so leaving it transparent means the hero's #FAFAFA and the
+      network canvas both run straight through — the figures read as the last
+      line of the hero rather than as a band bolted under it. Every version
+      that gave this its own surface (a near-black photograph, then white with
+      hairlines, then a cobalt wash) drew a seam across the page at exactly
+      the point where the eye is still travelling downward. */}
   <div class="proof-strip-marquee relative z-10">
     <dl class="proof-strip-track flex w-max items-stretch">
       {
@@ -40,7 +36,7 @@ const loop = [...stats, ...stats];
           const isClone = index >= stats.length;
           return (
             <div
-              class="flex w-43 shrink-0 flex-col justify-center border-r border-border px-3 text-center sm:w-104 sm:px-14"
+              class="flex w-43 shrink-0 flex-col justify-center border-r border-border/70 px-3 text-center sm:w-104 sm:px-14"
               aria-hidden={isClone ? "true" : undefined}
             >
               <dt class="text-[12.5px] font-bold tracking-tight text-foreground sm:text-xl lg:text-2xl">
