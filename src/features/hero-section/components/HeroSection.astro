@@ -1,5 +1,4 @@
 ---
-import { Plus } from "@lucide/astro";
 import Container from "@/components/shared/Container.astro";
 import SectionLabel from "@/components/shared/SectionLabel.astro";
 import GradientButton from "@/components/shared/GradientButton.astro";
@@ -7,129 +6,108 @@ import GhostButton from "@/components/shared/GhostButton.astro";
 import FadeIn from "@/components/animations/FadeIn.astro";
 import { HERO_CONTENT } from "@/features/hero-section/constants";
 import HeroNetworkBg from "./HeroNetworkBg.astro";
-import HeroArchitecture from "./HeroArchitecture.astro";
+import HeroVisual from "./HeroVisual.astro";
 import ProofStrip from "./ProofStrip.astro";
 
-/** Port of features/hero-section/components/hero-section.tsx. */
+/**
+ * Two-column hero: copy left, circular visual right.
+ *
+ * The centred version had every line finding its own axis — eyebrow, three
+ * headline lines, three deck lines, and a button pair each centred on the
+ * page, so the reader's eye restarted seven times on the way down. Left
+ * alignment gives all seven one shared edge, and the column that frees up on
+ * the right is what the visual fills.
+ */
 ---
 
 <section
-  class="relative flex flex-col overflow-hidden bg-[#FAFAFA] pt-[5.5rem] sm:min-h-dvh sm:pt-[6rem] lg:pt-[8rem]"
+  class="relative flex flex-col overflow-hidden bg-[#FAFAFA] pt-[5.5rem] sm:min-h-dvh sm:pt-[6rem] lg:pt-[7rem]"
 >
   <HeroNetworkBg />
 
   <div class="relative z-10 flex min-h-0 flex-1 flex-col">
-    <Container class="flex flex-1 flex-col pb-4 sm:justify-center sm:pb-8">
-      <div class="mx-auto max-w-6xl text-center">
-        <FadeIn>
-          <SectionLabel tone="primary" class="mb-0 block pl-0">
-            <span class="sm:hidden">{HERO_CONTENT.labelShort}</span>
-            <span class="hidden sm:inline">{HERO_CONTENT.label}</span>
-          </SectionLabel>
-          <h1
-            class="text-hero stack-sm mx-auto max-w-[26ch] leading-[1.05] text-foreground sm:max-w-[36ch] sm:leading-[1.08] sm:text-balance"
-          >
-            {HERO_CONTENT.title}
-          </h1>
-          <p class="stack-sm mx-auto max-w-[36ch] text-[14px] leading-[1.5] text-muted sm:stack-md sm:max-w-2xl sm:text-body-lg">
-            {HERO_CONTENT.description}
-          </p>
-          {/*
-            `gap-3` rather than `gap-4`, and a shared floor width on the two
-            pills. The labels differ by four characters, and at hero scale two
-            differently-sized capsules a full rem apart read as two unrelated
-            controls instead of as one cluster with a primary in it.
-          */}
-          <div
-            class="stack-sm flex w-full flex-col items-stretch justify-center gap-2.5 sm:stack-lg sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-3"
-          >
-            <GradientButton
-              href={HERO_CONTENT.primaryCta.href}
-              size="lg"
-              class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto sm:min-w-[13.75rem]"
-            >
-              {HERO_CONTENT.primaryCta.label}
-            </GradientButton>
-            <GhostButton
-              href={HERO_CONTENT.secondaryCta.href}
-              size="lg"
-              class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto sm:min-w-[13.75rem]"
-            >
-              {HERO_CONTENT.secondaryCta.label}
-            </GhostButton>
-          </div>
-          <p class="stack-sm text-center text-[12px] leading-snug text-muted-light sm:text-[13px]">
-            {HERO_CONTENT.ctaNote}
-          </p>
-          <div class="stack-sm flex justify-center sm:stack-lg">
-            <a
-              href={HERO_CONTENT.trustedHref}
-              data-hero-hash
-              class="group inline-flex min-w-0 max-w-full flex-nowrap items-center justify-center gap-x-1.5 rounded-full border border-border/80 bg-white/70 px-2 py-1.5 text-foreground/80 shadow-sm backdrop-blur-sm transition-colors duration-300 hover:border-accent/35 hover:text-foreground sm:gap-3.5 sm:px-4 sm:py-2"
-            >
-              {/* Decorative. The names behind these faces are not public, so
-                  `title` was announcing nothing on desktop and nothing at all
-                  on touch — the sentence beside it carries the whole claim. */}
-              <div class="flex shrink-0 -space-x-2" aria-hidden="true">
-                {
-                  HERO_CONTENT.trustedAvatars.map((avatar) => (
-                    <span
-                      class="relative flex h-6 w-6 overflow-hidden rounded-full border-2 border-white shadow-sm transition-transform duration-300 group-hover:-translate-y-0.5 sm:h-9 sm:w-9"
-                    >
-                      <img
-                        src={avatar.image}
-                        alt=""
-                        class="absolute inset-0 h-full w-full object-cover"
-                        width="36"
-                        height="36"
-                        loading="eager"
-                        decoding="async"
-                      />
-                    </span>
-                  ))
-                }
-                <span
-                  class="flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-white text-foreground shadow-sm transition-transform duration-300 group-hover:-translate-y-0.5 sm:h-9 sm:w-9"
-                >
-                  <Plus class="h-3 w-3 sm:h-4 sm:w-4" />
-                </span>
-              </div>
-              <p class="min-w-0 text-[11px] leading-tight sm:text-body-md">
-                {HERO_CONTENT.trustedText}
-              </p>
-            </a>
-          </div>
-        </FadeIn>
-      </div>
+    {/*
+      The panel is positioned against this wrapper rather than against the
+      section, so it stops at the proof strip instead of running under it —
+      and it sits outside `Container`, because the whole point is to escape
+      the container's gutter and reach the window edge.
+    */}
+    <div class="relative flex flex-1 flex-col justify-center">
+      <HeroVisual variant="panel" />
 
-      <FadeIn delay={0.15}>
-        <HeroArchitecture />
-      </FadeIn>
-    </Container>
+      <Container class="relative z-10 pb-10 sm:pb-14 lg:pb-20">
+        {/*
+          One column from `lg` up: the visual is out of the flow by then, so
+          the copy is holding half the width on its own rather than sharing a
+          grid with anything.
+        */}
+        <div class="grid items-center gap-8 sm:gap-12 lg:block">
+          <FadeIn class="text-left lg:w-[56%] lg:pr-6 xl:pr-14">
+            <SectionLabel tone="primary" class="mb-0 block pl-0">
+              <span class="sm:hidden">{HERO_CONTENT.labelShort}</span>
+              <span class="hidden sm:inline">{HERO_CONTENT.label}</span>
+            </SectionLabel>
+            {/*
+              `text-hero` clamps at the scale's 60px, sized for the full-width
+              centred case; in a column it needs its own scale at each step, and
+              three steps rather than two because `xl` starts at 1280 — a 13"
+              laptop was taking the widest size against the narrowest desktop
+              column and spilling the headline to four lines. Only the widest
+              step, where the column is around 700px, gets the full 60px.
+
+              Above `lg` the grid column is narrower than any `ch` cap worth
+              setting, so the cap is dropped and the column is the measure.
+              `text-balance` then evens the three lines out; their natural
+              lengths differ by half a line otherwise.
+            */}
+            <h1
+              class="text-hero stack-sm max-w-[18ch] text-balance text-foreground [@media(max-height:430px)]:text-[1.75rem] sm:max-w-[22ch] lg:max-w-none lg:text-[2.5rem] xl:text-[3rem] min-[87.5rem]:text-[3.75rem]"
+            >
+              {HERO_CONTENT.title.lead}{" "}
+              <span class="text-accent">{HERO_CONTENT.title.accent}</span>{" "}
+              {HERO_CONTENT.title.tail}
+            </h1>
+            <p
+              class="stack-sm max-w-[44ch] text-pretty text-[15px] leading-[1.5] text-muted sm:stack-md sm:text-[17px] lg:max-w-[46ch] lg:text-[18px]"
+            >
+              {HERO_CONTENT.description}
+            </p>
+            {/*
+              `gap-3` rather than `gap-4`, and a shared floor width on the two
+              pills. The labels differ by four characters, and at hero scale two
+              differently-sized capsules a full rem apart read as two unrelated
+              controls instead of as one cluster with a primary in it.
+            */}
+            <div
+              class="stack-md flex w-full flex-col items-stretch gap-2.5 sm:stack-lg sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-start sm:gap-3"
+            >
+              <GradientButton
+                href={HERO_CONTENT.primaryCta.href}
+                size="lg"
+                class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto sm:min-w-[13.75rem]"
+              >
+                {HERO_CONTENT.primaryCta.label}
+              </GradientButton>
+              <GhostButton
+                href={HERO_CONTENT.secondaryCta.href}
+                size="lg"
+                class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto sm:min-w-[13.75rem]"
+              >
+                {HERO_CONTENT.secondaryCta.label}
+              </GhostButton>
+            </div>
+            <p class="stack-sm text-[13px] leading-[1.4] text-muted-light">
+              {HERO_CONTENT.ctaNote}
+            </p>
+          </FadeIn>
+
+          <FadeIn delay={0.15} class="lg:hidden">
+            <HeroVisual variant="card" />
+          </FadeIn>
+        </div>
+      </Container>
+    </div>
 
     <ProofStrip />
   </div>
 </section>
-
-<script>
-  function initHeroHashes() {
-    document.querySelectorAll<HTMLAnchorElement>("[data-hero-hash]").forEach((link) => {
-      if (link.dataset.ready === "true") return;
-      link.dataset.ready = "true";
-
-      link.addEventListener("click", (event) => {
-        const id = link.hash.slice(1);
-        const target = id ? document.getElementById(id) : null;
-        if (!target) return;
-
-        event.preventDefault();
-        const lenis = (window as Window & { lenis?: { scrollTo: (el: HTMLElement) => void } }).lenis;
-        if (lenis) lenis.scrollTo(target);
-        else target.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-    });
-  }
-
-  initHeroHashes();
-  document.addEventListener("astro:page-load", initHeroHashes);
-</script>

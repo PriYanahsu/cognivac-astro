@@ -1,0 +1,96 @@
+---
+import { HERO_CONTENT } from "@/features/hero-section/constants";
+
+/**
+ * The hero's right side, in its two forms.
+ *
+ * From `lg` up it is a panel pinned to the right edge of the window — rounded
+ * on the left only, because the right side has no edge to round. Below `lg`
+ * it bleeds the other way: out of the container's gutter and off both side
+ * edges of the screen. It was a rounded card with a ring and a shadow first,
+ * and on a tablet that card floated centred in the column while every line of
+ * copy above it was flush left — two axes on one screen, and the only framed
+ * object left on a page that had stopped framing things.
+ *
+ * The left edge is a gradient wash to page colour rather than a border. A
+ * panel this size with a hard edge cuts the hero in half and the network
+ * canvas dies at the seam; washing it out means the render arrives out of the
+ * page instead of being pasted onto it.
+ *
+ * Three framed versions came before this one — a white ring, cobalt arcs, and
+ * a feathered circle in an orbit — and each spent its effort on the frame.
+ * There is no frame here. The render is large, well cropped, and still.
+ */
+interface Props {
+  /** `panel` is the bleeding version; `card` is the one that stacks. */
+  variant: "panel" | "card";
+}
+
+const { variant } = Astro.props;
+
+const IMG =
+  "h-full w-full object-cover object-[42%_center] select-none";
+---
+
+{
+  variant === "panel" ? (
+    <div
+      class="pointer-events-none absolute inset-y-0 right-0 hidden w-[46%] overflow-hidden rounded-l-[2.5rem] lg:block xl:w-[47%]"
+    >
+      <img
+        src={HERO_CONTENT.visual.image}
+        srcset={HERO_CONTENT.visual.srcset}
+        sizes={HERO_CONTENT.visual.sizes}
+        alt={HERO_CONTENT.visual.alt}
+        class={IMG}
+        width={HERO_CONTENT.visual.width}
+        height={HERO_CONTENT.visual.height}
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+      {/* Wash, not a border. Wide enough that the render is fully page colour
+          by the time it reaches the copy column. */}
+      <div
+        aria-hidden="true"
+        class="absolute inset-y-0 left-0 w-[42%] bg-gradient-to-r from-[#FAFAFA] via-[#FAFAFA]/70 to-transparent"
+      />
+      {/* The same wash top and bottom, so the panel has no cut corners
+          against the navbar above it or the proof strip below. */}
+      <div
+        aria-hidden="true"
+        class="absolute inset-x-0 top-0 h-[18%] bg-gradient-to-b from-[#FAFAFA] to-transparent"
+      />
+      <div
+        aria-hidden="true"
+        class="absolute inset-x-0 bottom-0 h-[18%] bg-gradient-to-t from-[#FAFAFA] to-transparent"
+      />
+    </div>
+  ) : (
+    <div class="relative -mx-5 aspect-[4/3] max-h-[52svh] overflow-hidden sm:-mx-6 sm:aspect-[16/9] lg:hidden">
+      <img
+        src={HERO_CONTENT.visual.image}
+        srcset={HERO_CONTENT.visual.srcset}
+        sizes={HERO_CONTENT.visual.sizes}
+        alt={HERO_CONTENT.visual.alt}
+        class={IMG}
+        width={HERO_CONTENT.visual.width}
+        height={HERO_CONTENT.visual.height}
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+      {/* Same washes as the panel, turned ninety degrees: this version bleeds
+          off both side edges, so the only edges left to soften are the ones
+          facing the copy above and the figures below. */}
+      <div
+        aria-hidden="true"
+        class="absolute inset-x-0 top-0 h-[18%] bg-gradient-to-b from-[#FAFAFA] to-transparent"
+      />
+      <div
+        aria-hidden="true"
+        class="absolute inset-x-0 bottom-0 h-[18%] bg-gradient-to-t from-[#FAFAFA] to-transparent"
+      />
+    </div>
+  )
+}

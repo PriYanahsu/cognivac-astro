@@ -116,9 +116,9 @@
   --font-body-sm-size: 12px;
   --font-body-sm-line-height: 16px;
   --font-body-sm-weight: 400;
-  --font-button-lg-size: 16px;
+  --font-button-lg-size: 14px;
   --font-button-lg-line-height: 20px;
-  --font-button-lg-weight: 500;
+  --font-button-lg-weight: 600;
   --font-button-md-size: 14px;
   --font-button-md-line-height: 20px;
   --font-button-md-weight: 500;
@@ -282,11 +282,6 @@ h6 {
   font-weight: var(--font-eyebrow-weight);
   letter-spacing: var(--font-eyebrow-tracking);
   text-transform: uppercase;
-
-  @media (min-width: 640px) {
-    font-size: var(--font-eyebrow-size);
-    line-height: var(--font-eyebrow-line-height);
-  }
 }
 
 @utility text-body-lg {
@@ -334,9 +329,9 @@ h6 {
 /* Legacy responsive headings — aligned to MD weights (600) */
 @utility text-hero {
   font-family: var(--font-heading);
-  font-size: clamp(1.875rem, 5vw + 0.5rem, 3rem);
-  line-height: 1.08;
-  letter-spacing: -0.05em;
+  font-size: clamp(1.875rem, 5vw + 0.5rem, 3.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.0333em;
   font-weight: 600;
 }
 
@@ -1360,116 +1355,9 @@ h6 {
   }
 }
 
-/*
- * Short-laptop escape hatch. Width is not the problem here — height is, so
- * this keys off viewport height, and only above `sm` so phones (short and
- * narrow, but scrolled rather than fitted) keep the card.
- */
-@media (min-width: 640px) and (max-height: 800px) {
-  [data-hero-pipeline] {
-    display: none;
-  }
-}
-
-/* Hero pipeline rail */
-@keyframes hero-halo-pulse {
-  0%,
-  100% {
-    opacity: 0.28;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.08);
-  }
-}
-
-@keyframes hero-rail-fill {
-  0% {
-    width: 0%;
-  }
-  100% {
-    width: 100%;
-  }
-}
-
-@keyframes hero-rail-sheen {
-  0% {
-    transform: translateX(-120%);
-  }
-  100% {
-    transform: translateX(280%);
-  }
-}
-
-@keyframes hero-rail-packet {
-  0% {
-    left: 0%;
-    opacity: 0;
-  }
-  8% {
-    opacity: 1;
-  }
-  92% {
-    opacity: 1;
-  }
-  100% {
-    left: calc(100% - 6px);
-    opacity: 0;
-  }
-}
-
-.hero-node-halo {
-  animation: hero-halo-pulse 3.2s ease-in-out infinite;
-}
-
-.hero-rail-fill {
-  width: 0;
-  background: linear-gradient(
-    90deg,
-    rgba(30, 79, 216, 0.15),
-    rgba(30, 79, 216, 0.55)
-  );
-  animation: hero-rail-fill 2.4s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.hero-rail-sheen {
-  width: 28%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(30, 79, 216, 0.55),
-    transparent
-  );
-  animation: hero-rail-sheen 2.8s ease-in-out 2.2s infinite;
-}
-
-.hero-rail-packet {
-  animation: hero-rail-packet 3.2s ease-in-out 2.4s infinite;
-}
-
-.hero-rail-packet-2 {
-  animation-delay: 4s;
-  animation-duration: 3.6s;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .proof-strip-track {
     animation: none;
-  }
-
-  .hero-node-halo,
-  .hero-rail-fill,
-  .hero-rail-sheen,
-  .hero-rail-packet,
-  .hero-rail-packet-2 {
-    animation: none;
-  }
-
-  .hero-rail-packet,
-  .hero-rail-packet-2,
-  .hero-rail-sheen {
-    display: none;
   }
 }
 
