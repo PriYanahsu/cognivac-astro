@@ -2,89 +2,89 @@
 import { HERO_CONTENT } from "@/features/hero-section/constants";
 
 /**
- * The hero's right column: a circular crop ringed by two open arcs.
+ * The hero's right column: the render dissolved into the page, inside a thin
+ * orbital ring.
  *
- * The arcs are the reason this is a component and not an `<img>` in a
- * `rounded-full` div. A photo circle on its own sits on the page like a
- * sticker — the arcs give the column a silhouette that isn't a perfect
- * circle, so it reads as composed rather than cropped. They are open (they
- * stop short of closing) and sit at two different radii on purpose: a closed
- * ring at one radius is a loading spinner.
+ * The two framed versions of this — a white ring, then a ring wrapped in
+ * cobalt arcs — both fought the render instead of carrying it. It is a pale,
+ * airy drawing on a white ground, and a hard edge around it does two things:
+ * it puts the heaviest element of the whole hero on the far side of the page
+ * from the headline, and it fences off the network canvas so the two
+ * drawings, which are the same drawing, stop meeting.
  *
- * Cobalt and indigo, both already in the palette, and the same node dot the
- * network canvas behind this draws — the visual is part of that mesh, not a
- * second decorative language competing with it.
+ * So: no edge. The render is masked out to nothing before it reaches its own
+ * boundary, and the only drawn lines are two hairline rings with three nodes
+ * riding the outer one — the same nodes-on-edges vocabulary as the canvas
+ * behind it, at a scale you read as structure rather than as decoration.
  */
+
+/** Feathered well inside the crop: the render's own corners are white, and a
+ *  mask that ends at the edge would leave them as a visible square. */
+const FEATHER =
+  "radial-gradient(circle at 50% 50%, #000 54%, rgba(0,0,0,0.88) 66%, transparent 80%)";
 ---
 
-<div class="relative mx-auto aspect-square w-full max-w-[20rem] sm:max-w-[24rem] lg:max-w-[26rem] xl:max-w-[30rem]">
-  {/* Ambient wash. Sits under everything and never reads as an object —
-      it exists so the circle has something to be lit against on a flat
-      #FAFAFA field. */}
+<div
+  class="relative mx-auto aspect-square w-full max-w-[20rem] sm:max-w-[24rem] lg:max-w-[26rem] xl:max-w-[30rem]"
+>
+  {/* The light the render sits in. Warm-side cobalt top-left, sky bottom-right
+      — two sources rather than one flat halo, so the column has a direction. */}
   <div
     aria-hidden="true"
-    class="pointer-events-none absolute -top-[6%] -left-[4%] h-[55%] w-[55%] rounded-full bg-accent/10 blur-3xl"
+    class="pointer-events-none absolute -top-[6%] left-[2%] h-[62%] w-[62%] rounded-full bg-accent/12 blur-3xl"
   >
   </div>
   <div
     aria-hidden="true"
-    class="pointer-events-none absolute right-0 -bottom-[4%] h-[50%] w-[50%] rounded-full bg-indigo/10 blur-3xl"
+    class="pointer-events-none absolute -right-[2%] bottom-[4%] h-[52%] w-[52%] rounded-full bg-teal/10 blur-3xl"
   >
   </div>
+
+  <img
+    src={HERO_CONTENT.visual.image}
+    alt={HERO_CONTENT.visual.alt}
+    class="absolute inset-[6%] h-[88%] w-[88%] object-cover object-center"
+    style={`mask-image:${FEATHER};-webkit-mask-image:${FEATHER}`}
+    width="960"
+    height="640"
+    loading="eager"
+    fetchpriority="high"
+    decoding="async"
+  />
 
   <svg
     aria-hidden="true"
-    class="hero-visual-arcs pointer-events-none absolute inset-0 h-full w-full overflow-visible"
+    class="pointer-events-none absolute inset-0 h-full w-full"
     viewBox="0 0 400 400"
     fill="none"
   >
-    <defs>
-      <linearGradient id="hero-arc-a" x1="0" y1="1" x2="1" y2="0">
-        <stop offset="0%" stop-color="#1e4fd8" stop-opacity="0.12"></stop>
-        <stop offset="55%" stop-color="#1e4fd8" stop-opacity="0.9"></stop>
-        <stop offset="100%" stop-color="#163db0" stop-opacity="1"></stop>
-      </linearGradient>
-      <linearGradient id="hero-arc-b" x1="1" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#163db0" stop-opacity="0.75"></stop>
-        <stop offset="100%" stop-color="#1e4fd8" stop-opacity="0.08"></stop>
-      </linearGradient>
-    </defs>
+    {/* Inner ring, dashed and barely there — it reads as the edge the render
+        no longer has, without drawing one. */}
+    <circle
+      cx="200"
+      cy="200"
+      r="152"
+      stroke="var(--accent)"
+      stroke-opacity="0.13"
+      stroke-width="1"
+      stroke-dasharray="2 7"
+    ></circle>
 
-    {/* Sweeps up the left and over the top, stopping at 1 o'clock. */}
-    <path
-      d="M 22.7 215.5 A 178 178 0 0 1 314.4 63.6"
-      stroke="url(#hero-arc-a)"
-      stroke-width="26"
-      stroke-linecap="round"
-    ></path>
-    {/* The counterweight: thinner, wider radius, running back along the
-        bottom so the composition closes without the two meeting. */}
-    <path
-      d="M 373.9 281.2 A 192 192 0 0 1 150.3 385.5"
-      stroke="url(#hero-arc-b)"
-      stroke-width="14"
-      stroke-linecap="round"
-    ></path>
-    <circle cx="314.4" cy="63.6" r="7" fill="#163db0"></circle>
+    {/* Outer ring and its three nodes, turning as one group. A minute and a
+        half a revolution: the nodes have plainly moved if you look back at
+        them, and never catch your eye while you are reading. */}
+    <g class="hero-orbit">
+      <circle
+        cx="200"
+        cy="200"
+        r="188"
+        stroke="var(--accent)"
+        stroke-opacity="0.2"
+        stroke-width="1"
+      ></circle>
+      <circle cx="388" cy="200" r="5.5" fill="var(--accent)"></circle>
+      <circle cx="106" cy="362.8" r="4" fill="var(--indigo)" fill-opacity="0.7"></circle>
+      <circle cx="106" cy="37.2" r="3" fill="var(--teal)" fill-opacity="0.8"></circle>
+    </g>
   </svg>
-
-  {/* A hairline and a shadow, not a thick white ring. The render is pale and
-      its own corners are near-white, so a white band around it would fuse
-      with both the image and the page and the circle would lose its edge on
-      two sides at once. The cobalt hairline draws that edge, and the shadow
-      is what lifts it off the page. */}
-  <div
-    class="absolute inset-[11%] overflow-hidden rounded-full bg-white ring-[1.5px] ring-accent/25 shadow-[0_30px_80px_-30px_rgba(30,79,216,0.45)]"
-  >
-    <img
-      src={HERO_CONTENT.visual.image}
-      alt={HERO_CONTENT.visual.alt}
-      class="h-full w-full object-cover"
-      width="960"
-      height="640"
-      loading="eager"
-      fetchpriority="high"
-      decoding="async"
-    />
-  </div>
 </div>
