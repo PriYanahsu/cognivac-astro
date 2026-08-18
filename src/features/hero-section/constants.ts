@@ -9,55 +9,7 @@ export const HERO_CONTENT = {
   primaryCta: { label: "Schedule Consultation", href: NAV_ROUTES.contact },
   secondaryCta: { label: "Explore Solutions", href: NAV_ROUTES.services },
   ctaNote: "We reply within 24 hours.",
-  trustedAvatars: [
-    { initials: "AR", image: "/images/clients/ar.webp", name: "Client AR" },
-    { initials: "SM", image: "/images/clients/sm.webp", name: "Client SM" },
-    { initials: "DK", image: "/images/clients/dk.webp", name: "Client DK" },
-    { initials: "NT", image: "/images/clients/nt.webp", name: "Client NT" },
-  ],
-  trustedText: "Trusted by 75+ clients worldwide",
-  trustedHref: "#testimonials",
 };
-
-/**
- * Decorative pipeline under the hero copy. Kept to four stages on purpose —
- * this is a glanceable path, not the five-step engagement rail in ProcessSection.
- */
-export const HERO_PIPELINE = {
-  label: "From brief to production",
-  cta: { label: "How we work", href: "#process" },
-} as const;
-
-export const HERO_STAGES = [
-  {
-    id: "discover",
-    index: "01",
-    label: "Discover",
-    detail: "Scope · Requirements",
-    icon: "ScanSearch",
-  },
-  {
-    id: "design",
-    index: "02",
-    label: "Design",
-    detail: "Architecture · UX",
-    icon: "Layers",
-  },
-  {
-    id: "build",
-    index: "03",
-    label: "Build",
-    detail: "Frontend · Backend · AI",
-    icon: "Cpu",
-  },
-  {
-    id: "deliver",
-    index: "04",
-    label: "Deliver",
-    detail: "Deploy · Support · Scale",
-    icon: "Rocket",
-  },
-] as const;
 
 export const PROOF_STRIP = {
   /** Not rendered — the row carries no heading, so this labels it for screen readers. */

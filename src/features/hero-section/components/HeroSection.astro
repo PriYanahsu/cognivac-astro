@@ -1,5 +1,4 @@
 ---
-import { Plus } from "@lucide/astro";
 import Container from "@/components/shared/Container.astro";
 import SectionLabel from "@/components/shared/SectionLabel.astro";
 import GradientButton from "@/components/shared/GradientButton.astro";
@@ -7,7 +6,6 @@ import GhostButton from "@/components/shared/GhostButton.astro";
 import FadeIn from "@/components/animations/FadeIn.astro";
 import { HERO_CONTENT } from "@/features/hero-section/constants";
 import HeroNetworkBg from "./HeroNetworkBg.astro";
-import HeroArchitecture from "./HeroArchitecture.astro";
 import ProofStrip from "./ProofStrip.astro";
 
 /** Port of features/hero-section/components/hero-section.tsx. */
@@ -19,7 +17,7 @@ import ProofStrip from "./ProofStrip.astro";
   <HeroNetworkBg />
 
   <div class="relative z-10 flex min-h-0 flex-1 flex-col">
-    <Container class="flex flex-1 flex-col pb-4 sm:justify-center sm:pb-8">
+    <Container class="flex flex-1 flex-col pb-10 sm:justify-center sm:pb-16 lg:pb-20">
       <div class="mx-auto max-w-6xl text-center">
         <FadeIn>
           <SectionLabel tone="primary" class="mb-0 block pl-0">
@@ -27,11 +25,11 @@ import ProofStrip from "./ProofStrip.astro";
             <span class="hidden sm:inline">{HERO_CONTENT.label}</span>
           </SectionLabel>
           <h1
-            class="text-hero stack-sm mx-auto max-w-[26ch] leading-[1.05] text-foreground sm:max-w-[36ch] sm:leading-[1.08] sm:text-balance"
+            class="text-hero stack-sm mx-auto max-w-[26ch] leading-[1.05] text-foreground sm:max-w-[36ch] sm:leading-[1.08] sm:text-balance lg:text-[3.375rem] xl:text-[3.75rem]"
           >
             {HERO_CONTENT.title}
           </h1>
-          <p class="stack-sm mx-auto max-w-[36ch] text-[14px] leading-[1.5] text-muted sm:stack-md sm:max-w-2xl sm:text-body-lg">
+          <p class="stack-sm mx-auto max-w-[36ch] text-[14px] leading-[1.5] text-balance text-muted sm:stack-md sm:max-w-[54ch] sm:text-body-lg lg:text-[17px] lg:leading-[1.6]">
             {HERO_CONTENT.description}
           </p>
           {/*
@@ -41,95 +39,30 @@ import ProofStrip from "./ProofStrip.astro";
             controls instead of as one cluster with a primary in it.
           */}
           <div
-            class="stack-sm flex w-full flex-col items-stretch justify-center gap-2.5 sm:stack-lg sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-3"
+            class="stack-md flex w-full flex-col items-stretch justify-center gap-2.5 sm:stack-xl sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-3"
           >
             <GradientButton
               href={HERO_CONTENT.primaryCta.href}
               size="lg"
-              class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto sm:min-w-[13.75rem]"
+              class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto sm:min-w-[13.75rem] lg:h-16 lg:min-h-16 lg:min-w-[15rem] lg:px-10 lg:text-[17px]"
             >
               {HERO_CONTENT.primaryCta.label}
             </GradientButton>
             <GhostButton
               href={HERO_CONTENT.secondaryCta.href}
               size="lg"
-              class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto sm:min-w-[13.75rem]"
+              class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto sm:min-w-[13.75rem] lg:h-16 lg:min-h-16 lg:min-w-[15rem] lg:px-10 lg:text-[17px]"
             >
               {HERO_CONTENT.secondaryCta.label}
             </GhostButton>
           </div>
-          <p class="stack-sm text-center text-[12px] leading-snug text-muted-light sm:text-[13px]">
+          <p class="stack-xs text-center text-[12px] leading-snug text-muted-light sm:stack-sm sm:text-[13px] lg:text-[14px]">
             {HERO_CONTENT.ctaNote}
           </p>
-          <div class="stack-sm flex justify-center sm:stack-lg">
-            <a
-              href={HERO_CONTENT.trustedHref}
-              data-hero-hash
-              class="group inline-flex min-w-0 max-w-full flex-nowrap items-center justify-center gap-x-1.5 rounded-full border border-border/80 bg-white/70 px-2 py-1.5 text-foreground/80 shadow-sm backdrop-blur-sm transition-colors duration-300 hover:border-accent/35 hover:text-foreground sm:gap-3.5 sm:px-4 sm:py-2"
-            >
-              {/* Decorative. The names behind these faces are not public, so
-                  `title` was announcing nothing on desktop and nothing at all
-                  on touch — the sentence beside it carries the whole claim. */}
-              <div class="flex shrink-0 -space-x-2" aria-hidden="true">
-                {
-                  HERO_CONTENT.trustedAvatars.map((avatar) => (
-                    <span
-                      class="relative flex h-6 w-6 overflow-hidden rounded-full border-2 border-white shadow-sm transition-transform duration-300 group-hover:-translate-y-0.5 sm:h-9 sm:w-9"
-                    >
-                      <img
-                        src={avatar.image}
-                        alt=""
-                        class="absolute inset-0 h-full w-full object-cover"
-                        width="36"
-                        height="36"
-                        loading="eager"
-                        decoding="async"
-                      />
-                    </span>
-                  ))
-                }
-                <span
-                  class="flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-white text-foreground shadow-sm transition-transform duration-300 group-hover:-translate-y-0.5 sm:h-9 sm:w-9"
-                >
-                  <Plus class="h-3 w-3 sm:h-4 sm:w-4" />
-                </span>
-              </div>
-              <p class="min-w-0 text-[11px] leading-tight sm:text-body-md">
-                {HERO_CONTENT.trustedText}
-              </p>
-            </a>
-          </div>
         </FadeIn>
       </div>
-
-      <FadeIn delay={0.15}>
-        <HeroArchitecture />
-      </FadeIn>
     </Container>
 
     <ProofStrip />
   </div>
 </section>
-
-<script>
-  function initHeroHashes() {
-    document.querySelectorAll<HTMLAnchorElement>("[data-hero-hash]").forEach((link) => {
-      if (link.dataset.ready === "true") return;
-      link.dataset.ready = "true";
-
-      link.addEventListener("click", (event) => {
-        const id = link.hash.slice(1);
-        const target = id ? document.getElementById(id) : null;
-        if (!target) return;
-
-        event.preventDefault();
-        const lenis = (window as Window & { lenis?: { scrollTo: (el: HTMLElement) => void } }).lenis;
-        if (lenis) lenis.scrollTo(target);
-        else target.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-    });
-  }
-
-  initHeroHashes();
-  document.addEventListener("astro:page-load", initHeroHashes);
-</script>
