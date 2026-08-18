@@ -2,70 +2,115 @@
 import { HERO_CONTENT } from "@/features/hero-section/constants";
 
 /**
- * The hero's right column: a circular crop ringed by two open arcs.
+ * The hero's right column: a circular crop wrapped in ribbon shapes.
  *
- * The arcs are the reason this is a component and not an `<img>` in a
- * `rounded-full` div. A photo circle on its own sits on the page like a
- * sticker — the arcs give the column a silhouette that isn't a perfect
- * circle, so it reads as composed rather than cropped. They are open (they
- * stop short of closing) and sit at two different radii on purpose: a closed
- * ring at one radius is a loading spinner.
+ * Two rules make this read as a composition rather than as a circle with
+ * decoration parked around it.
  *
- * Cobalt and indigo, both already in the palette, and the same node dot the
- * network canvas behind this draws — the visual is part of that mesh, not a
- * second decorative language competing with it.
+ * The ribbons vary. Three different widths, three different radii, one of
+ * them curling back on itself, and two solid petals with no stroke at all —
+ * an even set of equal arcs at one radius is a progress ring, which is what
+ * the first pass of this looked like.
+ *
+ * One shape crosses in front. Everything else sits behind the circle, so
+ * without that one the ribbons all read as a flat backdrop and the circle
+ * reads as a sticker on top of them. The petal at four o'clock is what makes
+ * the two layers interleave.
+ *
+ * Cobalt through sky, both already in the palette — the two-hue gradient is
+ * what stops a shape this large from reading as a flat blue blob.
  */
 ---
 
-<div class="relative mx-auto aspect-square w-full max-w-[20rem] sm:max-w-[24rem] lg:max-w-[26rem] xl:max-w-[30rem]">
-  {/* Ambient wash. Sits under everything and never reads as an object —
-      it exists so the circle has something to be lit against on a flat
-      #FAFAFA field. */}
+<div
+  class="relative mx-auto aspect-square w-full max-w-[20rem] sm:max-w-[24rem] lg:max-w-[26rem] xl:max-w-[30rem]"
+>
+  {/* Ambient wash. Never reads as an object — it exists so the circle has
+      something to be lit against on a flat #FAFAFA field. */}
   <div
     aria-hidden="true"
-    class="pointer-events-none absolute -top-[6%] -left-[4%] h-[55%] w-[55%] rounded-full bg-accent/10 blur-3xl"
+    class="pointer-events-none absolute -top-[8%] -left-[6%] h-[58%] w-[58%] rounded-full bg-accent/10 blur-3xl"
   >
   </div>
   <div
     aria-hidden="true"
-    class="pointer-events-none absolute right-0 -bottom-[4%] h-[50%] w-[50%] rounded-full bg-indigo/10 blur-3xl"
+    class="pointer-events-none absolute -right-[4%] -bottom-[6%] h-[52%] w-[52%] rounded-full bg-teal/10 blur-3xl"
   >
   </div>
 
   <svg
     aria-hidden="true"
-    class="hero-visual-arcs pointer-events-none absolute inset-0 h-full w-full overflow-visible"
+    class="hero-ribbons pointer-events-none absolute inset-0 h-full w-full overflow-visible"
     viewBox="0 0 400 400"
     fill="none"
   >
     <defs>
-      <linearGradient id="hero-arc-a" x1="0" y1="1" x2="1" y2="0">
-        <stop offset="0%" stop-color="#1e4fd8" stop-opacity="0.12"></stop>
-        <stop offset="55%" stop-color="#1e4fd8" stop-opacity="0.9"></stop>
-        <stop offset="100%" stop-color="#163db0" stop-opacity="1"></stop>
+      <linearGradient id="hero-ribbon-a" x1="0.1" y1="1" x2="0.9" y2="0">
+        <stop offset="0%" stop-color="#0ea5e9"></stop>
+        <stop offset="55%" stop-color="#1e4fd8"></stop>
+        <stop offset="100%" stop-color="#163db0"></stop>
       </linearGradient>
-      <linearGradient id="hero-arc-b" x1="1" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#163db0" stop-opacity="0.75"></stop>
-        <stop offset="100%" stop-color="#1e4fd8" stop-opacity="0.08"></stop>
+      <linearGradient id="hero-ribbon-b" x1="1" y1="0" x2="0.2" y2="1">
+        <stop offset="0%" stop-color="#163db0"></stop>
+        <stop offset="50%" stop-color="#1e4fd8"></stop>
+        <stop offset="100%" stop-color="#0ea5e9"></stop>
+      </linearGradient>
+      <linearGradient id="hero-ribbon-c" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#1e4fd8" stop-opacity="0.55"></stop>
+        <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.3"></stop>
       </linearGradient>
     </defs>
 
-    {/* Sweeps up the left and over the top, stopping at 1 o'clock. */}
+    {/* The long one: in low on the left, up over the top, out at one
+        o'clock. It starts outside the viewBox because a ribbon that begins
+        and ends inside the frame reads as a closed object — this one is meant
+        to be passing through. */}
     <path
-      d="M 22.7 215.5 A 178 178 0 0 1 314.4 63.6"
-      stroke="url(#hero-arc-a)"
-      stroke-width="26"
+      d="M -16 190 C -12 70, 100 -12, 204 8 C 282 23, 330 78, 306 126"
+      stroke="url(#hero-ribbon-a)"
+      stroke-width="28"
       stroke-linecap="round"
     ></path>
-    {/* The counterweight: thinner, wider radius, running back along the
-        bottom so the composition closes without the two meeting. */}
+
+    {/* The curl: a spiral of about a turn and a half, crossing the long
+        ribbon's body up at eleven o'clock. Thinner and a hue lighter so the
+        crossing reads as two shapes at different depths. It sat next to the
+        ribbon's end first, where the two just merged into one blunt mass. */}
     <path
-      d="M 373.9 281.2 A 192 192 0 0 1 150.3 385.5"
-      stroke="url(#hero-arc-b)"
+      d="M 96 -14 C 152 -20, 176 32, 136 52 C 106 66, 84 38, 106 26 C 120 18, 128 32, 118 38"
+      stroke="url(#hero-ribbon-c)"
+      stroke-width="15"
+      stroke-linecap="round"
+    ></path>
+
+    {/* The counterweight down the right: the widest stroke in the set.
+        Unlike the others it stays inside the viewBox — the section clips its
+        overflow, and at 1024 the container's right padding is all that stands
+        between this shape and the window edge, so bleeding it looked like a
+        rendering fault rather than a choice. */}
+    <path
+      d="M 336 88 C 396 170, 388 292, 312 350 C 284 368, 254 352, 266 328"
+      stroke="url(#hero-ribbon-b)"
+      stroke-width="44"
+      stroke-linecap="round"
+    ></path>
+
+    {/* Thin, low, unfinished — it keeps the bottom edge from being a clean
+        line under everything else. */}
+    <path
+      d="M 96 344 C 128 384, 182 398, 226 384"
+      stroke="url(#hero-ribbon-c)"
       stroke-width="14"
       stroke-linecap="round"
     ></path>
-    <circle cx="314.4" cy="63.6" r="7" fill="#163db0"></circle>
+
+    {/* A petal, not a stroke: no cap, no even width, one sharp corner. It is
+        the only shape here that is not a line, which is the whole reason it
+        is here. */}
+    <path
+      d="M 20 280 C 70 298, 92 344, 70 400 C 26 374, 8 330, 20 280 Z"
+      fill="url(#hero-ribbon-c)"
+    ></path>
   </svg>
 
   {/* A hairline and a shadow, not a thick white ring. The render is pale and
@@ -87,4 +132,18 @@ import { HERO_CONTENT } from "@/features/hero-section/constants";
       decoding="async"
     />
   </div>
+
+  {/* The one shape in front. Clipped to nothing else, so it overlaps the
+      circle's edge and the two layers interleave. */}
+  <svg
+    aria-hidden="true"
+    class="hero-ribbons pointer-events-none absolute inset-0 h-full w-full overflow-visible"
+    viewBox="0 0 400 400"
+    fill="none"
+  >
+    <path
+      d="M 264 302 C 320 312, 350 360, 332 416 C 278 400, 254 354, 264 302 Z"
+      fill="url(#hero-ribbon-b)"
+    ></path>
+  </svg>
 </div>
