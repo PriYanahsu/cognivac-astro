@@ -48,11 +48,12 @@ import ProofStrip from "./ProofStrip.astro";
               <span class="hidden sm:inline">{HERO_CONTENT.label}</span>
             </SectionLabel>
             {/*
-              `text-hero` clamps at 3rem, sized for the full-width centred case;
-              in a column it needs its own scale at each step, and three steps
-              rather than two because `xl` starts at 1280 — a 13" laptop was
-              taking the widest size against the narrowest desktop column and
-              spilling the headline to four lines.
+              `text-hero` clamps at the scale's 60px, sized for the full-width
+              centred case; in a column it needs its own scale at each step, and
+              three steps rather than two because `xl` starts at 1280 — a 13"
+              laptop was taking the widest size against the narrowest desktop
+              column and spilling the headline to four lines. Only the widest
+              step, where the column is around 700px, gets the full 60px.
 
               Above `lg` the grid column is narrower than any `ch` cap worth
               setting, so the cap is dropped and the column is the measure.
@@ -60,14 +61,14 @@ import ProofStrip from "./ProofStrip.astro";
               lengths differ by half a line otherwise.
             */}
             <h1
-              class="text-hero stack-sm max-w-[18ch] text-balance leading-[1.06] text-foreground [@media(max-height:430px)]:text-[1.75rem] sm:max-w-[22ch] lg:max-w-none lg:text-[2.5rem] xl:text-[3rem] min-[87.5rem]:text-[3.375rem]"
+              class="text-hero stack-sm max-w-[18ch] text-balance text-foreground [@media(max-height:430px)]:text-[1.75rem] sm:max-w-[22ch] lg:max-w-none lg:text-[2.5rem] xl:text-[3rem] min-[87.5rem]:text-[3.75rem]"
             >
               {HERO_CONTENT.title.lead}{" "}
               <span class="text-accent">{HERO_CONTENT.title.accent}</span>{" "}
               {HERO_CONTENT.title.tail}
             </h1>
             <p
-              class="stack-sm max-w-[44ch] text-pretty text-[14px] leading-[1.6] text-muted sm:stack-md sm:text-body-lg lg:max-w-[46ch] lg:text-[17px]"
+              class="stack-sm max-w-[44ch] text-pretty text-[15px] leading-[1.5] text-muted sm:stack-md sm:text-[17px] lg:max-w-[46ch] lg:text-[18px]"
             >
               {HERO_CONTENT.description}
             </p>
@@ -95,7 +96,7 @@ import ProofStrip from "./ProofStrip.astro";
                 {HERO_CONTENT.secondaryCta.label}
               </GhostButton>
             </div>
-            <p class="stack-sm text-[12px] leading-snug text-muted-light sm:text-[13px]">
+            <p class="stack-sm text-[13px] leading-[1.4] text-muted-light">
               {HERO_CONTENT.ctaNote}
             </p>
           </FadeIn>

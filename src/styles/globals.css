@@ -116,9 +116,9 @@
   --font-body-sm-size: 12px;
   --font-body-sm-line-height: 16px;
   --font-body-sm-weight: 400;
-  --font-button-lg-size: 16px;
+  --font-button-lg-size: 14px;
   --font-button-lg-line-height: 20px;
-  --font-button-lg-weight: 500;
+  --font-button-lg-weight: 600;
   --font-button-md-size: 14px;
   --font-button-md-line-height: 20px;
   --font-button-md-weight: 500;
@@ -282,11 +282,6 @@ h6 {
   font-weight: var(--font-eyebrow-weight);
   letter-spacing: var(--font-eyebrow-tracking);
   text-transform: uppercase;
-
-  @media (min-width: 640px) {
-    font-size: var(--font-eyebrow-size);
-    line-height: var(--font-eyebrow-line-height);
-  }
 }
 
 @utility text-body-lg {
@@ -334,9 +329,9 @@ h6 {
 /* Legacy responsive headings — aligned to MD weights (600) */
 @utility text-hero {
   font-family: var(--font-heading);
-  font-size: clamp(1.875rem, 5vw + 0.5rem, 3rem);
-  line-height: 1.08;
-  letter-spacing: -0.05em;
+  font-size: clamp(1.875rem, 5vw + 0.5rem, 3.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.0333em;
   font-weight: 600;
 }
 
