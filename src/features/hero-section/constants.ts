@@ -32,7 +32,23 @@ export const HERO_CONTENT = {
    * down the page.
    */
   visual: {
-    image: "/images/solutions/ml-integration.webp",
+    /**
+     * Encoded from the 1536x1024 original rather than reusing the services
+     * card's copy, which is 960x540. The hero panel is tall and crops on
+     * height, so it was scaling 540 source pixels across the better part of a
+     * viewport — around 3x on a retina screen, which is what "breaking"
+     * looked like. This source carries nearly twice the vertical pixels and
+     * the full 3:2 frame the 16:9 card copy had already cropped away.
+     */
+    image: "/images/hero/ml-pipeline-1536.webp",
+    srcset:
+      "/images/hero/ml-pipeline-768.webp 768w, /images/hero/ml-pipeline-1152.webp 1152w, /images/hero/ml-pipeline-1536.webp 1536w",
+    /** Both forms of the visual declare the same `sizes` on purpose: the
+     *  hidden one is still in the DOM, and matching candidates keep the two
+     *  of them to a single download. */
+    sizes: "(min-width: 1024px) 50vw, 100vw",
+    width: 1536,
+    height: 1024,
     alt: "A neural network of nodes and edges converging into a single running pipeline",
   },
 };

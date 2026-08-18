@@ -39,10 +39,12 @@ const IMG =
     >
       <img
         src={HERO_CONTENT.visual.image}
+        srcset={HERO_CONTENT.visual.srcset}
+        sizes={HERO_CONTENT.visual.sizes}
         alt={HERO_CONTENT.visual.alt}
         class={IMG}
-        width="960"
-        height="640"
+        width={HERO_CONTENT.visual.width}
+        height={HERO_CONTENT.visual.height}
         loading="eager"
         fetchpriority="high"
         decoding="async"
@@ -68,10 +70,12 @@ const IMG =
     <div class="relative -mx-5 aspect-[4/3] overflow-hidden sm:-mx-6 sm:aspect-[16/9] lg:hidden">
       <img
         src={HERO_CONTENT.visual.image}
+        srcset={HERO_CONTENT.visual.srcset}
+        sizes={HERO_CONTENT.visual.sizes}
         alt={HERO_CONTENT.visual.alt}
         class={IMG}
-        width="960"
-        height="640"
+        width={HERO_CONTENT.visual.width}
+        height={HERO_CONTENT.visual.height}
         loading="eager"
         fetchpriority="high"
         decoding="async"
