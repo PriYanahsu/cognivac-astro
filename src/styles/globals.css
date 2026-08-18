@@ -1361,29 +1361,27 @@ h6 {
 }
 
 /*
- * Hero ribbons.
+ * Hero visual arcs.
  *
- * A drift, not a spin. These shapes are placed against each other and against
- * the circle they wrap, so rotating them would pull the composition apart —
- * the movement here is the whole set breathing in place.
+ * One revolution a minute — slow enough that nothing appears to be spinning,
+ * fast enough that the accent dot has plainly moved if you look back. The
+ * circle it wraps stays still, so the two layers separate into foreground and
+ * background instead of reading as one flat sticker.
  */
-@keyframes hero-ribbon-drift {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-  50% {
-    transform: translate3d(0, -10px, 0);
+@keyframes hero-arc-orbit {
+  to {
+    transform: rotate(360deg);
   }
 }
 
-.hero-ribbons {
-  animation: hero-ribbon-drift 9s ease-in-out infinite;
+.hero-visual-arcs {
+  transform-origin: 50% 50%;
+  animation: hero-arc-orbit 60s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .proof-strip-track,
-  .hero-ribbons {
+  .hero-visual-arcs {
     animation: none;
   }
 }
