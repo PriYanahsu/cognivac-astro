@@ -41,7 +41,7 @@ import ProofStrip from "./ProofStrip.astro";
           the copy is holding half the width on its own rather than sharing a
           grid with anything.
         */}
-        <div class="grid items-center gap-10 sm:gap-12 lg:block">
+        <div class="grid items-center gap-8 sm:gap-12 lg:block">
           <FadeIn class="text-left lg:w-[56%] lg:pr-6 xl:pr-14">
             <SectionLabel tone="primary" class="mb-0 block pl-0">
               <span class="sm:hidden">{HERO_CONTENT.labelShort}</span>
@@ -60,7 +60,7 @@ import ProofStrip from "./ProofStrip.astro";
               lengths differ by half a line otherwise.
             */}
             <h1
-              class="text-hero stack-sm max-w-[18ch] text-balance leading-[1.06] text-foreground sm:max-w-[22ch] lg:max-w-none lg:text-[2.5rem] xl:text-[3rem] min-[87.5rem]:text-[3.375rem]"
+              class="text-hero stack-sm max-w-[18ch] text-balance leading-[1.06] text-foreground [@media(max-height:430px)]:text-[1.75rem] sm:max-w-[22ch] lg:max-w-none lg:text-[2.5rem] xl:text-[3rem] min-[87.5rem]:text-[3.375rem]"
             >
               {HERO_CONTENT.title.lead}{" "}
               <span class="text-accent">{HERO_CONTENT.title.accent}</span>{" "}
