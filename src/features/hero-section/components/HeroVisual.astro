@@ -6,8 +6,11 @@ import { HERO_CONTENT } from "@/features/hero-section/constants";
  *
  * From `lg` up it is a panel pinned to the right edge of the window — rounded
  * on the left only, because the right side has no edge to round. Below `lg`
- * there is no room to bleed anything, so the same render becomes an ordinary
- * card under the copy.
+ * it bleeds the other way: out of the container's gutter and off both side
+ * edges of the screen. It was a rounded card with a ring and a shadow first,
+ * and on a tablet that card floated centred in the column while every line of
+ * copy above it was flush left — two axes on one screen, and the only framed
+ * object left on a page that had stopped framing things.
  *
  * The left edge is a gradient wash to page colour rather than a border. A
  * panel this size with a hard edge cuts the hero in half and the network
@@ -62,19 +65,28 @@ const IMG =
       />
     </div>
   ) : (
-    <div class="relative mx-auto w-full max-w-[30rem] overflow-hidden rounded-2xl bg-white shadow-soft ring-1 ring-accent/12 lg:hidden">
-      <div class="aspect-[4/3]">
-        <img
-          src={HERO_CONTENT.visual.image}
-          alt={HERO_CONTENT.visual.alt}
-          class={IMG}
-          width="960"
-          height="640"
-          loading="eager"
-          fetchpriority="high"
-          decoding="async"
-        />
-      </div>
+    <div class="relative -mx-5 aspect-[4/3] overflow-hidden sm:-mx-6 sm:aspect-[16/9] lg:hidden">
+      <img
+        src={HERO_CONTENT.visual.image}
+        alt={HERO_CONTENT.visual.alt}
+        class={IMG}
+        width="960"
+        height="640"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+      {/* Same washes as the panel, turned ninety degrees: this version bleeds
+          off both side edges, so the only edges left to soften are the ones
+          facing the copy above and the figures below. */}
+      <div
+        aria-hidden="true"
+        class="absolute inset-x-0 top-0 h-[18%] bg-gradient-to-b from-[#FAFAFA] to-transparent"
+      />
+      <div
+        aria-hidden="true"
+        class="absolute inset-x-0 bottom-0 h-[18%] bg-gradient-to-t from-[#FAFAFA] to-transparent"
+      />
     </div>
   )
 }
