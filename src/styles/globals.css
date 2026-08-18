@@ -1360,8 +1360,28 @@ h6 {
   }
 }
 
+/*
+ * Hero visual arcs.
+ *
+ * One revolution a minute — slow enough that nothing appears to be spinning,
+ * fast enough that the accent dot has plainly moved if you look back. The
+ * circle it wraps stays still, so the two layers separate into foreground and
+ * background instead of reading as one flat sticker.
+ */
+@keyframes hero-arc-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hero-visual-arcs {
+  transform-origin: 50% 50%;
+  animation: hero-arc-orbit 60s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .proof-strip-track {
+  .proof-strip-track,
+  .hero-visual-arcs {
     animation: none;
   }
 }

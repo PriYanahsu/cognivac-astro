@@ -6,30 +6,63 @@ import GhostButton from "@/components/shared/GhostButton.astro";
 import FadeIn from "@/components/animations/FadeIn.astro";
 import { HERO_CONTENT } from "@/features/hero-section/constants";
 import HeroNetworkBg from "./HeroNetworkBg.astro";
+import HeroVisual from "./HeroVisual.astro";
 import ProofStrip from "./ProofStrip.astro";
 
-/** Port of features/hero-section/components/hero-section.tsx. */
+/**
+ * Two-column hero: copy left, circular visual right.
+ *
+ * The centred version had every line finding its own axis — eyebrow, three
+ * headline lines, three deck lines, and a button pair each centred on the
+ * page, so the reader's eye restarted seven times on the way down. Left
+ * alignment gives all seven one shared edge, and the column that frees up on
+ * the right is what the visual fills.
+ */
 ---
 
 <section
-  class="relative flex flex-col overflow-hidden bg-[#FAFAFA] pt-[5.5rem] sm:min-h-dvh sm:pt-[6rem] lg:pt-[8rem]"
+  class="relative flex flex-col overflow-hidden bg-[#FAFAFA] pt-[5.5rem] sm:min-h-dvh sm:pt-[6rem] lg:pt-[7rem]"
 >
   <HeroNetworkBg />
 
   <div class="relative z-10 flex min-h-0 flex-1 flex-col">
-    <Container class="flex flex-1 flex-col pb-10 sm:justify-center sm:pb-16 lg:pb-20">
-      <div class="mx-auto max-w-6xl text-center">
-        <FadeIn>
+    <Container class="flex flex-1 flex-col justify-center pb-10 sm:pb-14 lg:pb-20">
+      {/*
+        `1fr` against `0.85fr` rather than an even split. The copy is the
+        column that has to hold three lines of headline at hero scale without
+        breaking mid-phrase; the visual is square and scales to whatever it is
+        given, so it takes the remainder.
+      */}
+      <div
+        class="grid items-center gap-10 sm:gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] lg:gap-14 xl:gap-20"
+      >
+        <FadeIn class="text-left">
           <SectionLabel tone="primary" class="mb-0 block pl-0">
             <span class="sm:hidden">{HERO_CONTENT.labelShort}</span>
             <span class="hidden sm:inline">{HERO_CONTENT.label}</span>
           </SectionLabel>
+          {/*
+            `text-hero` clamps at 3rem, sized for the full-width centred case;
+            in a column it needs its own scale at each step, and three steps
+            rather than two because `xl` starts at 1280 — a 13" laptop was
+            taking the widest size against the narrowest desktop column and
+            spilling the headline to four lines.
+
+            Above `lg` the grid column is narrower than any `ch` cap worth
+            setting, so the cap is dropped and the column is the measure.
+            `text-balance` then evens the three lines out; their natural
+            lengths differ by half a line otherwise.
+          */}
           <h1
-            class="text-hero stack-sm mx-auto max-w-[26ch] leading-[1.05] text-foreground sm:max-w-[36ch] sm:leading-[1.08] sm:text-balance lg:text-[3.375rem] xl:text-[3.75rem]"
+            class="text-hero stack-sm max-w-[18ch] text-balance leading-[1.06] text-foreground sm:max-w-[22ch] lg:max-w-none lg:text-[2.5rem] xl:text-[3rem] min-[87.5rem]:text-[3.375rem]"
           >
-            {HERO_CONTENT.title}
+            {HERO_CONTENT.title.lead}{" "}
+            <span class="text-accent">{HERO_CONTENT.title.accent}</span>{" "}
+            {HERO_CONTENT.title.tail}
           </h1>
-          <p class="stack-sm mx-auto max-w-[36ch] text-[14px] leading-[1.5] text-balance text-muted sm:stack-md sm:max-w-[54ch] sm:text-body-lg lg:text-[17px] lg:leading-[1.6]">
+          <p
+            class="stack-sm max-w-[44ch] text-pretty text-[14px] leading-[1.6] text-muted sm:stack-md sm:text-body-lg lg:max-w-[46ch] lg:text-[17px]"
+          >
             {HERO_CONTENT.description}
           </p>
           {/*
@@ -39,26 +72,30 @@ import ProofStrip from "./ProofStrip.astro";
             controls instead of as one cluster with a primary in it.
           */}
           <div
-            class="stack-md flex w-full flex-col items-stretch justify-center gap-2.5 sm:stack-xl sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-3"
+            class="stack-md flex w-full flex-col items-stretch gap-2.5 sm:stack-lg sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-start sm:gap-3"
           >
             <GradientButton
               href={HERO_CONTENT.primaryCta.href}
               size="lg"
-              class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto sm:min-w-[13.75rem] lg:h-16 lg:min-h-16 lg:min-w-[15rem] lg:px-10 lg:text-[17px]"
+              class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto sm:min-w-[13.75rem]"
             >
               {HERO_CONTENT.primaryCta.label}
             </GradientButton>
             <GhostButton
               href={HERO_CONTENT.secondaryCta.href}
               size="lg"
-              class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto sm:min-w-[13.75rem] lg:h-16 lg:min-h-16 lg:min-w-[15rem] lg:px-10 lg:text-[17px]"
+              class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto sm:min-w-[13.75rem]"
             >
               {HERO_CONTENT.secondaryCta.label}
             </GhostButton>
           </div>
-          <p class="stack-xs text-center text-[12px] leading-snug text-muted-light sm:stack-sm sm:text-[13px] lg:text-[14px]">
+          <p class="stack-xs text-[12px] leading-snug text-muted-light sm:stack-sm sm:text-[13px]">
             {HERO_CONTENT.ctaNote}
           </p>
+        </FadeIn>
+
+        <FadeIn direction="left" delay={0.15}>
+          <HeroVisual />
         </FadeIn>
       </div>
     </Container>
