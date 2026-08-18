@@ -1360,27 +1360,8 @@ h6 {
   }
 }
 
-/*
- * Hero orbit ring.
- *
- * Ninety seconds a revolution. The nodes have plainly moved if you look back
- * at them and never catch your eye while you are reading the headline beside
- * them — which is the only job this has.
- */
-@keyframes hero-orbit-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.hero-orbit {
-  transform-origin: 50% 50%;
-  animation: hero-orbit-spin 90s linear infinite;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .proof-strip-track,
-  .hero-orbit {
+  .proof-strip-track {
     animation: none;
   }
 }

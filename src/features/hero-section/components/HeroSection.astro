@@ -26,79 +26,86 @@ import ProofStrip from "./ProofStrip.astro";
   <HeroNetworkBg />
 
   <div class="relative z-10 flex min-h-0 flex-1 flex-col">
-    <Container class="flex flex-1 flex-col justify-center pb-10 sm:pb-14 lg:pb-20">
-      {/*
-        `1fr` against `0.85fr` rather than an even split. The copy is the
-        column that has to hold three lines of headline at hero scale without
-        breaking mid-phrase; the visual is square and scales to whatever it is
-        given, so it takes the remainder.
-      */}
-      <div
-        class="grid items-center gap-10 sm:gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] lg:gap-14 xl:gap-20"
-      >
-        <FadeIn class="text-left">
-          <SectionLabel tone="primary" class="mb-0 block pl-0">
-            <span class="sm:hidden">{HERO_CONTENT.labelShort}</span>
-            <span class="hidden sm:inline">{HERO_CONTENT.label}</span>
-          </SectionLabel>
-          {/*
-            `text-hero` clamps at 3rem, sized for the full-width centred case;
-            in a column it needs its own scale at each step, and three steps
-            rather than two because `xl` starts at 1280 — a 13" laptop was
-            taking the widest size against the narrowest desktop column and
-            spilling the headline to four lines.
+    {/*
+      The panel is positioned against this wrapper rather than against the
+      section, so it stops at the proof strip instead of running under it —
+      and it sits outside `Container`, because the whole point is to escape
+      the container's gutter and reach the window edge.
+    */}
+    <div class="relative flex flex-1 flex-col justify-center">
+      <HeroVisual variant="panel" />
 
-            Above `lg` the grid column is narrower than any `ch` cap worth
-            setting, so the cap is dropped and the column is the measure.
-            `text-balance` then evens the three lines out; their natural
-            lengths differ by half a line otherwise.
-          */}
-          <h1
-            class="text-hero stack-sm max-w-[18ch] text-balance leading-[1.06] text-foreground sm:max-w-[22ch] lg:max-w-none lg:text-[2.5rem] xl:text-[3rem] min-[87.5rem]:text-[3.375rem]"
-          >
-            {HERO_CONTENT.title.lead}{" "}
-            <span class="text-accent">{HERO_CONTENT.title.accent}</span>{" "}
-            {HERO_CONTENT.title.tail}
-          </h1>
-          <p
-            class="stack-sm max-w-[44ch] text-pretty text-[14px] leading-[1.6] text-muted sm:stack-md sm:text-body-lg lg:max-w-[46ch] lg:text-[17px]"
-          >
-            {HERO_CONTENT.description}
-          </p>
-          {/*
-            `gap-3` rather than `gap-4`, and a shared floor width on the two
-            pills. The labels differ by four characters, and at hero scale two
-            differently-sized capsules a full rem apart read as two unrelated
-            controls instead of as one cluster with a primary in it.
-          */}
-          <div
-            class="stack-md flex w-full flex-col items-stretch gap-2.5 sm:stack-lg sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-start sm:gap-3"
-          >
-            <GradientButton
-              href={HERO_CONTENT.primaryCta.href}
-              size="lg"
-              class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto sm:min-w-[13.75rem]"
-            >
-              {HERO_CONTENT.primaryCta.label}
-            </GradientButton>
-            <GhostButton
-              href={HERO_CONTENT.secondaryCta.href}
-              size="lg"
-              class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto sm:min-w-[13.75rem]"
-            >
-              {HERO_CONTENT.secondaryCta.label}
-            </GhostButton>
-          </div>
-          <p class="stack-xs text-[12px] leading-snug text-muted-light sm:stack-sm sm:text-[13px]">
-            {HERO_CONTENT.ctaNote}
-          </p>
-        </FadeIn>
+      <Container class="relative z-10 pb-10 sm:pb-14 lg:pb-20">
+        {/*
+          One column from `lg` up: the visual is out of the flow by then, so
+          the copy is holding half the width on its own rather than sharing a
+          grid with anything.
+        */}
+        <div class="grid items-center gap-10 sm:gap-12 lg:block">
+          <FadeIn class="text-left lg:w-[56%] lg:pr-6 xl:pr-14">
+            <SectionLabel tone="primary" class="mb-0 block pl-0">
+              <span class="sm:hidden">{HERO_CONTENT.labelShort}</span>
+              <span class="hidden sm:inline">{HERO_CONTENT.label}</span>
+            </SectionLabel>
+            {/*
+              `text-hero` clamps at 3rem, sized for the full-width centred case;
+              in a column it needs its own scale at each step, and three steps
+              rather than two because `xl` starts at 1280 — a 13" laptop was
+              taking the widest size against the narrowest desktop column and
+              spilling the headline to four lines.
 
-        <FadeIn direction="left" delay={0.15}>
-          <HeroVisual />
-        </FadeIn>
-      </div>
-    </Container>
+              Above `lg` the grid column is narrower than any `ch` cap worth
+              setting, so the cap is dropped and the column is the measure.
+              `text-balance` then evens the three lines out; their natural
+              lengths differ by half a line otherwise.
+            */}
+            <h1
+              class="text-hero stack-sm max-w-[18ch] text-balance leading-[1.06] text-foreground sm:max-w-[22ch] lg:max-w-none lg:text-[2.5rem] xl:text-[3rem] min-[87.5rem]:text-[3.375rem]"
+            >
+              {HERO_CONTENT.title.lead}{" "}
+              <span class="text-accent">{HERO_CONTENT.title.accent}</span>{" "}
+              {HERO_CONTENT.title.tail}
+            </h1>
+            <p
+              class="stack-sm max-w-[44ch] text-pretty text-[14px] leading-[1.6] text-muted sm:stack-md sm:text-body-lg lg:max-w-[46ch] lg:text-[17px]"
+            >
+              {HERO_CONTENT.description}
+            </p>
+            {/*
+              `gap-3` rather than `gap-4`, and a shared floor width on the two
+              pills. The labels differ by four characters, and at hero scale two
+              differently-sized capsules a full rem apart read as two unrelated
+              controls instead of as one cluster with a primary in it.
+            */}
+            <div
+              class="stack-md flex w-full flex-col items-stretch gap-2.5 sm:stack-lg sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-start sm:gap-3"
+            >
+              <GradientButton
+                href={HERO_CONTENT.primaryCta.href}
+                size="lg"
+                class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto sm:min-w-[13.75rem]"
+              >
+                {HERO_CONTENT.primaryCta.label}
+              </GradientButton>
+              <GhostButton
+                href={HERO_CONTENT.secondaryCta.href}
+                size="lg"
+                class="h-12 min-h-12 w-full justify-center sm:h-14 sm:min-h-14 sm:w-auto sm:min-w-[13.75rem]"
+              >
+                {HERO_CONTENT.secondaryCta.label}
+              </GhostButton>
+            </div>
+            <p class="stack-xs text-[12px] leading-snug text-muted-light sm:stack-sm sm:text-[13px]">
+              {HERO_CONTENT.ctaNote}
+            </p>
+          </FadeIn>
+
+          <FadeIn delay={0.15} class="lg:hidden">
+            <HeroVisual variant="card" />
+          </FadeIn>
+        </div>
+      </Container>
+    </div>
 
     <ProofStrip />
   </div>

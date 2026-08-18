@@ -2,89 +2,79 @@
 import { HERO_CONTENT } from "@/features/hero-section/constants";
 
 /**
- * The hero's right column: the render dissolved into the page, inside a thin
- * orbital ring.
+ * The hero's right side, in its two forms.
  *
- * The two framed versions of this — a white ring, then a ring wrapped in
- * cobalt arcs — both fought the render instead of carrying it. It is a pale,
- * airy drawing on a white ground, and a hard edge around it does two things:
- * it puts the heaviest element of the whole hero on the far side of the page
- * from the headline, and it fences off the network canvas so the two
- * drawings, which are the same drawing, stop meeting.
+ * From `lg` up it is a panel pinned to the right edge of the window — rounded
+ * on the left only, because the right side has no edge to round. Below `lg`
+ * there is no room to bleed anything, so the same render becomes an ordinary
+ * card under the copy.
  *
- * So: no edge. The render is masked out to nothing before it reaches its own
- * boundary, and the only drawn lines are two hairline rings with three nodes
- * riding the outer one — the same nodes-on-edges vocabulary as the canvas
- * behind it, at a scale you read as structure rather than as decoration.
+ * The left edge is a gradient wash to page colour rather than a border. A
+ * panel this size with a hard edge cuts the hero in half and the network
+ * canvas dies at the seam; washing it out means the render arrives out of the
+ * page instead of being pasted onto it.
+ *
+ * Three framed versions came before this one — a white ring, cobalt arcs, and
+ * a feathered circle in an orbit — and each spent its effort on the frame.
+ * There is no frame here. The render is large, well cropped, and still.
  */
+interface Props {
+  /** `panel` is the bleeding version; `card` is the one that stacks. */
+  variant: "panel" | "card";
+}
 
-/** Feathered well inside the crop: the render's own corners are white, and a
- *  mask that ends at the edge would leave them as a visible square. */
-const FEATHER =
-  "radial-gradient(circle at 50% 50%, #000 54%, rgba(0,0,0,0.88) 66%, transparent 80%)";
+const { variant } = Astro.props;
+
+const IMG =
+  "h-full w-full object-cover object-[42%_center] select-none";
 ---
 
-<div
-  class="relative mx-auto aspect-square w-full max-w-[20rem] sm:max-w-[24rem] lg:max-w-[26rem] xl:max-w-[30rem]"
->
-  {/* The light the render sits in. Warm-side cobalt top-left, sky bottom-right
-      — two sources rather than one flat halo, so the column has a direction. */}
-  <div
-    aria-hidden="true"
-    class="pointer-events-none absolute -top-[6%] left-[2%] h-[62%] w-[62%] rounded-full bg-accent/12 blur-3xl"
-  >
-  </div>
-  <div
-    aria-hidden="true"
-    class="pointer-events-none absolute -right-[2%] bottom-[4%] h-[52%] w-[52%] rounded-full bg-teal/10 blur-3xl"
-  >
-  </div>
-
-  <img
-    src={HERO_CONTENT.visual.image}
-    alt={HERO_CONTENT.visual.alt}
-    class="absolute inset-[6%] h-[88%] w-[88%] object-cover object-center"
-    style={`mask-image:${FEATHER};-webkit-mask-image:${FEATHER}`}
-    width="960"
-    height="640"
-    loading="eager"
-    fetchpriority="high"
-    decoding="async"
-  />
-
-  <svg
-    aria-hidden="true"
-    class="pointer-events-none absolute inset-0 h-full w-full"
-    viewBox="0 0 400 400"
-    fill="none"
-  >
-    {/* Inner ring, dashed and barely there — it reads as the edge the render
-        no longer has, without drawing one. */}
-    <circle
-      cx="200"
-      cy="200"
-      r="152"
-      stroke="var(--accent)"
-      stroke-opacity="0.13"
-      stroke-width="1"
-      stroke-dasharray="2 7"
-    ></circle>
-
-    {/* Outer ring and its three nodes, turning as one group. A minute and a
-        half a revolution: the nodes have plainly moved if you look back at
-        them, and never catch your eye while you are reading. */}
-    <g class="hero-orbit">
-      <circle
-        cx="200"
-        cy="200"
-        r="188"
-        stroke="var(--accent)"
-        stroke-opacity="0.2"
-        stroke-width="1"
-      ></circle>
-      <circle cx="388" cy="200" r="5.5" fill="var(--accent)"></circle>
-      <circle cx="106" cy="362.8" r="4" fill="var(--indigo)" fill-opacity="0.7"></circle>
-      <circle cx="106" cy="37.2" r="3" fill="var(--teal)" fill-opacity="0.8"></circle>
-    </g>
-  </svg>
-</div>
+{
+  variant === "panel" ? (
+    <div
+      class="pointer-events-none absolute inset-y-0 right-0 hidden w-[46%] overflow-hidden rounded-l-[2.5rem] lg:block xl:w-[47%]"
+    >
+      <img
+        src={HERO_CONTENT.visual.image}
+        alt={HERO_CONTENT.visual.alt}
+        class={IMG}
+        width="960"
+        height="640"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+      {/* Wash, not a border. Wide enough that the render is fully page colour
+          by the time it reaches the copy column. */}
+      <div
+        aria-hidden="true"
+        class="absolute inset-y-0 left-0 w-[42%] bg-gradient-to-r from-[#FAFAFA] via-[#FAFAFA]/70 to-transparent"
+      />
+      {/* The same wash top and bottom, so the panel has no cut corners
+          against the navbar above it or the proof strip below. */}
+      <div
+        aria-hidden="true"
+        class="absolute inset-x-0 top-0 h-[18%] bg-gradient-to-b from-[#FAFAFA] to-transparent"
+      />
+      <div
+        aria-hidden="true"
+        class="absolute inset-x-0 bottom-0 h-[18%] bg-gradient-to-t from-[#FAFAFA] to-transparent"
+      />
+    </div>
+  ) : (
+    <div class="relative mx-auto w-full max-w-[30rem] overflow-hidden rounded-2xl bg-white shadow-soft ring-1 ring-accent/12 lg:hidden">
+      <div class="aspect-[4/3]">
+        <img
+          src={HERO_CONTENT.visual.image}
+          alt={HERO_CONTENT.visual.alt}
+          class={IMG}
+          width="960"
+          height="640"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </div>
+    </div>
+  )
+}
