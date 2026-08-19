@@ -5,24 +5,19 @@ import { NAV_ROUTES } from "@/constants/site";
  *
  * Every `title` names the buyer's situation, not the technology behind it, so a
  * reader picks the line that sounds like their week rather than decoding a
- * capability menu. `short` is the pill/tab label — the full titles are sentences
- * and would blow out the tab strip.
+ * capability menu. `short` labelled the tab strip the wheel used to need; the
+ * grid shows full titles, so nothing reads it today — kept for the next place
+ * that wants a two-word name for an offer.
  *
- * ORDER IS THE ENGAGEMENT ARC, and the wheel reads it as a loop:
+ * ORDER IS THE ENGAGEMENT ARC, and the grid reads it left to right, top to
+ * bottom:
  *   1–4  build   — what we make for you
  *   5–6  fix     — what we do when something already exists and stalled
  *   7–8  run     — what happens after it is live
  *   9    staff   — how we resource all of the above
- * It loops 9 → 1 cleanly. Card 3 is the one the wheel opens on
- * (`initialIndex = min(2, CARD_COUNT - 1)`), so keep a strong offer there.
- * Adjacent `color` values are also kept in different hue families, since three
- * or more cards are on screen at once.
- *
- * ⚠️ THE COUNT IS NOT FREE. The orbit shows every card within ~±96° of the
- * crown, and `RING_SLOTS = n * ceil(10 / n)` sets the angular step — so at some
- * counts a card is on screen twice at once. Verified safe: 5, 7, 9, 10, 11, 12.
- * Broken: 6 and 8. Adding or removing one entry here can silently duplicate a
- * card on the wheel, so re-check against RING_SLOTS in ServicesGrid.astro.
+ * At nine entries the three-column grid fills exactly, so the arc ends on a
+ * full row. Adjacent `color` values are kept in different hue families, since
+ * the whole set is on screen at once.
  *
  * ⚠️ `stats` on the first five are inherited from the previous copy and still
  * unverified; each pair stayed with the capability it originally described. The

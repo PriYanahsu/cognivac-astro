@@ -9,12 +9,11 @@ import {
   Rocket,
   Users,
   Workflow,
-  ChevronLeft,
-  ChevronRight,
+  ArrowRight,
 } from "@lucide/astro";
 import Container from "@/components/shared/Container.astro";
 import GradientButton from "@/components/shared/GradientButton.astro";
-import SectionLabel from "@/components/shared/SectionLabel.astro";
+import SectionIntro from "@/components/shared/SectionIntro.astro";
 import { NAV_ROUTES } from "@/constants/site";
 import {
   SERVICE_OFFERS,
@@ -22,9 +21,41 @@ import {
 } from "@/features/services-section/constants";
 
 /**
- * Port of features/services-section/components/services-grid.tsx — circular
- * wheel deck with continuous rotation, horizon scrim, and rAF-driven paint.
+ * Services, as a pinned card grid.
+ *
+ * This was a rotating 3D wheel: nine cards on a ring, drag to spin, a tab
+ * strip and arrows to drive it, and around 400 lines of rAF paint code to
+ * hold it together. Only the crown card was ever fully legible, so seeing all
+ * nine meant nine deliberate interactions. It is a grid now.
+ *
+ * From `lg` the grid is pinned: the section is a screen tall plus the height
+ * the rows overflow by, the stage sticks to the top for exactly that
+ * distance, and the track is translated by however far you have scrolled
+ * through it. The header stays put while the rows pass under it — the section
+ * asks which problem sounds like yours, so the question holds while you go
+ * through the answers. When the track runs out the stage unsticks and the page
+ * carries on by itself.
+ *
+ * The travel is 1:1 with the page, and the mapping is a scroll-driven CSS
+ * animation wherever the browser has one, so the rows are sampled on the same
+ * frame as the scroll rather than a rAF behind it. The script keeps the old
+ * transform path for browsers without scroll timelines, and otherwise only
+ * measures.
+ *
+ * The scroll is the whole motion. The cards have no entry of their own — they
+ * used to fade and scale in on an observer, which inside a clipped window
+ * fired mid-travel and put a second, slower movement on a row that was already
+ * moving. Nor is there a progress rail or a count under the window: both were
+ * meters for a scroll the reader is already doing, and the cut edge of the next
+ * row is the honest signal that there is more.
+ *
+ * Nothing here intercepts the wheel. The scroll is the page's own, read rather
+ * than captured, so trackpad momentum, keyboard paging, scrollbar dragging and
+ * scrolling back up all behave normally. The pin is off below `lg`, off under
+ * `prefers-reduced-motion`, and off whenever the rows already fit — in every
+ * one of those cases the grid is an ordinary block in the flow.
  */
+
 const ICONS = {
   Puzzle,
   Workflow,
@@ -38,285 +69,117 @@ const ICONS = {
 } as const;
 
 const CARD_COUNT = SERVICE_OFFERS.length;
-const RING_SLOTS = CARD_COUNT * Math.max(1, Math.ceil(10 / CARD_COUNT));
-const initialIndex = Math.min(2, CARD_COUNT - 1);
 ---
 
-<section class="relative overflow-hidden bg-[#0f0f12] py-12 text-white sm:py-16 lg:py-24">
-  <Container class="relative z-10 w-full">
-    <div
-      data-reveal-stagger
-      data-reveal-margin="-20% 0px -20% 0px"
-      data-stagger="0.1"
-      data-delay-children="0"
-      style="--reveal-item-y:20px;--reveal-item-duration:0.55s"
-      class="mx-auto max-w-6xl text-center"
-    >
-      <div data-reveal-item>
-        <SectionLabel
-          tone="accent"
-          class="mb-0"
-        >
-          {SERVICES_HEADER.label}
-        </SectionLabel>
-      </div>
-      <h2
-        data-reveal-item
-        class="mt-3 text-[clamp(1.625rem,3.5vw+0.75rem,3.5rem)] font-bold leading-[1.08] tracking-[-0.02em] text-white sm:mt-5"
-      >
-        {SERVICES_HEADER.title}
-      </h2>
-      <p
-        data-reveal-item
-        class="mx-auto stack-sm lede max-w-[640px] px-1 text-white/85 sm:stack-md"
-      >
-        {SERVICES_HEADER.description}
-      </p>
-    </div>
+{/*
+  `overflow-hidden` is gone from this section on purpose: overflow on ANY
+  ancestor of a `position: sticky` element silently disables the sticky, and
+  the stage below depends on it. Nothing needs the clip now that the wheel is.
+*/}
+<section class="relative bg-[#0f0f12] text-white">
+  <div class="services-pin" data-pin>
+    <div class="services-pin__stage">
+      <Container class="relative z-10 w-full shrink-0">
+        <SectionIntro
+          label={SERVICES_HEADER.label}
+          title={SERVICES_HEADER.title}
+          description={SERVICES_HEADER.description}
+          tone="dark"
+          align="center"
+        />
+      </Container>
 
-    <div data-deck-tabs class="relative z-20 mt-8 sm:mt-12 md:mt-14">
-      <div class="flex items-center gap-3 sm:hidden">
-        <button
-          type="button"
-          data-mobile-prev
-          aria-label="Previous service"
-          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/25 text-white transition-colors active:bg-white/10"
-        >
-          <ChevronLeft class="h-4 w-4" />
-        </button>
-        <div class="min-w-0 flex-1 text-center">
-          <span
-            class="inline-flex max-w-full items-center justify-center rounded-full border border-accent bg-accent px-4 py-2 text-[13px] font-semibold text-white"
-          >
-            <span data-mobile-title class="truncate"
-              >{SERVICE_OFFERS[0].short}</span
-            >
-          </span>
-        </div>
-        <button
-          type="button"
-          data-mobile-next
-          aria-label="Next service"
-          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/25 text-white transition-colors active:bg-white/10"
-        >
-          <ChevronRight class="h-4 w-4" />
-        </button>
-      </div>
-      <div class="mt-3 flex items-center justify-center gap-1.5 sm:hidden">
-        {
-          SERVICE_OFFERS.map((service, i) => (
-            <button
-              type="button"
-              data-mobile-dot
-              data-index={i}
-              data-short={service.short}
-              aria-label={service.title}
-              class="h-1.5 rounded-full transition-all duration-300"
-              data-active={i === 0 ? "true" : "false"}
-            />
-          ))
-        }
-      </div>
-
-      <div class="hidden w-full items-center gap-2 sm:flex">
-        <button
-          type="button"
-          data-deck-prev
-          aria-label="Previous service"
-          class="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full border border-white/25 bg-transparent text-white transition-colors hover:border-white/50 hover:bg-white/10"
-        >
-          <ChevronLeft class="h-4 w-4" />
-        </button>
-
-        <div
-          data-deck-tabs-viewport
-          class="min-w-0 flex-1 overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        >
-          <div class="flex w-max min-w-full justify-center gap-2">
-            {
-              SERVICE_OFFERS.map((service, i) => (
-                <button
-                  type="button"
-                  data-deck-tab
-                  data-index={i}
-                  data-active={i === initialIndex ? "true" : "false"}
-                  class="shrink-0 whitespace-nowrap rounded-pill-category border px-4 py-2 text-button-md transition-all duration-300"
-                >
-                  {service.short}
-                </button>
-              ))
-            }
-          </div>
-        </div>
-
-        <button
-          type="button"
-          data-deck-next
-          aria-label="Next service"
-          class="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full border border-white/25 bg-transparent text-white transition-colors hover:border-white/50 hover:bg-white/10"
-        >
-          <ChevronRight class="h-4 w-4" />
-        </button>
-      </div>
-    </div>
-  </Container>
-
-  <div
-    data-mobile-track
-    class="relative z-10 mt-6 flex snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-hidden overscroll-x-contain px-5 pb-2 scrollbar-none sm:hidden [&::-webkit-scrollbar]:hidden"
-  >
-    {
-      SERVICE_OFFERS.map((service) => {
-        const Icon = ICONS[service.icon as keyof typeof ICONS] ?? Bot;
-        return (
-          <a
-            href={service.href}
-            class="flex w-[calc(100vw-5.5rem)] shrink-0 snap-center flex-col overflow-hidden rounded-md p-4 text-left text-[#0b0b0f]"
-            style={`background:${service.color}`}
-          >
-            <div class="flex items-start gap-2.5">
-              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-black/8 text-[#0b0b0f]">
-                <Icon class="h-4 w-4" stroke-width={1.75} />
-              </div>
-              <h3 class="m-0 min-w-0 flex-1 text-[16.5px] font-semibold leading-tight tracking-[-0.02em] text-[#0b0b0f]">
-                {service.title}
-              </h3>
-            </div>
-
-            <p class="m-0 mt-3 text-[13.5px] leading-normal text-[#0b0b0f]/85">
-              {service.description}
-            </p>
-
-            <div class="mt-3.5 flex gap-5 border-t border-black/10 pt-3">
-              {service.stats.map((stat) => (
-                <div class="min-w-0">
-                  <b class="block text-[15px] font-semibold tracking-[-0.02em] text-[#0b0b0f]">
-                    {stat.value}
-                  </b>
-                  <span class="mt-0.5 block text-[10.5px] leading-snug text-[#0b0b0f]/70">
-                    {stat.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            <div class="relative mt-3.5 h-26 shrink-0 overflow-hidden rounded-2xl">
-              <img
-                src={service.image}
-                alt=""
-                sizes="(max-width: 640px) 320px, 400px"
-                class="absolute inset-0 h-full w-full object-cover"
-                loading="lazy"
-                decoding="async"
-                draggable="false"
-              />
-            </div>
-
-            <span class="mt-3 inline-flex items-center gap-0.5 text-[12.5px] font-semibold tracking-[-0.01em] text-[#0b0b0f]/80">
-              View service
-              <ChevronRight class="h-3.5 w-3.5" />
-            </span>
-          </a>
-        );
-      })
-    }
-  </div>
-
-  <div
-    data-deck-stage
-    data-card-count={CARD_COUNT}
-    data-ring-slots={RING_SLOTS}
-    data-initial-index={initialIndex}
-    class="relative z-10 mt-6 hidden w-full touch-pan-y select-none overflow-hidden sm:mt-8 sm:block md:mt-10"
-  >
-    <div
-      aria-hidden="true"
-      data-deck-horizon
-      class="pointer-events-none absolute inset-x-0 bottom-0 z-[200]"
-    >
-    </div>
-    <div class="relative mx-auto h-full w-full">
+      {/*
+        The window is what the rows are read through, and the track is what
+        moves. `overflow: clip` rather than `hidden`: `hidden` makes a scroll
+        container, so tabbing to a card off-window would scroll it internally
+        and desync it from the transform. `clip` cannot scroll, and the focus
+        handler in the script moves the page instead.
+      */}
+      <div class="services-pin__window" data-pin-window>
+        <div class="services-pin__track" data-pin-track>
+          <Container class="w-full">
+            {/*
+              No scroll-reveal on the cards. Inside the pinned window a row
+              crosses the clip edge and the observer fires mid-travel, so a card
+              faded up while it was already sliding — two motions on one element
+              going different directions. The rows arrive by the scroll and
+              nothing else; the only thing animating here is the track.
+            */}
+            <div class="services-grid grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
       {
-        Array.from({ length: RING_SLOTS }, (_, slot) => {
-          const service = SERVICE_OFFERS[slot % CARD_COUNT];
+        SERVICE_OFFERS.map((service) => {
           const Icon = ICONS[service.icon as keyof typeof ICONS] ?? Bot;
-
           return (
-            <div
-              data-deck-orbit
-              data-slot={slot}
-              data-href={service.href}
-              data-short={service.short}
-              class="absolute left-1/2 top-4 sm:top-7 md:top-10"
-              style="visibility:hidden;opacity:0"
-            >
+            <a href={service.href} class="service-card">
+              {/*
+                The hover lift lives on this inner element rather than on the
+                anchor, so the card's own transform is never the one the pin
+                would have to share.
+              */}
               <div
-                data-deck-card
-                role="button"
-                tabindex="-1"
-                class="group relative flex h-full w-full flex-col overflow-hidden rounded-md p-4 text-left text-[#0b0b0f] shadow-[0_14px_28px_-12px_rgba(0,0,0,0.7)] transition-[transform,opacity] duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] sm:rounded-md sm:p-6 md:p-[30px]"
-                style={`background:${service.color}`}
+                class="service-card__inner"
+                style={`--card-tint:${service.color};background:${service.color}`}
               >
-                <div class="flex min-h-0 flex-1 flex-col overflow-hidden">
-                  <div class="mb-1.5 flex items-center gap-2.5 sm:mb-2 sm:gap-3">
-                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-black/[0.08] text-[#0b0b0f] sm:h-11 sm:w-11 sm:rounded-2xl">
-                      <Icon class="h-4 w-4 sm:h-5 sm:w-5" stroke-width={1.75} />
-                    </div>
-                    <h3 class="m-0 line-clamp-2 min-w-0 flex-1 text-[16.5px] font-semibold tracking-[-0.02em] leading-[1.2] text-[#0b0b0f] sm:text-[20px] md:text-[22px]">
-                      {service.title}
-                    </h3>
-                  </div>
-                  <p class="m-0 mb-3 line-clamp-2 max-w-[30ch] text-[12.5px] leading-[1.5] text-[#0b0b0f]/85 sm:mb-5 sm:line-clamp-3 sm:max-w-none sm:text-[14.5px] sm:leading-[1.55] md:text-[15.5px]">
-                    {service.description}
-                  </p>
-                  <div class="mb-2 hidden gap-5 border-t border-black/10 pt-3.5 sm:mb-0 sm:flex md:gap-7 md:pt-4">
-                    {service.stats.map((stat) => (
-                      <div class="min-w-0">
-                        <b class="block text-[16px] font-semibold tracking-[-0.02em] text-[#0b0b0f] md:text-[18px]">
-                          {stat.value}
-                        </b>
-                        <span class="mt-0.5 block line-clamp-1 text-[11px] leading-snug text-[#0b0b0f]/70 md:text-[12px]">
-                          {stat.label}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  <span
-                    data-deck-cta
-                    class="mt-auto inline-flex h-5 shrink-0 items-center gap-0.5 text-[12px] font-semibold tracking-[-0.01em] text-[#0b0b0f]/80 opacity-0 pointer-events-none sm:mt-4 sm:h-auto sm:text-[13px] [@media(hover:hover)]:hidden"
-                  >
-                    View service
-                    <ChevronRight class="h-3.5 w-3.5" />
-                  </span>
-                </div>
-                <div class="relative mt-3 h-[88px] shrink-0 overflow-hidden rounded-2xl sm:mt-4 sm:h-[130px] md:h-[150px]">
+                <div class="service-card__media">
                   <img
                     src={service.image}
                     alt=""
+                    sizes="(min-width: 1024px) 440px, (min-width: 640px) 50vw, 100vw"
+                    class="service-card__img"
                     loading="lazy"
                     decoding="async"
                     draggable="false"
-                    class="absolute inset-0 h-full w-full object-cover"
                   />
+                  {/*
+                    The mark sits in the image, on the same left axis as the
+                    title and the figures below it. Straddling the seam between
+                    image and copy read as a notch in the card rather than as a
+                    badge, and beside a two-line title it aligned to nothing.
+                  */}
+                  <span class="service-card__mark">
+                    <Icon class="h-[18px] w-[18px]" stroke-width={1.75} />
+                  </span>
                 </div>
-                <a
-                  data-deck-hover-cta
-                  href={service.href}
-                  class="pointer-events-none absolute left-1/2 top-1/2 z-50 hidden -translate-x-1/2 -translate-y-1/2 scale-90 whitespace-nowrap rounded-full bg-black/85 px-[22px] py-3 text-[13px] font-semibold text-white opacity-0 transition-[opacity,scale,background-color] duration-300 hover:bg-accent group-hover:pointer-events-auto group-hover:scale-100 group-hover:opacity-100"
-                >
-                  View my service →
-                </a>
+
+                <div class="service-card__body">
+                  <h3 class="service-card__title">{service.title}</h3>
+                  <p class="service-card__desc">{service.description}</p>
+
+                  {/*
+                    `mt-auto` alone let the rule ride up against the last line of
+                    a long description. The margin on the copy above sets the
+                    floor; `mt-auto` only ever adds to it.
+                  */}
+                  <div class="service-card__stats">
+                    {service.stats.map((stat) => (
+                      <div class="min-w-0">
+                        <b class="service-card__stat">{stat.value}</b>
+                        <span class="service-card__stat-label">{stat.label}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <span class="service-card__cta">
+                    View service
+                    <ArrowRight class="service-card__arrow h-3.5 w-3.5" />
+                  </span>
+                </div>
               </div>
-            </div>
+            </a>
           );
         })
       }
+            </div>
+          </Container>
+        </div>
+      </div>
     </div>
   </div>
 
-  <Container class="relative z-10">
+  <Container class="relative z-10 pb-14 sm:pb-20 lg:pb-24">
     <div
-      class="mt-9 flex flex-col items-center gap-3 sm:mt-12 sm:flex-row sm:justify-center sm:gap-5"
+      class="flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-5"
     >
       <GradientButton
         href={NAV_ROUTES.services}
@@ -326,9 +189,7 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
       >
         See all services
       </GradientButton>
-      <p
-        class="text-center text-[13px] leading-snug text-white/72 sm:text-left sm:text-[13.5px]"
-      >
+      <p class="text-center text-[13px] leading-[1.4] text-white/70 sm:text-left">
         {CARD_COUNT} capabilities, with what each one ships.
       </p>
     </div>
@@ -336,522 +197,486 @@ const initialIndex = Math.min(2, CARD_COUNT - 1);
 </section>
 
 <style>
-  [data-deck-tab] {
-    border-color: rgb(255 255 255 / 0.18);
-    background-color: rgb(255 255 255 / 0.05);
-    color: rgb(255 255 255 / 0.75);
+  /* ==========================================================================
+     THE PIN
+     Off by default — this block is the plain flowing grid, which is what a
+     phone, a reduced-motion reader, and any layout where the rows already fit
+     all get. `[data-pin="on"]` is set by the script only once it has measured
+     a real overflow to travel through.
+     ========================================================================== */
+  .services-pin {
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
   }
 
-  [data-deck-tab]:hover {
-    border-color: rgb(255 255 255 / 0.4);
+  @media (min-width: 640px) {
+    .services-pin {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
   }
 
-  [data-deck-tab][data-active="true"] {
-    border-color: var(--accent);
-    background-color: var(--accent);
+  .services-pin__window {
+    margin-top: 2.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .services-pin__window {
+      margin-top: 3.5rem;
+    }
+  }
+
+  /* --- pinned --- */
+
+  /* The extra height IS the scroll distance. The stage sticks for exactly as
+     long as the track has left to travel, so the release lands on the frame
+     the last row finishes arriving. */
+  .services-pin[data-pin="on"] {
+    height: calc(100dvh + var(--pin-travel, 0px));
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .services-pin[data-pin="on"] .services-pin__stage {
+    position: sticky;
+    top: 0;
+    display: flex;
+    height: 100dvh;
+    flex-direction: column;
+    overflow: clip;
+    padding-top: 3.25rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .services-pin[data-pin="on"] .services-pin__window {
+    position: relative;
+    min-height: 0;
+    flex: 1;
+    margin-top: 1.75rem;
+    /* Not `hidden`: see the note in the markup — `hidden` would let focus
+       scroll this box behind the transform's back. */
+    overflow: clip;
+  }
+
+  .services-pin[data-pin="on"] .services-pin__track {
+    transform: translate3d(0, var(--pin-shift, 0px), 0);
+    will-change: transform;
+  }
+
+  /* --- the sync ---
+     `--pin-shift` is written from script, and the obvious upgrade is to hand
+     the mapping to a scroll-driven CSS animation — `view-timeline` on the pin,
+     `animation-range: contain 0% contain 100%`, which is exactly this travel.
+     It was tried. Chromium resolves it correctly in every API you can ask:
+     `getComputedStyle` returns the right matrix, `getBoundingClientRect` puts
+     the ninth card flush with the window at the end, `getAnimations()` reports
+     progress 1 on a ViewTimeline. It just never paints it — captured
+     compositor frames show the first row at every scroll offset. Do not
+     reintroduce it on the strength of the computed values; they lie here.
+
+     So the transform stays in script, and the cost of that is a frame of lag,
+     which the Lenis binding below removes. */
+
+  /**
+   * The card. Nothing on it moves any more — no reveal on the anchor, no lift
+   * on `__inner` — so the two are only still separate because the anchor is
+   * what gets the focus ring and `__inner` is what gets clipped to the radius.
+   */
+  .service-card {
+    display: block;
+    border-radius: var(--rounded-xl);
+  }
+
+  .service-card__inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    border-radius: var(--rounded-xl);
+    color: #0b0b0f;
+    text-align: left;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+  }
+
+  /*
+   * HOVER IS THE BUTTON, and nothing else on the card.
+   *
+   * It used to be four things at once: the card lifted and took a deep shadow,
+   * its photograph zoomed, its wash cleared, and the other eight cards dropped
+   * to 45% and shrank. Moving the pointer across a nine-card grid set most of
+   * the section in motion, and since you cross the grid on the way to reading
+   * it, that fired while scrolling. Filling the pill is the whole affordance —
+   * it is the thing being clicked, so it is the thing that answers.
+   */
+
+  .service-card:focus-visible {
+    outline: 2px solid var(--accent-on-dark);
+    outline-offset: 4px;
+  }
+
+  /**
+   * 21:9, not 16:10. At 16:10 the photograph took 277px of a 553px card —
+   * dead half — and pushed the title, the copy and the figures into a strip
+   * along the bottom. A letterbox gives the image enough to read as an image
+   * and hands the rest of the card back to the words.
+   */
+  .service-card__media {
+    position: relative;
+    aspect-ratio: 2 / 1;
+    width: 100%;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  @media (min-width: 640px) {
+    .service-card__media {
+      aspect-ratio: 21 / 9;
+    }
+  }
+
+  /* The pastel wash holds the nine photographs together as one set. It used to
+     clear on hover; that was one more thing changing under a pointer that is
+     usually just passing through. */
+  .service-card__media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: var(--card-tint);
+    opacity: 0.2;
+  }
+
+  .service-card__img {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    /* Static overscan, not a hover zoom — it only covers the subpixel gap the
+       rounded corners leave at the edges. */
+    transform: scale(1.01);
+  }
+
+  /**
+   * The card has no entry of its own either. It used to fade up, settle a
+   * scale, pull its picture into focus and lift its wash — read as a set being
+   * laid out for you, but only outside the pin. Inside it, a row crosses the
+   * clip edge with the track already carrying it, so that entry played on top
+   * of the travel and the card appeared to move at a different rate from the
+   * scroll. The scroll is the only motion in this section now.
+   */
+
+  .service-card__body {
+    display: flex;
+    min-height: 0;
+    flex: 1;
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  @media (min-width: 1024px) {
+    .service-card__body {
+      padding: 26px;
+    }
+  }
+
+  /* Frosted chip on the image, inset to the same left axis as the copy below
+     so the card has one vertical edge running through it. */
+  .service-card__mark {
+    position: absolute;
+    z-index: 2;
+    top: 16px;
+    left: 20px;
+    display: inline-flex;
+    height: 38px;
+    width: 38px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgb(255 255 255 / 0.82);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 2px 10px rgb(0 0 0 / 0.12);
+    color: #0b0b0f;
+  }
+
+  @media (min-width: 1024px) {
+    .service-card__mark {
+      top: 20px;
+      left: 26px;
+    }
+  }
+
+  /* Card type, from the site's scale. Sizes are set here rather than as
+     utilities on the markup so the whole card reads as one block when tuning. */
+  .service-card__title {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.22;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .service-card__desc {
+    /* The floor under the rule. `mt-auto` on the figures only ever adds to it,
+       so a four-line description can no longer crowd the hairline. */
+    margin: 10px 0 24px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.55;
+    color: rgb(11 11 15 / 0.72);
+    text-wrap: pretty;
+  }
+
+  .service-card__stats {
+    display: flex;
+    margin-top: auto;
+    gap: 28px;
+    border-top: 1px solid rgb(0 0 0 / 0.1);
+    padding-top: 16px;
+  }
+
+  /* 22px against 14px copy. At 16px the figures were one step off the body
+     text and read as more sentence rather than as the evidence. */
+  .service-card__stat {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .service-card__stat-label {
+    display: block;
+    margin-top: 3px;
+    font-size: 11.5px;
+    font-weight: 400;
+    line-height: 1.35;
+    color: rgb(11 11 15 / 0.6);
+  }
+
+  /**
+   * An outlined pill at rest that fills with ink on card hover. As bare text it
+   * read as a fourth line of copy rather than as the thing you came to click,
+   * and it was the only element in the card with no edge of its own.
+   *
+   * `align-self` matters: the body is a flex column, so a stretched item would
+   * run the pill the full width of the card.
+   */
+  .service-card__cta {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 18px;
+    padding: 9px 15px 9px 17px;
+    border: 1px solid rgb(11 11 15 / 0.2);
+    border-radius: var(--rounded-pill);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: rgb(11 11 15 / 0.85);
+    /* 0.22s, down from 0.4s. It is the only answer the card gives now, so it
+       has to land while the pointer is still arriving rather than easing in
+       behind it. */
+    transition:
+      background-color 0.22s ease-out,
+      border-color 0.22s ease-out,
+      color 0.22s ease-out;
+  }
+
+  .service-card:hover .service-card__cta {
+    background-color: #0b0b0f;
+    border-color: #0b0b0f;
     color: #fff;
   }
 
-  [data-deck-dot],
-  [data-mobile-dot] {
-    width: 0.375rem;
-    background-color: rgb(255 255 255 / 0.3);
-  }
-
-  [data-deck-dot][data-active="true"],
-  [data-mobile-dot][data-active="true"] {
-    width: 1.25rem;
-    background-color: var(--accent);
-  }
-
-  [data-deck-orbit][data-center="true"] [data-deck-cta] {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  @media (hover: hover) {
-    [data-deck-orbit][data-front="true"] [data-deck-hover-cta] {
-      display: block;
+  /* The pill's colour change is the only transition left on the card, and a
+     colour crossfade moves nothing — but a reader who asked for no motion gets
+     the instant swap anyway. */
+  @media (prefers-reduced-motion: reduce) {
+    .service-card__cta {
+      transition: none;
     }
   }
 </style>
 
-<script define:vars={{ CARD_COUNT, RING_SLOTS, initialIndex }}>
-  const DEG = Math.PI / 180;
-  const CLICK_SLOP = 8;
-  const CARD_CLEARANCE = 72;
-  const ANGLE_STEP = 360 / RING_SLOTS;
-  const SECTION_BG = "#0f0f12";
-  const HORIZON_SCRIM = `linear-gradient(to bottom, rgba(26,26,28,0) 0%, rgba(26,26,28,0.55) 45%, rgba(26,26,28,0.9) 78%, ${SECTION_BG} 100%)`;
+<script>
+  /**
+   * Drives the pinned track from the page's own scroll position.
+   *
+   * Deliberately not a wheel handler. Reading the scroll and translating the
+   * track keeps every native scrolling affordance intact — momentum, keyboard,
+   * scrollbar, browser find, and reversing direction — where capturing the
+   * wheel would break all of them. The section is simply taller than a screen
+   * and the stage is sticky; the transform maps one to the other.
+   *
+   * The lag this would normally have — a scroll event, then a rAF, so the rows
+   * land two frames behind the pinned header — is what made it read as slipping
+   * before. Lenis is what fixes it: it moves the page from its own rAF and
+   * emits `scroll` synchronously right after setting the offset, so painting
+   * from that callback puts the rows on the same frame as the movement. See the
+   * note on the CSS side for why this is not a scroll-driven animation.
+   */
+  function initServicesPin() {
+    const root = document.querySelector<HTMLElement>("[data-pin]");
+    if (!root || root.dataset.pinReady === "true") return;
+    root.dataset.pinReady = "true";
 
-  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
-  const modulo = (v, n) => ((v % n) + n) % n;
-  const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+    const stage = root.querySelector<HTMLElement>(".services-pin__stage");
+    const win = root.querySelector<HTMLElement>("[data-pin-window]");
+    const track = root.querySelector<HTMLElement>("[data-pin-track]");
+    if (!stage || !win || !track) return;
 
-  function circularDelta(i, active, n) {
-    let d = i - active;
-    if (d > n / 2) d -= n;
-    if (d < -n / 2) d += n;
-    return d;
-  }
+    const wide = window.matchMedia("(min-width: 1024px)");
+    const still = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-  function slotFrame(slot, rotation, radius, tilt, drop) {
-    const rad = (slot * ANGLE_STEP + rotation) * DEG;
-    const sin = Math.sin(rad);
-    const cos = Math.cos(rad);
-    const depth = (1 - cos) / 2;
-
-    return {
-      transform:
-        `translate(-50%, 0) translate3d(${radius * sin}px, ${radius * (1 - cos)}px, 0)` +
-        ` rotate(${tilt * sin}deg) scale(${1 - depth * drop})`,
-      opacity: clamp((0.55 - depth) / 0.17, 0, 1) * (1 - depth * 0.28),
-      zIndex: Math.round((1 - depth) * 100) + 1,
-    };
-  }
-
-  function initServicesWheel() {
-    const stage = document.querySelector("[data-deck-stage]");
-    if (!stage || stage.dataset.wheelReady === "true") return;
-    stage.dataset.wheelReady = "true";
-
-    const section = stage.closest("section");
-    const horizon = stage.querySelector("[data-deck-horizon]");
-    const orbits = Array.from(stage.querySelectorAll("[data-deck-orbit]"));
-    const tabs = Array.from(section?.querySelectorAll("[data-deck-tab]") ?? []);
-    const dots = Array.from(section?.querySelectorAll("[data-deck-dot]") ?? []);
-    const tabsViewport = section?.querySelector("[data-deck-tabs-viewport]");
-    const activeTitle = section?.querySelector("[data-deck-active-title]");
-
-    const shorts = orbits.map((orbit) => orbit.dataset.short ?? "");
-    const titles = orbits.map(
-      (orbit) => orbit.querySelector("h3")?.textContent?.trim() ?? "",
-    );
-
-    let rotation = -initialIndex * ANGLE_STEP;
-    let userRotation = rotation;
-    let pendingRotation = rotation;
-    let activeSlot = initialIndex;
-    /**
-     * The slot the tabs/dots point at. Kept separate from activeSlot so a
-     * multi-step jump paints the destination pill once instead of chasing
-     * every slot the wheel sweeps through on its way there.
-     */
-    let selectedSlot = initialIndex;
-    let revealed = false;
-    let rafId = null;
-    let animating = false;
-
-    const shown = new Array(RING_SLOTS).fill(false);
-    const drag = { active: false, startX: 0, startRotation: 0, moved: false };
-
-    let isSm = false;
-    let isMd = false;
-    let vw = 390;
-    let cardW = 210;
-    let cardH = 290;
-    let radius = 203;
-    let tiltMax = 20;
-    let scaleDrop = 0.34;
-    let stagePad = 165;
-    let dragSpan = 190;
-    let degPerPx = ANGLE_STEP / dragSpan;
+    let travel = 0;
+    let originTop = 0;
+    let pinned = false;
+    let frame = 0;
 
     const measure = () => {
-      vw = window.innerWidth;
-      isSm = window.matchMedia("(min-width: 640px)").matches;
-      isMd = window.matchMedia("(min-width: 768px)").matches;
+      travel = 0;
+      pinned = false;
+      track.style.removeProperty("--pin-shift");
 
-      cardW = isMd ? 400 : isSm ? 300 : Math.round(Math.min(210, vw * 0.54));
-      cardH = isMd ? 480 : isSm ? 420 : Math.round(cardW * 1.38);
-      tiltMax = isMd ? 34 : isSm ? 28 : 20;
-      scaleDrop = isMd ? 0.3 : isSm ? 0.3 : 0.34;
+      if (wide.matches && !still.matches) {
+        /**
+         * Measured with the pinned layout applied, not without it. Unpinned,
+         * the window is an ordinary block that grows to its content, so it
+         * always reports the track's own height and the overflow always came
+         * out at zero. Only once the stage is a 100dvh flex column does the
+         * window take the height the rows actually have to travel through.
+         */
+        root.style.setProperty("--pin-travel", "0px");
+        root.dataset.pin = "on";
 
-      const neighbourTilt = tiltMax * Math.sin(ANGLE_STEP * DEG);
-      const neighbourScale =
-        1 - ((1 - Math.cos(ANGLE_STEP * DEG)) / 2) * scaleDrop;
-      const minRadius =
-        (cardW / 2 +
-          CARD_CLEARANCE +
-          ((cardW * Math.cos(neighbourTilt * DEG) +
-            cardH * Math.sin(neighbourTilt * DEG)) /
-            2) *
-            neighbourScale) /
-        Math.sin(ANGLE_STEP * DEG);
-
-      radius = Math.max(
-        minRadius,
-        isMd
-          ? clamp(vw * 0.5, 600, 900)
-          : isSm
-            ? clamp(vw * 0.6, 400, 600)
-            : Math.round(vw * 0.92),
-      );
-
-      stagePad = isMd ? 300 : isSm ? 215 : 165;
-      dragSpan = isMd ? 300 : isSm ? 240 : 190;
-      degPerPx = ANGLE_STEP / dragSpan;
-
-      stage.style.height = `${cardH + stagePad}px`;
-      if (horizon) {
-        horizon.style.height = `${Math.round((cardH + stagePad) * 0.3)}px`;
-        horizon.style.background = HORIZON_SCRIM;
-      }
-
-      orbits.forEach((orbit) => {
-        orbit.style.width = `${cardW}px`;
-        orbit.style.height = `${cardH}px`;
-        const card = orbit.querySelector("[data-deck-card]");
-        if (card) card.style.width = "100%";
-      });
-    };
-
-    const paint = (value) => {
-      rotation = value;
-      pendingRotation = value;
-
-      for (let slot = 0; slot < RING_SLOTS; slot += 1) {
-        const el = orbits[slot];
-        if (!el) continue;
-
-        const frame = slotFrame(slot, value, radius, tiltMax, scaleDrop);
-        const show = frame.opacity >= 0.01;
-
-        if (show) {
-          el.style.transform = frame.transform;
-          el.style.opacity = `${frame.opacity}`;
-          el.style.zIndex = `${frame.zIndex}`;
-          el.style.pointerEvents =
-            revealed && frame.opacity > 0.3 ? "auto" : "none";
-        }
-
-        if (show !== shown[slot]) {
-          shown[slot] = show;
-          el.style.visibility = show ? "visible" : "hidden";
-          el.style.willChange = show ? "transform, opacity" : "auto";
-          el.style.setProperty("content-visibility", show ? "visible" : "hidden");
-          if (!show) {
-            el.style.opacity = "0";
-            el.style.pointerEvents = "none";
-          }
-        }
-
-        const delta = circularDelta(slot, activeSlot, RING_SLOTS);
-        el.dataset.center = delta === 0 ? "true" : "false";
-        el.dataset.front = Math.abs(delta) <= 1 ? "true" : "false";
-        const card = el.querySelector("[data-deck-card]");
-        if (card) {
-          card.tabIndex = revealed && frame.opacity > 0.3 ? 0 : -1;
-          card.setAttribute(
-            "aria-label",
-            `${delta === 0 ? "View" : "Show"} ${titles[slot % CARD_COUNT]}`,
-          );
-          if (revealed) {
-            card.classList.remove("translate-y-10", "scale-[0.92]", "opacity-0");
-            card.classList.add("translate-y-0", "scale-100", "opacity-100");
-          }
+        const overflow = track.scrollHeight - win.clientHeight;
+        // Under ~48px of overflow the pin costs more than it shows: the page
+        // would stall for a distance the reader reads as a stutter.
+        if (overflow > 48) {
+          travel = Math.round(overflow);
+          pinned = true;
         }
       }
 
-      const slot = modulo(-Math.round(value / ANGLE_STEP), RING_SLOTS);
-      if (slot !== activeSlot) {
-        activeSlot = slot;
-        if (!animating) setSelectedSlot(slot);
+      if (pinned) {
+        root.style.setProperty("--pin-travel", `${travel}px`);
+        // Cached here, not read per frame. `getBoundingClientRect()` inside the
+        // scroll callback forces a layout flush on every scrolled frame, which
+        // is the jitter it was supposed to be smoothing out. Layout only moves
+        // on resize and on late images, and both already call this.
+        originTop = root.getBoundingClientRect().top + window.scrollY;
+      } else {
+        root.dataset.pin = "off";
+        root.style.removeProperty("--pin-travel");
       }
+      paint();
     };
 
-    const render = () => paint(userRotation);
-
-    const stopAnimation = () => {
-      animating = false;
-      if (rafId !== null) {
-        cancelAnimationFrame(rafId);
-        rafId = null;
-      }
-    };
-
-    const animateTo = (target) => {
-      stopAnimation();
-      const from = userRotation;
-      const dist = target - from;
-      if (Math.abs(dist) < 0.01) {
-        userRotation = target;
-        render();
+    const paint = () => {
+      if (!pinned) {
+        track.style.removeProperty("--pin-shift");
         return;
       }
-      const duration = clamp(560 + Math.abs(dist) * 6, 620, 1400);
-      const start = performance.now();
-
-      animating = true;
-      const tick = (now) => {
-        const t = Math.min(1, (now - start) / duration);
-        userRotation = from + dist * easeOutCubic(t);
-        render();
-        if (t < 1) {
-          rafId = requestAnimationFrame(tick);
-        } else {
-          rafId = null;
-          animating = false;
-        }
-      };
-      rafId = requestAnimationFrame(tick);
+      const shift = Math.min(travel, Math.max(0, window.scrollY - originTop));
+      track.style.setProperty("--pin-shift", `${-shift}px`);
     };
-
-    const rotationForSlot = (slot) => {
-      const base = -slot * ANGLE_STEP;
-      return base + Math.round((userRotation - base) / 360) * 360;
-    };
-
-    const goToSlot = (slot) => {
-      setSelectedSlot(modulo(slot, RING_SLOTS));
-      animateTo(rotationForSlot(slot));
-    };
-
-    const setActiveIndex = (i) => {
-      const index = modulo(i, CARD_COUNT);
-      let best = index;
-      let bestDist = Infinity;
-      for (let slot = index; slot < RING_SLOTS; slot += CARD_COUNT) {
-        const dist = Math.abs(rotationForSlot(slot) - userRotation);
-        if (dist < bestDist) {
-          bestDist = dist;
-          best = slot;
-        }
-      }
-      goToSlot(best);
-    };
-
-    const setSelectedSlot = (slot) => {
-      if (slot === selectedSlot) return;
-      selectedSlot = slot;
-      updateTabs();
-    };
-
-    const updateTabs = () => {
-      const activeIndex = selectedSlot % CARD_COUNT;
-      tabs.forEach((tab, i) => {
-        tab.dataset.active = i === activeIndex ? "true" : "false";
-      });
-      dots.forEach((dot, i) => {
-        dot.dataset.active = i === activeIndex ? "true" : "false";
-      });
-      if (activeTitle) activeTitle.textContent = shorts[selectedSlot] ?? "";
-      if (isSm && tabsViewport) {
-        const tab = tabs[activeIndex];
-        if (tab instanceof HTMLElement) {
-          const pad = 8;
-          const left = tab.offsetLeft;
-          const right = left + tab.offsetWidth;
-          const viewLeft = tabsViewport.scrollLeft;
-          const viewRight = viewLeft + tabsViewport.clientWidth;
-          if (left < viewLeft + pad) {
-            tabsViewport.scrollTo({ left: Math.max(0, left - pad), behavior: "smooth" });
-          } else if (right > viewRight - pad) {
-            tabsViewport.scrollTo({
-              left: right - tabsViewport.clientWidth + pad,
-              behavior: "smooth",
-            });
-          }
-        }
-      }
-    };
-
-    let revealTimer = 0;
-    const revealObserver = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          window.clearTimeout(revealTimer);
-          revealed = true;
-          render();
-        } else {
-          revealTimer = window.setTimeout(() => {
-            revealed = false;
-            render();
-          }, 120);
-        }
-      },
-      { threshold: 0.18, rootMargin: "0px 0px -6% 0px" },
-    );
-    revealObserver.observe(stage);
 
     /**
-     * Capture only after the pointer travels past CLICK_SLOP. Capturing on
-     * pointerdown sends pointerup to the stage and swallows "View service"
-     * clicks on the crown card.
+     * Coalesced to a frame: a ResizeObserver fires per observed box, and the
+     * font swap trips both at once.
      */
-    let capturedId = null;
-
-    stage.addEventListener("pointerdown", (event) => {
-      stopAnimation();
-      drag.active = true;
-      drag.startX = event.clientX;
-      drag.startRotation = userRotation;
-      drag.moved = false;
-      capturedId = null;
-    });
-
-    stage.addEventListener("pointermove", (event) => {
-      if (!drag.active) return;
-      const dx = event.clientX - drag.startX;
-      if (Math.abs(dx) > CLICK_SLOP) {
-        drag.moved = true;
-        if (capturedId === null) {
-          try {
-            stage.setPointerCapture(event.pointerId);
-            capturedId = event.pointerId;
-          } catch {
-            /* pointer already gone */
-          }
-        }
-      }
-      pendingRotation = drag.startRotation + dx * degPerPx;
-      if (rafId === null) {
-        rafId = requestAnimationFrame(() => {
-          rafId = null;
-          userRotation = pendingRotation;
-          render();
-        });
-      }
-    });
-
-    const endDrag = (event) => {
-      if (!drag.active) return;
-      drag.active = false;
-      stopAnimation();
-      userRotation = pendingRotation;
-      render();
-      goToSlot(-Math.round(rotation / ANGLE_STEP));
-      if (capturedId !== null) {
-        try {
-          stage.releasePointerCapture(event.pointerId);
-        } catch {
-          /* already released */
-        }
-        capturedId = null;
-      }
-    };
-
-    stage.addEventListener("pointerup", endDrag);
-    stage.addEventListener("pointercancel", endDrag);
-    stage.addEventListener("pointerleave", (event) => {
-      if (drag.active) endDrag(event);
-    });
-
-    const onCardActivate = (slot) => {
-      if (drag.moved) return;
-      if (slot === activeSlot) {
-        const href = orbits[slot]?.dataset.href;
-        if (href) window.location.href = href;
-        return;
-      }
-      goToSlot(slot);
-    };
-
-    orbits.forEach((orbit, slot) => {
-      const card = orbit.querySelector("[data-deck-card]");
-      const cta = orbit.querySelector("[data-deck-hover-cta]");
-      cta?.addEventListener("click", (event) => event.stopPropagation());
-      card?.addEventListener("click", () => onCardActivate(slot));
-      card?.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          onCardActivate(slot);
-        }
+    let pendingMeasure = 0;
+    const remeasure = () => {
+      if (pendingMeasure) return;
+      pendingMeasure = requestAnimationFrame(() => {
+        pendingMeasure = 0;
+        measure();
       });
-    });
+    };
 
-    section?.querySelectorAll("[data-deck-prev]").forEach((btn) =>
-      btn.addEventListener("click", () => goToSlot(activeSlot - 1)),
-    );
-    section?.querySelectorAll("[data-deck-next]").forEach((btn) =>
-      btn.addEventListener("click", () => goToSlot(activeSlot + 1)),
-    );
+    /**
+     * Hands `paint` to Lenis on the first scroll rather than at init, because
+     * Layout's Lenis module has no guaranteed execution order against this one
+     * — by the time anything has scrolled it is up. Browsers where Lenis bailed
+     * out (it skips `prefers-reduced-motion`, which also turns the pin off)
+     * stay on the rAF.
+     */
+    let bound = false;
+    const schedule = () => {
+      if (!bound) {
+        bound = true;
+        const lenis = (window as Window & { lenis?: { on?: Function } }).lenis;
+        if (typeof lenis?.on === "function") {
+          lenis.on("scroll", paint);
+          window.removeEventListener("scroll", schedule);
+          paint();
+          return;
+        }
+      }
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        paint();
+      });
+    };
 
-    [...tabs, ...dots].forEach((el) =>
-      el.addEventListener("click", () => setActiveIndex(Number(el.dataset.index ?? "0"))),
-    );
+    /**
+     * Tabbing to a card that is off-window would otherwise focus something the
+     * reader cannot see. The window cannot scroll (`overflow: clip`), so move
+     * the page by the same distance instead — which advances the pin and
+     * carries the card up into view.
+     */
+    const onFocusIn = (event: FocusEvent) => {
+      if (!pinned) return;
+      const target = event.target as HTMLElement | null;
+      const card = target?.closest?.(".service-card");
+      if (!card || !track.contains(card)) return;
 
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "ArrowLeft") goToSlot(activeSlot - 1);
-      if (event.key === "ArrowRight") goToSlot(activeSlot + 1);
-    });
+      const cardBox = card.getBoundingClientRect();
+      const winBox = win.getBoundingClientRect();
+      const over = cardBox.bottom - winBox.bottom;
+      const under = winBox.top - cardBox.top;
+      const delta = over > 0 ? over : under > 0 ? -under : 0;
+      if (delta !== 0) window.scrollBy({ top: delta, behavior: "auto" });
+    };
 
-    window.addEventListener("resize", () => {
-      measure();
-      render();
-    });
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", measure);
+    document.addEventListener("focusin", onFocusIn);
+    wide.addEventListener("change", measure);
+    still.addEventListener("change", measure);
+
+    /**
+     * `--pin-travel` is the whole mapping — the section's height and the end of
+     * the track's run are both derived from it — so a stale one is a pin that
+     * releases before the last row has finished arriving, or holds after it
+     * has. It only stayed right by luck: the sole re-measure was a lazy image
+     * landing, and the thing that actually moved the number was the webfont
+     * reflowing the heading a frame earlier. Load a page where every image is
+     * cached and nothing corrected it.
+     *
+     * A ResizeObserver on the two boxes the travel is computed from catches all
+     * of it — fonts, wrapped headings, an image without an aspect ratio, a
+     * browser zoom — without naming any of the causes. Measuring is layout
+     * reads and one custom property, and none of it changes either observed
+     * box, so there is no loop to guard against.
+     */
+    if (typeof ResizeObserver === "function") {
+      const observer = new ResizeObserver(remeasure);
+      observer.observe(track);
+      observer.observe(win);
+    }
+    if (document.fonts?.status !== "loaded") void document.fonts?.ready.then(measure);
 
     measure();
-    userRotation = -initialIndex * ANGLE_STEP;
-    pendingRotation = userRotation;
-    render();
-    updateTabs();
   }
 
-  initServicesWheel();
-  document.addEventListener("astro:page-load", initServicesWheel);
-</script>
-
-<script>
-  function initMobileServices() {
-    const track = document.querySelector<HTMLElement>("[data-mobile-track]");
-    const section = track?.closest("section");
-    if (!track || !section || track.dataset.mobileReady === "true") return;
-    track.dataset.mobileReady = "true";
-
-    const cards = Array.from(track.children) as HTMLElement[];
-    const dots = Array.from(
-      section.querySelectorAll<HTMLButtonElement>("[data-mobile-dot]"),
-    );
-    const title = section.querySelector<HTMLElement>("[data-mobile-title]");
-    let index = 0;
-
-    const paint = (i: number) => {
-      index = i;
-      dots.forEach((dot, d) => {
-        dot.dataset.active = d === i ? "true" : "false";
-      });
-      if (title) title.textContent = dots[i]?.dataset.short ?? "";
-    };
-
-    const scrollTo = (i: number) => {
-      const n = cards.length;
-      const next = ((i % n) + n) % n;
-      const card = cards[next];
-      if (!card) return;
-      track.scrollTo({
-        left: card.offsetLeft - (track.clientWidth - card.offsetWidth) / 2,
-        behavior: "smooth",
-      });
-      paint(next);
-    };
-
-    const onScroll = () => {
-      const centre = track.scrollLeft + track.clientWidth / 2;
-      let best = 0;
-      let bestDist = Infinity;
-      cards.forEach((el, i) => {
-        const dist = Math.abs(el.offsetLeft + el.offsetWidth / 2 - centre);
-        if (dist < bestDist) {
-          bestDist = dist;
-          best = i;
-        }
-      });
-      if (best !== index) paint(best);
-    };
-
-    section
-      .querySelector("[data-mobile-prev]")
-      ?.addEventListener("click", () => scrollTo(index - 1));
-    section
-      .querySelector("[data-mobile-next]")
-      ?.addEventListener("click", () => scrollTo(index + 1));
-    dots.forEach((dot, i) => {
-      dot.addEventListener("click", () => scrollTo(i));
-    });
-    track.addEventListener("scroll", onScroll, { passive: true });
-  }
-
-  initMobileServices();
-  document.addEventListener("astro:page-load", initMobileServices);
+  initServicesPin();
+  document.addEventListener("astro:page-load", initServicesPin);
 </script>
