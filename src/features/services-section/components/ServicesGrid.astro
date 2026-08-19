@@ -21,39 +21,24 @@ import {
 } from "@/features/services-section/constants";
 
 /**
- * Services, as a pinned card grid.
+ * Services, as a plain card grid.
  *
- * This was a rotating 3D wheel: nine cards on a ring, drag to spin, a tab
- * strip and arrows to drive it, and around 400 lines of rAF paint code to
- * hold it together. Only the crown card was ever fully legible, so seeing all
- * nine meant nine deliberate interactions. It is a grid now.
+ * It has been two other things. First a rotating 3D wheel — nine cards on a
+ * ring, drag to spin, a tab strip and arrows to drive it, ~400 lines of rAF
+ * paint code — where only the crown card was ever fully legible, so seeing all
+ * nine meant nine deliberate interactions. Then a pinned grid: the section ran
+ * a screen tall plus the row overflow, the header stuck while a clipped track
+ * was translated under it by however far you had scrolled.
  *
- * From `lg` the grid is pinned: the section is a screen tall plus the height
- * the rows overflow by, the stage sticks to the top for exactly that
- * distance, and the track is translated by however far you have scrolled
- * through it. The header stays put while the rows pass under it — the section
- * asks which problem sounds like yours, so the question holds while you go
- * through the answers. When the track runs out the stage unsticks and the page
- * carries on by itself.
+ * Both are gone and nothing replaced them. The section is a heading and nine
+ * cards in normal flow; the page scrolls it the way it scrolls everything
+ * else. The pin cost a scroll position that had to be measured, kept in sync
+ * against a webfont reflow and a resize, and rebuilt whenever the browser
+ * disagreed about what it had painted — all so the reader could scroll past
+ * nine cards, which is what they do here for free.
  *
- * The travel is 1:1 with the page, and the mapping is a scroll-driven CSS
- * animation wherever the browser has one, so the rows are sampled on the same
- * frame as the scroll rather than a rAF behind it. The script keeps the old
- * transform path for browsers without scroll timelines, and otherwise only
- * measures.
- *
- * The scroll is the whole motion. The cards have no entry of their own — they
- * used to fade and scale in on an observer, which inside a clipped window
- * fired mid-travel and put a second, slower movement on a row that was already
- * moving. Nor is there a progress rail or a count under the window: both were
- * meters for a scroll the reader is already doing, and the cut edge of the next
- * row is the honest signal that there is more.
- *
- * Nothing here intercepts the wheel. The scroll is the page's own, read rather
- * than captured, so trackpad momentum, keyboard paging, scrollbar dragging and
- * scrolling back up all behave normally. The pin is off below `lg`, off under
- * `prefers-reduced-motion`, and off whenever the rows already fit — in every
- * one of those cases the grid is an ordinary block in the flow.
+ * Nothing in this file moves on scroll and nothing observes it. There is no
+ * script. The only state is `:hover` on a card, which fills its pill.
  */
 
 const ICONS = {
@@ -71,52 +56,29 @@ const ICONS = {
 const CARD_COUNT = SERVICE_OFFERS.length;
 ---
 
-{/*
-  `overflow-hidden` is gone from this section on purpose: overflow on ANY
-  ancestor of a `position: sticky` element silently disables the sticky, and
-  the stage below depends on it. Nothing needs the clip now that the wheel is.
-*/}
-<section class="relative bg-[#0f0f12] text-white">
-  <div class="services-pin" data-pin>
-    <div class="services-pin__stage">
-      <Container class="relative z-10 w-full shrink-0">
-        <SectionIntro
-          label={SERVICES_HEADER.label}
-          title={SERVICES_HEADER.title}
-          description={SERVICES_HEADER.description}
-          tone="dark"
-          align="center"
-        />
-      </Container>
+<section class="relative bg-[#0f0f12] py-14 text-white sm:py-20 lg:py-24">
+  <Container>
+    <SectionIntro
+      label={SERVICES_HEADER.label}
+      title={SERVICES_HEADER.title}
+      description={SERVICES_HEADER.description}
+      tone="dark"
+      align="center"
+    />
 
-      {/*
-        The window is what the rows are read through, and the track is what
-        moves. `overflow: clip` rather than `hidden`: `hidden` makes a scroll
-        container, so tabbing to a card off-window would scroll it internally
-        and desync it from the transform. `clip` cannot scroll, and the focus
-        handler in the script moves the page instead.
-      */}
-      <div class="services-pin__window" data-pin-window>
-        <div class="services-pin__track" data-pin-track>
-          <Container class="w-full">
-            {/*
-              No scroll-reveal on the cards. Inside the pinned window a row
-              crosses the clip edge and the observer fires mid-travel, so a card
-              faded up while it was already sliding — two motions on one element
-              going different directions. The rows arrive by the scroll and
-              nothing else; the only thing animating here is the track.
-            */}
-            <div class="services-grid grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
+    {/*
+      No scroll-reveal on the cards, and no stagger. The nine are one set to be
+      scanned, and anything that brings them in one at a time makes the reader
+      wait on the section rather than read it.
+    */}
+    <div
+      class="services-grid mt-10 grid gap-4 sm:mt-14 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6"
+    >
       {
         SERVICE_OFFERS.map((service) => {
           const Icon = ICONS[service.icon as keyof typeof ICONS] ?? Bot;
           return (
             <a href={service.href} class="service-card">
-              {/*
-                The hover lift lives on this inner element rather than on the
-                anchor, so the card's own transform is never the one the pin
-                would have to share.
-              */}
               <div
                 class="service-card__inner"
                 style={`--card-tint:${service.color};background:${service.color}`}
@@ -170,16 +132,10 @@ const CARD_COUNT = SERVICE_OFFERS.length;
           );
         })
       }
-            </div>
-          </Container>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <Container class="relative z-10 pb-14 sm:pb-20 lg:pb-24">
     <div
-      class="flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-5"
+      class="mt-12 flex flex-col items-center gap-3 sm:mt-16 sm:flex-row sm:justify-center sm:gap-5"
     >
       <GradientButton
         href={NAV_ROUTES.services}
@@ -197,86 +153,6 @@ const CARD_COUNT = SERVICE_OFFERS.length;
 </section>
 
 <style>
-  /* ==========================================================================
-     THE PIN
-     Off by default — this block is the plain flowing grid, which is what a
-     phone, a reduced-motion reader, and any layout where the rows already fit
-     all get. `[data-pin="on"]` is set by the script only once it has measured
-     a real overflow to travel through.
-     ========================================================================== */
-  .services-pin {
-    padding-top: 3.5rem;
-    padding-bottom: 3.5rem;
-  }
-
-  @media (min-width: 640px) {
-    .services-pin {
-      padding-top: 5rem;
-      padding-bottom: 5rem;
-    }
-  }
-
-  .services-pin__window {
-    margin-top: 2.5rem;
-  }
-
-  @media (min-width: 640px) {
-    .services-pin__window {
-      margin-top: 3.5rem;
-    }
-  }
-
-  /* --- pinned --- */
-
-  /* The extra height IS the scroll distance. The stage sticks for exactly as
-     long as the track has left to travel, so the release lands on the frame
-     the last row finishes arriving. */
-  .services-pin[data-pin="on"] {
-    height: calc(100dvh + var(--pin-travel, 0px));
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-
-  .services-pin[data-pin="on"] .services-pin__stage {
-    position: sticky;
-    top: 0;
-    display: flex;
-    height: 100dvh;
-    flex-direction: column;
-    overflow: clip;
-    padding-top: 3.25rem;
-    padding-bottom: 1.5rem;
-  }
-
-  .services-pin[data-pin="on"] .services-pin__window {
-    position: relative;
-    min-height: 0;
-    flex: 1;
-    margin-top: 1.75rem;
-    /* Not `hidden`: see the note in the markup — `hidden` would let focus
-       scroll this box behind the transform's back. */
-    overflow: clip;
-  }
-
-  .services-pin[data-pin="on"] .services-pin__track {
-    transform: translate3d(0, var(--pin-shift, 0px), 0);
-    will-change: transform;
-  }
-
-  /* --- the sync ---
-     `--pin-shift` is written from script, and the obvious upgrade is to hand
-     the mapping to a scroll-driven CSS animation — `view-timeline` on the pin,
-     `animation-range: contain 0% contain 100%`, which is exactly this travel.
-     It was tried. Chromium resolves it correctly in every API you can ask:
-     `getComputedStyle` returns the right matrix, `getBoundingClientRect` puts
-     the ninth card flush with the window at the end, `getAnimations()` reports
-     progress 1 on a ViewTimeline. It just never paints it — captured
-     compositor frames show the first row at every scroll offset. Do not
-     reintroduce it on the strength of the computed values; they lie here.
-
-     So the transform stays in script, and the cost of that is a frame of lag,
-     which the Lenis binding below removes. */
-
   /**
    * The card. Nothing on it moves any more — no reveal on the anchor, no lift
    * on `__inner` — so the two are only still separate because the anchor is
@@ -503,180 +379,3 @@ const CARD_COUNT = SERVICE_OFFERS.length;
     }
   }
 </style>
-
-<script>
-  /**
-   * Drives the pinned track from the page's own scroll position.
-   *
-   * Deliberately not a wheel handler. Reading the scroll and translating the
-   * track keeps every native scrolling affordance intact — momentum, keyboard,
-   * scrollbar, browser find, and reversing direction — where capturing the
-   * wheel would break all of them. The section is simply taller than a screen
-   * and the stage is sticky; the transform maps one to the other.
-   *
-   * The lag this would normally have — a scroll event, then a rAF, so the rows
-   * land two frames behind the pinned header — is what made it read as slipping
-   * before. Lenis is what fixes it: it moves the page from its own rAF and
-   * emits `scroll` synchronously right after setting the offset, so painting
-   * from that callback puts the rows on the same frame as the movement. See the
-   * note on the CSS side for why this is not a scroll-driven animation.
-   */
-  function initServicesPin() {
-    const root = document.querySelector<HTMLElement>("[data-pin]");
-    if (!root || root.dataset.pinReady === "true") return;
-    root.dataset.pinReady = "true";
-
-    const stage = root.querySelector<HTMLElement>(".services-pin__stage");
-    const win = root.querySelector<HTMLElement>("[data-pin-window]");
-    const track = root.querySelector<HTMLElement>("[data-pin-track]");
-    if (!stage || !win || !track) return;
-
-    const wide = window.matchMedia("(min-width: 1024px)");
-    const still = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-    let travel = 0;
-    let originTop = 0;
-    let pinned = false;
-    let frame = 0;
-
-    const measure = () => {
-      travel = 0;
-      pinned = false;
-      track.style.removeProperty("--pin-shift");
-
-      if (wide.matches && !still.matches) {
-        /**
-         * Measured with the pinned layout applied, not without it. Unpinned,
-         * the window is an ordinary block that grows to its content, so it
-         * always reports the track's own height and the overflow always came
-         * out at zero. Only once the stage is a 100dvh flex column does the
-         * window take the height the rows actually have to travel through.
-         */
-        root.style.setProperty("--pin-travel", "0px");
-        root.dataset.pin = "on";
-
-        const overflow = track.scrollHeight - win.clientHeight;
-        // Under ~48px of overflow the pin costs more than it shows: the page
-        // would stall for a distance the reader reads as a stutter.
-        if (overflow > 48) {
-          travel = Math.round(overflow);
-          pinned = true;
-        }
-      }
-
-      if (pinned) {
-        root.style.setProperty("--pin-travel", `${travel}px`);
-        // Cached here, not read per frame. `getBoundingClientRect()` inside the
-        // scroll callback forces a layout flush on every scrolled frame, which
-        // is the jitter it was supposed to be smoothing out. Layout only moves
-        // on resize and on late images, and both already call this.
-        originTop = root.getBoundingClientRect().top + window.scrollY;
-      } else {
-        root.dataset.pin = "off";
-        root.style.removeProperty("--pin-travel");
-      }
-      paint();
-    };
-
-    const paint = () => {
-      if (!pinned) {
-        track.style.removeProperty("--pin-shift");
-        return;
-      }
-      const shift = Math.min(travel, Math.max(0, window.scrollY - originTop));
-      track.style.setProperty("--pin-shift", `${-shift}px`);
-    };
-
-    /**
-     * Coalesced to a frame: a ResizeObserver fires per observed box, and the
-     * font swap trips both at once.
-     */
-    let pendingMeasure = 0;
-    const remeasure = () => {
-      if (pendingMeasure) return;
-      pendingMeasure = requestAnimationFrame(() => {
-        pendingMeasure = 0;
-        measure();
-      });
-    };
-
-    /**
-     * Hands `paint` to Lenis on the first scroll rather than at init, because
-     * Layout's Lenis module has no guaranteed execution order against this one
-     * — by the time anything has scrolled it is up. Browsers where Lenis bailed
-     * out (it skips `prefers-reduced-motion`, which also turns the pin off)
-     * stay on the rAF.
-     */
-    let bound = false;
-    const schedule = () => {
-      if (!bound) {
-        bound = true;
-        const lenis = (window as Window & { lenis?: { on?: Function } }).lenis;
-        if (typeof lenis?.on === "function") {
-          lenis.on("scroll", paint);
-          window.removeEventListener("scroll", schedule);
-          paint();
-          return;
-        }
-      }
-      if (frame) return;
-      frame = requestAnimationFrame(() => {
-        frame = 0;
-        paint();
-      });
-    };
-
-    /**
-     * Tabbing to a card that is off-window would otherwise focus something the
-     * reader cannot see. The window cannot scroll (`overflow: clip`), so move
-     * the page by the same distance instead — which advances the pin and
-     * carries the card up into view.
-     */
-    const onFocusIn = (event: FocusEvent) => {
-      if (!pinned) return;
-      const target = event.target as HTMLElement | null;
-      const card = target?.closest?.(".service-card");
-      if (!card || !track.contains(card)) return;
-
-      const cardBox = card.getBoundingClientRect();
-      const winBox = win.getBoundingClientRect();
-      const over = cardBox.bottom - winBox.bottom;
-      const under = winBox.top - cardBox.top;
-      const delta = over > 0 ? over : under > 0 ? -under : 0;
-      if (delta !== 0) window.scrollBy({ top: delta, behavior: "auto" });
-    };
-
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", measure);
-    document.addEventListener("focusin", onFocusIn);
-    wide.addEventListener("change", measure);
-    still.addEventListener("change", measure);
-
-    /**
-     * `--pin-travel` is the whole mapping — the section's height and the end of
-     * the track's run are both derived from it — so a stale one is a pin that
-     * releases before the last row has finished arriving, or holds after it
-     * has. It only stayed right by luck: the sole re-measure was a lazy image
-     * landing, and the thing that actually moved the number was the webfont
-     * reflowing the heading a frame earlier. Load a page where every image is
-     * cached and nothing corrected it.
-     *
-     * A ResizeObserver on the two boxes the travel is computed from catches all
-     * of it — fonts, wrapped headings, an image without an aspect ratio, a
-     * browser zoom — without naming any of the causes. Measuring is layout
-     * reads and one custom property, and none of it changes either observed
-     * box, so there is no loop to guard against.
-     */
-    if (typeof ResizeObserver === "function") {
-      const observer = new ResizeObserver(remeasure);
-      observer.observe(track);
-      observer.observe(win);
-    }
-    if (document.fonts?.status !== "loaded") void document.fonts?.ready.then(measure);
-
-    measure();
-  }
-
-  initServicesPin();
-  document.addEventListener("astro:page-load", initServicesPin);
-</script>
