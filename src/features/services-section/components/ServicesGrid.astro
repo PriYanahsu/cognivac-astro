@@ -37,8 +37,14 @@ import {
  * disagreed about what it had painted — all so the reader could scroll past
  * nine cards, which is what they do here for free.
  *
- * Nothing in this file moves on scroll and nothing observes it. There is no
- * script. The only state is `:hover` on a card, which fills its pill.
+ * The one thing scroll still does is bring the cards in. Each card is its own
+ * reveal target, so a row arrives as you reach it and the delays sweep it left
+ * to right — first offer to last across the grid. That is the site's shared
+ * `[data-reveal]` primitive (globals.css, driven by one IntersectionObserver in
+ * Layout.astro), not anything this file owns, and it resolves to a resting
+ * state rather than holding a frame. There is still no script here.
+ *
+ * The only other state is `:hover` on a card, which fills its pill.
  */
 
 const ICONS = {
@@ -67,9 +73,12 @@ const CARD_COUNT = SERVICE_OFFERS.length;
     />
 
     {/*
-      No scroll-reveal on the cards, and no stagger. The nine are one set to be
-      scanned, and anything that brings them in one at a time makes the reader
-      wait on the section rather than read it.
+      Each card is its own reveal target rather than the grid being one. A
+      single target would fire on the first row and run all nine delays while
+      six of them were still below the fold, so by the time you scrolled to
+      them they had already played. Per-card, a row arrives when you reach it,
+      and the delays below only sweep it left to right — which across the whole
+      grid reads as first to last, in the order the offers are written.
     */}
     <div
       class="services-grid mt-10 grid gap-4 sm:mt-14 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6"
@@ -78,7 +87,12 @@ const CARD_COUNT = SERVICE_OFFERS.length;
         SERVICE_OFFERS.map((service) => {
           const Icon = ICONS[service.icon as keyof typeof ICONS] ?? Bot;
           return (
-            <a href={service.href} class="service-card">
+            <a
+              data-reveal
+              data-reveal-margin="-60px"
+              href={service.href}
+              class="service-card"
+            >
               <div
                 class="service-card__inner"
                 style={`--card-tint:${service.color};background:${service.color}`}
@@ -154,13 +168,60 @@ const CARD_COUNT = SERVICE_OFFERS.length;
 
 <style>
   /**
-   * The card. Nothing on it moves any more — no reveal on the anchor, no lift
-   * on `__inner` — so the two are only still separate because the anchor is
-   * what gets the focus ring and `__inner` is what gets clipped to the radius.
+   * The card. The anchor is the reveal target (globals.css owns that
+   * transition, driven off the variables below); `__inner` carries the tint and
+   * the radius clip. Keeping them separate is what lets the reveal own the
+   * anchor's `transform` outright — one element doing both is how the old
+   * version had a hover and an entry overwriting each other.
    */
   .service-card {
     display: block;
     border-radius: var(--rounded-xl);
+    /* Short and shallow. It is a set being laid out, not each card making an
+       entrance — 22px and half a second is enough to read as arriving without
+       making anyone wait to read the words. */
+    --reveal-y: 22px;
+    --reveal-duration: 0.55s;
+    --reveal-delay: 0s;
+  }
+
+  /**
+   * THE ORDER, and why it is written per breakpoint.
+   *
+   * The delay is a card's position in its own row, so a row sweeps left to
+   * right and the grid overall runs first offer to last — which is also the
+   * engagement arc the constants file orders them by (build, fix, run, staff).
+   *
+   * That means the cycle has to match the column count, and the column count is
+   * a media query, so this is too. Keying it off `i % 3` in the template
+   * instead was wrong at every width but the widest: at two columns the
+   * three-step cycle drifts against the rows, so the sweep runs backwards on
+   * every other one.
+   *
+   * One column needs nothing — each card is its own row and arrives alone.
+   */
+  @media (min-width: 640px) {
+    .services-grid .service-card:nth-child(2n + 1) {
+      --reveal-delay: 0s;
+    }
+    .services-grid .service-card:nth-child(2n + 2) {
+      --reveal-delay: 0.08s;
+    }
+  }
+
+  /* Restated rather than added to: at three columns every card's position in
+     its row changes, so all three cases are set outright and the two-column
+     rule above is fully overridden. */
+  @media (min-width: 1024px) {
+    .services-grid .service-card:nth-child(3n + 1) {
+      --reveal-delay: 0s;
+    }
+    .services-grid .service-card:nth-child(3n + 2) {
+      --reveal-delay: 0.08s;
+    }
+    .services-grid .service-card:nth-child(3n + 3) {
+      --reveal-delay: 0.16s;
+    }
   }
 
   .service-card__inner {

@@ -68,6 +68,26 @@ const ogImage = new URL(metadata.image, SITE_CONFIG.url).href;
     <meta name="theme-color" content="#2B0B59" />
 
     <slot name="head" />
+    {/*
+      The scroll-reveal primitive rests at `opacity: 0` and is brought to rest
+      by an IntersectionObserver (see the script below). With no script there is
+      no observer, so every revealed element on the page — headings, cards, the
+      lot — would stay at zero and the site would render as empty sections.
+
+      `is:inline` so Astro emits this verbatim instead of scoping it to a
+      component. It has to outrank `[data-reveal]` in globals.css, which is why
+      it is `!important` rather than a later rule.
+    */}
+    <noscript>
+      <style is:inline>
+        [data-reveal],
+        [data-reveal-item],
+        [data-reveal-word] > span > span {
+          opacity: 1 !important;
+          transform: none !important;
+        }
+      </style>
+    </noscript>
   </head>
 
   <body
