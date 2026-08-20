@@ -1,0 +1,420 @@
+---
+import { ArrowUpRight } from "@lucide/astro";
+import type { CaseStudyItem } from "@/types";
+import { STORY_STEPS, WORK_STORIES } from "../constants";
+
+/**
+ * The detail half of the section — one engagement told in full.
+ *
+ * All six panels are stacked in the same grid cell and only the active one is
+ * visible, so the column never resizes as the reader moves down the list: the
+ * cell is as tall as the longest story and every other one is laid out inside
+ * it. Inactive panels are `visibility: hidden` rather than transparent, which
+ * is what keeps their "Read the full story" links out of the tab order and
+ * out of a screen reader's way.
+ *
+ * The first panel carries `is-active` from the server, so with no JavaScript
+ * at all the section is a full lead story beside a list of five more links —
+ * which is a working section, not a broken switcher.
+ */
+interface Props {
+  study: CaseStudyItem;
+  index: number;
+  total: number;
+  active?: boolean;
+}
+
+const { study, index, total, active = false } = Astro.props;
+const story = WORK_STORIES[study.id];
+
+const beats: { label: string; body: string }[] = [
+  { label: STORY_STEPS.problem, body: story?.problem },
+  { label: STORY_STEPS.built, body: story?.built },
+].filter((beat) => Boolean(beat.body)) as { label: string; body: string }[];
+---
+
+{
+  story && (
+    <article
+      data-work-panel
+      data-index={index}
+      class:list={["panel", active && "is-active"]}
+    >
+      <div class="panel__media">
+        <img
+          src={study.image}
+          alt=""
+          sizes="(min-width: 1024px) 660px, 100vw"
+          class="panel__img"
+          loading={index === 0 ? "eager" : "lazy"}
+          decoding="async"
+          draggable="false"
+        />
+        {/* A warm scrim rather than a filter: the six case photographs were
+            shot nowhere near each other, and the wash is what keeps whichever
+            one is showing on the same page as the list beside it. */}
+        <span aria-hidden="true" class="panel__wash" />
+        <span class="panel__count" aria-hidden="true">
+          {String(index + 1).padStart(2, "0")}
+          <span class="panel__count-total">/{String(total).padStart(2, "0")}</span>
+        </span>
+      </div>
+
+      <div class="panel__body">
+        <p class="panel__category">
+          <span aria-hidden="true" class="panel__dot" />
+          {study.category}
+        </p>
+
+        <h3 class="panel__title">{study.title}</h3>
+
+        <dl class="panel__beats">
+          {beats.map((beat) => (
+            <div class="panel__beat">
+              <dt class="panel__label">{beat.label}</dt>
+              <dd class="panel__beat-body">{beat.body}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <div class="panel__outcome">
+          <div class="panel__metric">
+            <p class="panel__label">{STORY_STEPS.outcome}</p>
+            <p class="panel__metric-value">{story.metric.value}</p>
+            <p class="panel__metric-label">{story.metric.label}</p>
+          </div>
+
+          <a href={study.href} class="panel__cta">
+            Read the full story
+            <span class="sr-only">: {study.title}</span>
+            <ArrowUpRight class="panel__cta-arrow h-4 w-4" />
+          </a>
+        </div>
+      </div>
+    </article>
+  )
+}
+
+<style>
+  /**
+   * THE SWAP.
+   *
+   * The two halves are deliberately not symmetrical. The card being left goes
+   * in 0.22s on a plain fade and does not move — a story sliding out while
+   * another slides in is two things happening in the same 500px of page, and
+   * it reads as a slideshow. The card arriving takes twice as long, comes up
+   * 6px, and starts a beat later so the cream is briefly clear underneath it.
+   *
+   * `visibility` is what keeps the inactive cards' buttons out of the tab
+   * order, and it is held until the fade has finished so the outgoing card is
+   * not cut off mid-transition.
+   */
+  /**
+   * THE COVER.
+   *
+   * The story arriving slides in over the one already there, from the side the
+   * reader is heading — down the list it comes in from the right, back up the
+   * list from the left. The story being covered does not move and does not
+   * fade: it is simply behind, and it is dropped the instant the cover has
+   * finished, when there is nothing of it left to see.
+   *
+   * That is the whole difference between this and a cross-fade. A fade has a
+   * middle where both stories are half there and neither is readable; a cover
+   * has no middle — every pixel of the card is one story or the other, the
+   * whole way across.
+   *
+   * `--enter` is where a story sits when it is not the one showing: ±100% for
+   * one that is about to come in, 0 for the one being covered, which is what
+   * keeps it still while it is behind. Everything about the story leaving is
+   * instant-after-a-delay rather than animated, so it holds until the cover
+   * lands and then goes without a frame of fade.
+   */
+  .panel {
+    position: relative;
+    /* Every story occupies the one cell its container declares. */
+    grid-area: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: var(--rounded-lg);
+    background: var(--card);
+    opacity: 0;
+    visibility: hidden;
+    transform: translate3d(var(--enter, 100%), 0, 0);
+    /* Underneath. The story arriving is the one on top — it is the sheet
+       being laid over. The other four are hidden and paint nothing. */
+    z-index: 2;
+    transition:
+      opacity 0s linear 0.56s,
+      transform 0s linear 0.56s,
+      visibility 0s linear 0.56s;
+  }
+
+  /* Dropped outright, with no delay to wait through: a story caught still
+     leaving when the next cover starts. It is behind two other layers by
+     then, so there is nothing of it on screen to lose. */
+  .panel.is-dropped {
+    opacity: 0;
+    visibility: hidden;
+    transition: none;
+  }
+
+  /**
+   * The one frame where a story is put down off the edge of the card before it
+   * slides on. Without the transition being killed for it, it would travel
+   * there from wherever it last stood — across the card, backwards, in front
+   * of the reader.
+   */
+  .panel.is-entering {
+    transition: none;
+  }
+
+  .panel.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: translate3d(0, 0, 0);
+    z-index: 3;
+    transition:
+      opacity 0s,
+      visibility 0s,
+      transform 0.56s cubic-bezier(0.28, 0.84, 0.24, 1);
+  }
+
+  /* The shade the arriving sheet casts on the one it is covering. It sits on
+     the leading edge, travels with it, and clears once the card has landed. */
+  .panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(
+      var(--shade-dir, to right),
+      rgba(34, 32, 28, 0.22),
+      rgba(34, 32, 28, 0) 9%
+    );
+    opacity: 1;
+    transition: opacity 0s linear 0.56s;
+  }
+
+  .panel.is-active::after {
+    opacity: 0;
+    transition: opacity 0.24s ease 0.5s;
+  }
+
+  /**
+   * The card only ever renders at the split, so there is one ratio here and no
+   * breakpoints below it.
+   *
+   * 16:10. At 3:2 the photograph was 360px of an 860px card and the story sat
+   * in the bottom third of it, which is a picture with a caption rather than a
+   * piece of work with its evidence. A band gives the picture enough to place
+   * the engagement and hands the rest of the card back to the words.
+   */
+  .panel__media {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    flex-shrink: 0;
+  }
+
+  /* The picture settles out of a slow 4% overscan as its card arrives, which
+     is what carries the swap — without it the photograph is the one part of
+     the card that cuts rather than moves, and that is the frame the eye
+     catches. It never zooms on hover; the only motion is the arrival. */
+  .panel__img {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    /* A slow drift the other way while the card slides in, so the photograph
+       has some depth behind the edge rather than arriving as one flat sheet.
+       Static overscan covers the subpixel gap at the rounded corners. */
+    transform: scale(1.05) translate3d(calc(var(--enter, 0%) * -0.12), 0, 0);
+    transition: transform 0s linear 0.56s;
+  }
+
+  .panel.is-active .panel__img {
+    transform: scale(1.05) translate3d(0, 0, 0);
+    transition: transform 0.85s cubic-bezier(0.28, 0.84, 0.24, 1);
+  }
+
+  .panel__wash {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(34, 32, 28, 0.32),
+      rgba(34, 32, 28, 0) 60%
+    );
+  }
+
+  .panel__count {
+    position: absolute;
+    right: 18px;
+    top: 16px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    font-variant-numeric: tabular-nums;
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+  }
+
+  .panel__count-total {
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .panel__body {
+    display: flex;
+    min-height: 0;
+    flex: 1;
+    flex-direction: column;
+    padding: 22px 24px 24px;
+  }
+
+  .panel__category {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .panel__dot {
+    height: 6px;
+    width: 6px;
+    border-radius: 999px;
+    background: var(--accent);
+  }
+
+  .panel__title {
+    margin: 12px 0 0;
+    font-family: var(--font-heading);
+    font-size: clamp(1.125rem, 0.5vw + 0.88rem, 1.3125rem);
+    font-weight: 600;
+    line-height: 1.28;
+    letter-spacing: -0.022em;
+    color: var(--foreground);
+    text-wrap: balance;
+  }
+
+  /* The two beats the drifting card had no room for. Labelled, because
+     unlabelled they read as two more sentences of description — the labels
+     are what make the panel a story with a shape. */
+  .panel__beats {
+    display: grid;
+    gap: 12px;
+    margin: 14px 0 0;
+  }
+
+  .panel__beat {
+    min-width: 0;
+  }
+
+  .panel__label {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+    color: var(--muted-light);
+  }
+
+  .panel__beat-body {
+    margin: 5px 0 0;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+
+  .panel__outcome {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 14px;
+    /* Pinned to the floor of the cell, so the number and the button hold the
+       same line whichever of the six stories is showing. */
+    margin-top: auto;
+    padding-top: 18px;
+  }
+
+  .panel__metric {
+    min-width: 0;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    flex: 1 1 9rem;
+  }
+
+  .panel__metric-value {
+    margin: 7px 0 0;
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 0.9vw + 1.1rem, 2.125rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.032em;
+    font-variant-numeric: tabular-nums;
+    color: var(--foreground);
+  }
+
+  .panel__metric-label {
+    margin: 7px 0 0;
+    max-width: 24ch;
+    font-size: 12.5px;
+    font-weight: 400;
+    line-height: 1.45;
+    color: var(--muted);
+  }
+
+  /**
+   * A tinted pill, not the near-black one it started as.
+   *
+   * On a cream section holding a white card, a solid ink button was the
+   * heaviest thing on screen and pulled ahead of the figure beside it, which
+   * is the wrong order — the number is the proof and the button is only the
+   * way through to the rest of it. It fills with accent on hover, so the
+   * weight arrives when the pointer does.
+   */
+  .panel__cta {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--accent) 7%, transparent);
+    padding: 10px 16px;
+    font-size: 12.5px;
+    font-weight: 550;
+    color: var(--accent);
+    transition:
+      background-color 0.35s ease,
+      border-color 0.35s ease,
+      color 0.35s ease;
+  }
+
+  @media (hover: hover) {
+    .panel__cta:hover {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: var(--on-primary);
+    }
+
+    .panel__cta:hover .panel__cta-arrow {
+      transform: translate(2px, -2px);
+    }
+  }
+
+  .panel__cta-arrow {
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+</style>

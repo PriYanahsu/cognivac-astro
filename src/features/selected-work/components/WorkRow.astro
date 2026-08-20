@@ -1,0 +1,471 @@
+---
+import { ArrowUpRight } from "@lucide/astro";
+import type { CaseStudyItem } from "@/types";
+import { WORK_STORIES } from "../constants";
+
+/**
+ * One line of the work list — the left half of the section.
+ *
+ * At desktop the row is deliberately thin: a number, a thumbnail, the
+ * engagement, and the figure it moved. That is all it has to be, because the
+ * panel beside it carries the story for whichever row the reader is on. Six
+ * rows of that put six figures in one column, which is the comparison the
+ * drifting cards could never make — no two of them were ever still on screen
+ * together.
+ *
+ * Below the split the panel is gone, so the row grows back the summary line
+ * and the metric's label and stands on its own as a link to the study.
+ */
+interface Props {
+  study: CaseStudyItem;
+  index: number;
+  total: number;
+  active?: boolean;
+}
+
+const { study, index, total, active = false } = Astro.props;
+const story = WORK_STORIES[study.id];
+---
+
+{
+  story && (
+    <a
+      href={study.href}
+      data-work-row
+      data-index={index}
+      class:list={["row", active && "is-active"]}
+      data-reveal
+      data-reveal-margin="-40px"
+    >
+      <span class="row__index" aria-hidden="true">
+        {String(index + 1).padStart(2, "0")}
+        <span class="row__index-total">/{String(total).padStart(2, "0")}</span>
+      </span>
+
+      <span class="row__thumb" aria-hidden="true">
+        <img
+          src={study.image}
+          alt=""
+          sizes="80px"
+          class="row__img"
+          loading="lazy"
+          decoding="async"
+          draggable="false"
+        />
+      </span>
+
+      <span class="row__body">
+        <span class="row__category">{study.category}</span>
+        <span class="row__title">{study.title}</span>
+        {/* What we did, in one line. Under the split it is always on, because
+            there is no card to carry it; at the split it opens on the row the
+            reader is on and closes behind them, so the column stays a list of
+            six and still says what each one was. */}
+        <span class="row__summary">
+          <span class="row__summary-inner">{study.description}</span>
+        </span>
+      </span>
+
+      <span class="row__metric">
+        <b class="row__metric-value">{story.metric.value}</b>
+        <span class="row__metric-label">{story.metric.label}</span>
+      </span>
+
+      <span class="row__arrow">
+        <ArrowUpRight class="h-4 w-4" />
+      </span>
+    </a>
+  )
+}
+
+<style>
+  .row {
+    position: relative;
+    display: grid;
+    /* Top-aligned while the row wraps to three lines; centred once the split
+       puts everything on one line. */
+    align-items: start;
+    /* The fill bleeds past the text column so an active row reads as a plate
+       lifted off the page rather than as a rectangle drawn around the words. */
+    margin-inline: -14px;
+    padding: 18px 14px;
+    border-radius: var(--rounded-md);
+    border-top: 1px solid var(--border);
+    column-gap: 16px;
+    row-gap: 10px;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "idx body arrow"
+      ".   metric metric";
+    --reveal-y: 14px;
+    --reveal-duration: 0.5s;
+    transition:
+      background-color 0.35s ease,
+      box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Rows arrive in reading order rather than the whole list at once — the
+     same sweep the services grid runs. */
+  .row:nth-child(2) {
+    --reveal-delay: 0.05s;
+  }
+  .row:nth-child(3) {
+    --reveal-delay: 0.1s;
+  }
+  .row:nth-child(4) {
+    --reveal-delay: 0.15s;
+  }
+  .row:nth-child(5) {
+    --reveal-delay: 0.2s;
+  }
+  .row:nth-child(6) {
+    --reveal-delay: 0.25s;
+  }
+
+  .row:last-child {
+    border-bottom: 1px solid var(--border);
+  }
+
+  @media (min-width: 1024px) {
+    .row {
+      /* number · picture · engagement · figure. The figure column is fixed so
+         all six stack into one right-hand column down the list. */
+      align-items: center;
+      grid-template-columns: 2.75rem 80px minmax(0, 1fr) auto;
+      grid-template-areas: "idx thumb body metric";
+      column-gap: 18px;
+      padding: 15px 16px;
+      margin-inline: -16px;
+      border-top: 1px solid transparent;
+      border-bottom: 1px solid transparent;
+    }
+
+    /* Hairlines between the rows only, drawn on the row above so the active
+       plate never sits on a line. */
+    .row + .row {
+      border-top-color: var(--border);
+    }
+
+    .row:last-child {
+      border-bottom-color: transparent;
+    }
+  }
+
+  /**
+   * ACTIVE, not `:hover` — and only where there is a card to be active
+   * against.
+   *
+   * The state is held in the section (the script sets it on pointer or focus)
+   * rather than read off `:hover` here, because the reader has to be able to
+   * leave the row and cross into the card to press its button, and a `:hover`
+   * rule would drop the story they were reading somewhere in the gutter
+   * between the two columns.
+   *
+   * Below the split there is no card and nothing to be the current row *of*,
+   * so `is-active` is inert there and the plate is a plain hover affordance.
+   */
+  @media (min-width: 1024px) {
+    .row.is-active {
+      background: var(--card);
+      box-shadow: 0 14px 36px rgba(34, 32, 28, 0.07);
+      transform: translateX(4px);
+    }
+  }
+
+  @media (hover: hover) {
+    .row:hover {
+      background: var(--card);
+      box-shadow: 0 14px 36px rgba(34, 32, 28, 0.07);
+    }
+  }
+
+  /* The accent edge that marks the row. It grows from nothing rather than
+     sliding in, so the row reads as being picked out of the list. */
+  .row::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 12px;
+    bottom: 12px;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--accent);
+    transform: scaleY(0);
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @media (min-width: 1024px) {
+    .row.is-active::before {
+      transform: scaleY(1);
+    }
+  }
+
+  @media (hover: hover) {
+    .row:hover::before {
+      transform: scaleY(1);
+    }
+  }
+
+  .row__index {
+    grid-area: idx;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted-light);
+    transition: color 0.35s ease;
+  }
+
+  .row__index-total {
+    color: color-mix(in srgb, var(--muted-light) 55%, transparent);
+  }
+
+  @media (min-width: 1024px) {
+    .row.is-active .row__index {
+      color: var(--accent);
+    }
+  }
+
+  @media (hover: hover) {
+    .row:hover .row__index {
+      color: var(--accent);
+    }
+  }
+
+  .row__thumb {
+    grid-area: thumb;
+    display: none;
+    overflow: hidden;
+    border-radius: var(--rounded-sm);
+    border: 1px solid var(--border);
+    aspect-ratio: 16 / 11;
+  }
+
+  @media (min-width: 1024px) {
+    .row__thumb {
+      display: block;
+    }
+  }
+
+  .row__img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    /* Held back at rest so six photographs down the column stay a texture;
+       the one being read comes fully up. */
+    opacity: 0.6;
+    filter: saturate(0.75);
+    transition:
+      opacity 0.4s ease,
+      filter 0.4s ease,
+      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @media (min-width: 1024px) {
+    .row.is-active .row__img {
+      opacity: 1;
+      filter: saturate(1);
+      transform: scale(1.05);
+    }
+  }
+
+  .row__body {
+    grid-area: body;
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .row__category {
+    font-family: var(--font-heading);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+    color: var(--muted-light);
+    transition: color 0.35s ease;
+  }
+
+  @media (min-width: 1024px) {
+    .row.is-active .row__category {
+      color: var(--accent);
+    }
+  }
+
+  @media (hover: hover) {
+    .row:hover .row__category {
+      color: var(--accent);
+    }
+  }
+
+  /**
+   * 550, not 600. Six titles stacked at 600 with a bold figure on the end of
+   * each row made the column read as six headlines competing with the card —
+   * half a weight down and it reads as a list, which is what it is. The one
+   * the reader is on is the only one that goes to full weight.
+   */
+  .row__title {
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 550;
+    line-height: 1.32;
+    letter-spacing: -0.015em;
+    color: var(--foreground);
+    text-wrap: pretty;
+  }
+
+  /* The active row does NOT thicken its title. A variable-weight step re-lays
+     the text out, and at this column width one of the six titles tips onto a
+     second line as it goes — the row jumps under the pointer that caused it.
+     The plate, the accent edge and the figure turning blue carry the state
+     without touching the type. */
+
+  @media (min-width: 1024px) {
+    .row__title {
+      font-size: 16.5px;
+      /* Two lines at most: the list is a column of engagements, and a title
+         that ran to three set the six rows at different heights. */
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+  }
+
+  /**
+   * Cut on a phone, where the column cannot hold a fourth line. Everywhere
+   * else it is a `0fr → 1fr` grid row, which is the one way to animate a box
+   * open to the height of its own text — `max-height` guesses a number, and
+   * whichever number you pick is wrong for one of the six.
+   */
+  .row__summary {
+    display: none;
+    min-height: 0;
+  }
+
+  @media (min-width: 640px) {
+    .row__summary {
+      display: grid;
+      grid-template-rows: 1fr;
+      margin-top: 3px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .row__summary {
+      grid-template-rows: 0fr;
+      opacity: 0;
+      margin-top: 0;
+      transition:
+        grid-template-rows 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        margin-top 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.3s ease;
+    }
+
+    .row.is-active .row__summary {
+      grid-template-rows: 1fr;
+      margin-top: 5px;
+      opacity: 1;
+    }
+  }
+
+  /**
+   * The clipped half of the drawer. No line clamp: a grid item is blockified,
+   * so `-webkit-box` would not survive here anyway, and the summaries run two
+   * lines and occasionally three — which the column has the slack to absorb
+   * and an ellipsis would only hide.
+   */
+  .row__summary-inner {
+    overflow: hidden;
+    min-height: 0;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+
+  .row__metric {
+    grid-area: metric;
+    display: flex;
+    min-width: 0;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  @media (min-width: 1024px) {
+    .row__metric {
+      justify-content: flex-end;
+      text-align: right;
+    }
+  }
+
+  .row__metric-value {
+    flex-shrink: 0;
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.022em;
+    font-variant-numeric: tabular-nums;
+    color: var(--foreground);
+    transition: color 0.35s ease;
+  }
+
+  @media (min-width: 1024px) {
+    .row__metric-value {
+      font-size: 19px;
+      color: var(--muted);
+    }
+
+    .row.is-active .row__metric-value {
+      color: var(--accent);
+    }
+  }
+
+  .row__metric-label {
+    font-size: 12.5px;
+    line-height: 1.35;
+    color: var(--muted);
+  }
+
+  /* The panel carries the button once the section is two columns, so the row
+     only needs its own arrow below the split. */
+  @media (min-width: 1024px) {
+    .row__metric-label {
+      display: none;
+    }
+  }
+
+  .row__arrow {
+    grid-area: arrow;
+    display: inline-flex;
+    height: 36px;
+    width: 36px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--foreground);
+    transition:
+      background-color 0.3s ease,
+      border-color 0.3s ease,
+      color 0.3s ease;
+  }
+
+  @media (min-width: 1024px) {
+    .row__arrow {
+      display: none;
+    }
+  }
+
+  @media (hover: hover) {
+    .row:hover .row__arrow {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: var(--on-primary);
+    }
+  }
+</style>
