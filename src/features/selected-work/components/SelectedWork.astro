@@ -37,12 +37,22 @@ import { HOME_STORIES, SELECTED_WORK_CONTENT } from "../constants";
 const total = HOME_STORIES.length;
 ---
 
+{/*
+  The section is a track, and the thing that fills the screen is stuck to the
+  top of it. Scrolling the track does not scroll the section past — it steps
+  the story, one engagement per screen of travel, and when the last one is
+  reached the track runs out and the page carries on to the next section.
+  Nothing is intercepted to do that: the browser is scrolling normally the
+  whole time, and `position: sticky` is doing the holding.
+*/}
 <section
   data-selected-work
+  data-work-track
   id="selected-work"
-  class="bg-background py-14 sm:py-18 lg:py-22"
+  class="work-track bg-background"
   aria-labelledby="selected-work-title"
 >
+  <div data-work-pin class="work-pin py-14 sm:py-18 lg:py-20">
   <Container>
     <FadeIn>
       {/*
@@ -65,7 +75,7 @@ const total = HOME_STORIES.length;
           </SectionLabel>
           <h2
             id="selected-work-title"
-            class="text-section-column stack-sm max-w-[24ch] text-balance text-foreground"
+            class="work-heading text-section-column stack-sm max-w-[24ch] text-balance text-foreground"
           >
             {SELECTED_WORK_CONTENT.title}
           </h2>
@@ -73,7 +83,7 @@ const total = HOME_STORIES.length;
 
         {/* Bottom-aligned with the heading, and on the card's left edge: both
             belong to the column they introduce. */}
-        <div class="flex flex-col items-start gap-4 lg:col-span-5 lg:pb-1">
+        <div class="flex flex-col items-start gap-3.5 lg:col-span-5 lg:pb-1">
           <p class="lede max-w-[34ch]">
             {SELECTED_WORK_CONTENT.description}
           </p>
@@ -85,7 +95,7 @@ const total = HOME_STORIES.length;
     </FadeIn>
 
     <div
-      class="mt-8 grid items-start gap-8 sm:mt-10 lg:mt-12 lg:grid-cols-12 lg:items-stretch lg:gap-10 xl:gap-14"
+      class="work-body mt-8 grid items-start gap-8 sm:mt-10 lg:mt-12 lg:grid-cols-12 lg:items-stretch lg:gap-10 xl:gap-14"
     >
       {/* The list takes the wider half. It is the part the reader works —
           six engagements to run an eye down — and the card beside it answers
@@ -118,9 +128,75 @@ const total = HOME_STORIES.length;
       </div>
     </div>
   </Container>
+  </div>
 </section>
 
 <style>
+  /**
+   * THE TRACK AND THE PIN.
+   *
+   * Both are inert until the script has measured that the section fits on the
+   * screen and turned them on, so the whole thing degrades to what it was
+   * before — a normal section that scrolls past — whenever it cannot hold a
+   * reader's screen honestly. Below the split, on a short window, and under
+   * `prefers-reduced-motion`, that is exactly what happens.
+   *
+   * `--track-height` is the one number the script sets: one screen for the
+   * section to stand in, plus a step of travel for every engagement after the
+   * first.
+   */
+  .work-track.is-pinned {
+    height: var(--track-height);
+  }
+
+  .work-track.is-pinned .work-pin {
+    position: sticky;
+    top: 0;
+    display: flex;
+    height: 100vh;
+    height: 100svh;
+    align-items: center;
+  }
+
+  .work-track.is-pinned .work-pin > * {
+    width: 100%;
+  }
+
+  /**
+   * The section's standing air is what a reader scrolls through; pinned, it is
+   * what decides whether the section fits the window at all — and the top of
+   * it has to clear the navbar, which floats over everything and would
+   * otherwise sit on the eyebrow for the whole time the section is held.
+   */
+  .work-track.is-pinned .work-pin {
+    /* 72px clears the navbar, which floats over everything and would otherwise
+       sit on the eyebrow for as long as the section is held. */
+    padding-top: 4.5rem;
+    padding-bottom: 0.75rem;
+  }
+
+  /**
+   * WHERE THE PIN'S ROOM COMES FROM.
+   *
+   * A held section has the window as a hard ceiling instead of something to
+   * scroll past, and something has to give. It is the section's own air and
+   * its heading — never the card, which is the thing being read: squashing
+   * that to buy 60px produced a letterbox over a cramped body, which is not a
+   * card anyone would design on purpose.
+   *
+   * The heading drops from the column scale to a size that holds the same
+   * words on one line, which is 30px of the 60 the pin needs. The rest comes
+   * out of the gap under it and the padding around the whole thing.
+   */
+  .work-track.is-pinned .work-body {
+    margin-top: 0.5rem;
+  }
+
+  .work-track.is-pinned .work-heading {
+    font-size: clamp(1.5rem, 0.85vw + 1.1rem, 1.875rem);
+    line-height: 1.18;
+  }
+
   .work-card {
     overflow: hidden;
     border: 1px solid var(--border);
@@ -202,6 +278,31 @@ const total = HOME_STORIES.length;
         let active = 0;
         let pending = 0;
         let timer = 0;
+        let sweepTimer = 0;
+        /* Raised once per cover so the stack reads newest-on-top. Reset when
+           the layers underneath are cleared. */
+        let stack = 10;
+
+        /** How long a cover takes, matched to the transition in WorkPanel. */
+        const COVER = 560;
+
+        /**
+         * Everything but the story showing, put away in one go.
+         *
+         * Rescheduled on every cover, so it only ever runs once the last one
+         * has landed — which is what lets the layers underneath stay painted
+         * for as long as it takes. Hiding them as each cover started is what
+         * used to put white through the card on a fast scroll.
+         */
+        const clearBehind = () => {
+          panels.forEach((panel, i) => {
+            if (i === active) return;
+            panel.classList.add("is-hidden");
+            panel.style.removeProperty("z-index");
+          });
+          panels[active]?.style.removeProperty("z-index");
+          stack = 10;
+        };
         const show = (next: number) => {
           if (next === active || !panels[next]) return;
 
@@ -217,22 +318,13 @@ const total = HOME_STORIES.length;
           /* Frozen exactly where it stands rather than sent back to 0. If it
              was itself still sliding on, `0%` would snap it across the card in
              a single frame — which is the jump you saw when two covers
-             overlapped. */
-          outgoing?.style.setProperty(
-            "--enter",
-            outgoing ? `${currentX(outgoing)}px` : "0%",
-          );
+             overlapped. It stays painted, and stays where it is, until
+             something covers it. */
+          if (outgoing) {
+            outgoing.style.setProperty("--enter", `${currentX(outgoing)}px`);
+            outgoing.classList.remove("is-active");
+          }
           rows[active]?.classList.remove("is-active");
-          outgoing?.classList.remove("is-active");
-
-          /* Never three deep. Anything still on its way out from an earlier
-             cover is dropped now, so the card is only ever the story being
-             covered and the one covering it. */
-          panels.forEach((panel, i) => {
-            if (i !== next && i !== active) panel.classList.add("is-dropped");
-          });
-          incoming?.classList.remove("is-dropped");
-          outgoing?.classList.remove("is-dropped");
 
           if (incoming) {
             incoming.style.setProperty("--enter", `${heading * OFF_CARD}%`);
@@ -246,6 +338,10 @@ const total = HOME_STORIES.length;
                to accept that as where it now is, and only then let it travel —
                otherwise it slides there from wherever it last stood. */
             incoming.classList.add("is-entering");
+            incoming.classList.remove("is-hidden");
+            /* Above everything it is about to cover, including any story still
+               frozen part-way across from a cover before this one. */
+            incoming.style.zIndex = String((stack += 1));
             void incoming.offsetWidth;
             incoming.classList.remove("is-entering");
             incoming.classList.add("is-active");
@@ -253,6 +349,11 @@ const total = HOME_STORIES.length;
 
           rows[next]?.classList.add("is-active");
           active = next;
+
+          /* Put the layers underneath away, but only after this cover — and
+             any that overtake it — has finished crossing. */
+          window.clearTimeout(sweepTimer);
+          sweepTimer = window.setTimeout(clearBehind, COVER + 60);
         };
 
         const settleOn = (i: number) => {
@@ -263,20 +364,154 @@ const total = HOME_STORIES.length;
         };
 
         rows.forEach((row, i) => {
-          /* Mouse only. On a touch screen `pointerenter` fires on the tap that
+          /* Mouse only, and only when the section is not driving itself off
+             the scroll. On a touch screen `pointerenter` fires on the tap that
              is already following the link, so the card would swap for the
              instant before the page changes. */
           row.addEventListener("pointerenter", (event) => {
+            if (pinned) return;
             if (event.pointerType === "mouse") settleOn(i);
           });
           /* Keyboard tabs through the list one row at a time and every stop is
-             deliberate, so focus does not wait out the settle. */
+             deliberate, so focus does not wait out the settle. Focus works
+             pinned or not — a reader who tabs to a row has asked for it. */
           row.addEventListener("focus", () => {
             window.clearTimeout(timer);
             pending = i;
             show(i);
           });
         });
+
+        /**
+         * ─── THE NESTED SCROLL ──────────────────────────────────────────
+         *
+         * While the section holds the screen, scrolling steps through the six
+         * engagements instead of moving the page; when the sixth is reached
+         * the track runs out, the section lets go, and the page carries on.
+         * Scrolling back up runs the whole thing in reverse, because the only
+         * state is the scroll position — there is nothing here to get out of
+         * sync with the page.
+         *
+         * IT DOES NOT TOUCH THE SCROLL. No `wheel` handler, no
+         * `preventDefault`, no scrolling anything on the reader's behalf. The
+         * browser scrolls the way it always does and `position: sticky` holds
+         * the section still while it happens, which is why a trackpad, a
+         * mouse wheel, Page Down, a keyboard, a screen reader and the scroll
+         * bar itself all behave exactly as they do everywhere else on the
+         * page — and why letting go at the end needs no code at all.
+         */
+        const track = section;
+        const pin = section.querySelector<HTMLElement>("[data-work-pin]");
+        const desktop = window.matchMedia("(min-width: 1024px)");
+        const still = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+        /* How much scrolling one engagement is worth. Under about half a
+           screen the six go by faster than they can be read; much over it and
+           the section reads as a page that will not let go. */
+        const STEP = 0.62;
+
+        let pinned = false;
+        let range = 0;
+
+        /** Does a screen of this window actually hold the section? */
+        const fits = () => {
+          if (!pin) return false;
+          const inner = pin.firstElementChild as HTMLElement | null;
+          if (!inner) return false;
+          const pad = getComputedStyle(pin);
+          const needed =
+            inner.scrollHeight +
+            parseFloat(pad.paddingTop) +
+            parseFloat(pad.paddingBottom);
+          /* No safety margin beyond the pin's own bottom padding — the whole
+             point of the measurement is that the section either stands in the
+             window honestly or does not pin at all. */
+          return needed <= window.innerHeight;
+        };
+
+        const unpin = () => {
+          pinned = false;
+          track.classList.remove("is-pinned");
+          track.style.removeProperty("--track-height");
+        };
+
+        const measure = () => {
+          if (!pin) return;
+          if (!desktop.matches || still.matches) {
+            if (pinned) unpin();
+            return;
+          }
+
+          /* Measured with the pinned layout already applied — it is a little
+             more compact than the standing one, and measuring the standing
+             one would turn the pin off on windows that would have held it. */
+          track.classList.add("is-pinned");
+          if (!fits()) {
+            unpin();
+            return;
+          }
+
+          pinned = true;
+          const step = Math.round(window.innerHeight * STEP);
+          range = step * (panels.length - 1);
+          track.style.setProperty(
+            "--track-height",
+            `${window.innerHeight + range}px`,
+          );
+          onScroll();
+        };
+
+        function onScroll() {
+          if (!pinned || range <= 0) return;
+          /* How far into the track the reader is, 0 to 1. `-top` because the
+             track's top edge passes the top of the window and keeps going. */
+          const progress = Math.min(1, Math.max(0, -track.getBoundingClientRect().top / range));
+          /* Rounded, not floored: each engagement holds the card for half a
+             step either side of its own mark, so the swap happens halfway
+             between two rows rather than the instant one is left. */
+          const next = Math.round(progress * (panels.length - 1));
+          if (next !== active) {
+            window.clearTimeout(timer);
+            pending = next;
+            show(next);
+          }
+        }
+
+        let frame = 0;
+        const onScrollFrame = () => {
+          if (frame) return;
+          frame = requestAnimationFrame(() => {
+            frame = 0;
+            onScroll();
+          });
+        };
+
+        let resizeTimer = 0;
+        const onResize = () => {
+          window.clearTimeout(resizeTimer);
+          resizeTimer = window.setTimeout(measure, 150);
+        };
+
+        measure();
+        window.addEventListener("scroll", onScrollFrame, { passive: true });
+        window.addEventListener("resize", onResize);
+        desktop.addEventListener("change", measure);
+        still.addEventListener("change", measure);
+
+        document.addEventListener(
+          "astro:before-swap",
+          () => {
+            window.removeEventListener("scroll", onScrollFrame);
+            window.removeEventListener("resize", onResize);
+            desktop.removeEventListener("change", measure);
+            still.removeEventListener("change", measure);
+            window.clearTimeout(timer);
+            window.clearTimeout(sweepTimer);
+            window.clearTimeout(resizeTimer);
+            if (frame) cancelAnimationFrame(frame);
+          },
+          { once: true },
+        );
       });
   }
 

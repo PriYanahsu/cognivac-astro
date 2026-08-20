@@ -38,7 +38,7 @@ const beats: { label: string; body: string }[] = [
     <article
       data-work-panel
       data-index={index}
-      class:list={["panel", active && "is-active"]}
+      class:list={["panel", active ? "is-active" : "is-hidden"]}
     >
       <div class="panel__media">
         <img
@@ -97,37 +97,26 @@ const beats: { label: string; body: string }[] = [
 
 <style>
   /**
-   * THE SWAP.
-   *
-   * The two halves are deliberately not symmetrical. The card being left goes
-   * in 0.22s on a plain fade and does not move — a story sliding out while
-   * another slides in is two things happening in the same 500px of page, and
-   * it reads as a slideshow. The card arriving takes twice as long, comes up
-   * 6px, and starts a beat later so the cream is briefly clear underneath it.
-   *
-   * `visibility` is what keeps the inactive cards' buttons out of the tab
-   * order, and it is held until the fade has finished so the outgoing card is
-   * not cut off mid-transition.
-   */
-  /**
    * THE COVER.
    *
    * The story arriving slides in over the one already there, from the side the
    * reader is heading — down the list it comes in from the right, back up the
    * list from the left. The story being covered does not move and does not
-   * fade: it is simply behind, and it is dropped the instant the cover has
-   * finished, when there is nothing of it left to see.
+   * fade: it is simply behind.
    *
-   * That is the whole difference between this and a cross-fade. A fade has a
-   * middle where both stories are half there and neither is readable; a cover
-   * has no middle — every pixel of the card is one story or the other, the
-   * whole way across.
+   * NOTHING IS EVER HIDDEN BEFORE IT IS COVERED. That is the whole rule here,
+   * and getting it wrong is what put white through the card on a fast scroll:
+   * a story dropped while the sheet on top of it was still halfway across left
+   * the strip it used to fill showing the empty shell. So a story leaving is
+   * frozen exactly where it stands and stays painted, however many covers run
+   * over it, and the script hides the lot in one go once the last one has
+   * landed — by which point every one of them is behind a full card.
    *
    * `--enter` is where a story sits when it is not the one showing: ±100% for
-   * one that is about to come in, 0 for the one being covered, which is what
-   * keeps it still while it is behind. Everything about the story leaving is
-   * instant-after-a-delay rather than animated, so it holds until the cover
-   * lands and then goes without a frame of fade.
+   * one about to come in, and whatever it had reached for one caught being
+   * covered mid-slide. Off-card stories need no hiding to be invisible — the
+   * shell clips them — but they are hidden anyway, so their links stay out of
+   * the tab order.
    */
   .panel {
     position: relative;
@@ -138,25 +127,17 @@ const beats: { label: string; body: string }[] = [
     overflow: hidden;
     border-radius: var(--rounded-lg);
     background: var(--card);
-    opacity: 0;
-    visibility: hidden;
     transform: translate3d(var(--enter, 100%), 0, 0);
-    /* Underneath. The story arriving is the one on top — it is the sheet
-       being laid over. The other four are hidden and paint nothing. */
+    /* The script raises each arriving story above the ones it is covering, so
+       the stack reads newest-on-top however many are still standing. */
     z-index: 2;
-    transition:
-      opacity 0s linear 0.56s,
-      transform 0s linear 0.56s,
-      visibility 0s linear 0.56s;
+    transition: none;
   }
 
-  /* Dropped outright, with no delay to wait through: a story caught still
-     leaving when the next cover starts. It is behind two other layers by
-     then, so there is nothing of it on screen to lose. */
-  .panel.is-dropped {
-    opacity: 0;
+  /* Out of sight and out of the tab order — applied only once the story is
+     behind a full card, never while one is still crossing it. */
+  .panel.is-hidden {
     visibility: hidden;
-    transition: none;
   }
 
   /**
@@ -170,14 +151,9 @@ const beats: { label: string; body: string }[] = [
   }
 
   .panel.is-active {
-    opacity: 1;
-    visibility: visible;
     transform: translate3d(0, 0, 0);
     z-index: 3;
-    transition:
-      opacity 0s,
-      visibility 0s,
-      transform 0.56s cubic-bezier(0.28, 0.84, 0.24, 1);
+    transition: transform 0.56s cubic-bezier(0.28, 0.84, 0.24, 1);
   }
 
   /* The shade the arriving sheet casts on the one it is covering. It sits on
@@ -195,7 +171,7 @@ const beats: { label: string; body: string }[] = [
       rgba(34, 32, 28, 0) 9%
     );
     opacity: 1;
-    transition: opacity 0s linear 0.56s;
+    transition: none;
   }
 
   .panel.is-active::after {
@@ -219,6 +195,20 @@ const beats: { label: string; body: string }[] = [
     flex-shrink: 0;
   }
 
+  /**
+   * Held on the screen rather than scrolled past, the card has one window to
+   * fit inside, and the photograph is the only part of it that gives.
+   *
+   * 16:9, and no further. It went to 3:1 to buy the pin another 60px and the
+   * card came out squashed — a letterbox strip over a cramped body, which is
+   * not a card anyone would design on purpose. The room the pin needs is
+   * taken out of the section's own air and the header instead, and where that
+   * is still not enough the section does not pin at all.
+   */
+  :global(.work-track.is-pinned) .panel__media {
+    aspect-ratio: 16 / 9;
+  }
+
   /* The picture settles out of a slow 4% overscan as its card arrives, which
      is what carries the swap — without it the photograph is the one part of
      the card that cuts rather than moves, and that is the frame the eye
@@ -233,7 +223,7 @@ const beats: { label: string; body: string }[] = [
        has some depth behind the edge rather than arriving as one flat sheet.
        Static overscan covers the subpixel gap at the rounded corners. */
     transform: scale(1.05) translate3d(calc(var(--enter, 0%) * -0.12), 0, 0);
-    transition: transform 0s linear 0.56s;
+    transition: none;
   }
 
   .panel.is-active .panel__img {
