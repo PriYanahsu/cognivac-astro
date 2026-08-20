@@ -3,309 +3,281 @@ import Container from "@/components/shared/Container.astro";
 import SectionLabel from "@/components/shared/SectionLabel.astro";
 import GhostButton from "@/components/shared/GhostButton.astro";
 import FadeIn from "@/components/animations/FadeIn.astro";
-import StoryCard from "./StoryCard.astro";
+import WorkPanel from "./WorkPanel.astro";
+import WorkRow from "./WorkRow.astro";
 import { HOME_STORIES, SELECTED_WORK_CONTENT } from "../constants";
 
 /**
- * Port of features/selected-work/components/selected-work.tsx.
+ * Wireframe slot 5 · Selected work.
  *
- * The marquee is a transform on a track, driven by a clock, inside a
- * fixed-height overflow-hidden box. Measurement feeds the transform and
- * never the layout — same contract as the React original.
+ * WHAT THIS USED TO BE, and why none of it is here.
  *
- * overflow-hidden from the first paint (not overflow-x-auto) so Lenis
- * never hits a nested scroll container on the way into this section.
+ * Six identical cards on an infinite marquee: a rAF clock translating a track,
+ * cloned copies sized off a measured unit, edge scrims, pause-on-hover, a
+ * count-up per card, and a second layout for phones and reduced motion —
+ * roughly 200 lines of script to move proof past a reader at 34px a second.
+ *
+ * It cost the section the two things this slot exists to do. Nothing could be
+ * compared, because no two figures were ever still on screen together at rest.
+ * And nothing could be *said*, because a card that drifts has to be skimmable
+ * in three seconds, so the problem and what we built were cut from every one
+ * of them — the home page carried six headlines and six numbers with no story
+ * attached to any of them.
+ *
+ * It is now the same two-partition shape the FAQ uses, mirrored: the list of
+ * engagements on the left, and on the right the one being read, told in full —
+ * picture, what was wrong, what we built, the figure it moved, and the way
+ * through to the study. The first row is the one showing, from the server, so
+ * the section is complete before any script runs.
+ *
+ * The order also answers the section above it. Services is a dark grid of
+ * cards; another card grid here would have read as its second half. Cream, a
+ * hairline list and one photograph is the step.
  */
 const total = HOME_STORIES.length;
-const gap = "flex w-max items-stretch gap-5 sm:gap-6 lg:gap-7";
 ---
 
 <section
   data-selected-work
   id="selected-work"
-  class="bg-background py-14 sm:py-16 lg:py-20"
+  class="bg-background py-14 sm:py-18 lg:py-22"
   aria-labelledby="selected-work-title"
 >
   <Container>
     <FadeIn>
-      {/* Same 7/5 split as the process header: the lede and the CTA ride the
-          right column instead of stacking under the title, which is what made
-          this header 180px tall with its right half empty. */}
-      <div class="grid gap-4 lg:grid-cols-12 lg:items-end lg:gap-12">
+      {/*
+        The header is built on the same 7/5 split as the two columns under it,
+        with the same gutter, so the heading sits over the list and the lede
+        and button sit over the card — two vertical lines running the height of
+        the section rather than four edges that nearly agree.
+
+        THE HEADING IS THE COLUMN SIZE, not the full-width one. `text-section`
+        is drawn for a heading that has the page to itself; in a seven-column
+        slot it ran to 52px, took two long lines, and left the top right of the
+        section empty for the 300px the button was hiding in. At the column
+        scale it holds the same two lines at a size the column was built for,
+        and the lede and the button fill the half beside it.
+      */}
+      <div class="grid gap-6 lg:grid-cols-12 lg:items-end lg:gap-10 xl:gap-14">
         <div class="min-w-0 lg:col-span-7">
           <SectionLabel class="mb-0">
             {SELECTED_WORK_CONTENT.label}
           </SectionLabel>
           <h2
             id="selected-work-title"
-            class="text-section stack-sm max-w-[20ch] text-foreground"
+            class="text-section-column stack-sm max-w-[24ch] text-balance text-foreground"
           >
             {SELECTED_WORK_CONTENT.title}
           </h2>
         </div>
-        <div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 lg:col-span-5 lg:flex-nowrap lg:items-end">
-          <p class="lede min-w-0 max-w-[30ch]">
+
+        {/* Bottom-aligned with the heading, and on the card's left edge: both
+            belong to the column they introduce. */}
+        <div class="flex flex-col items-start gap-4 lg:col-span-5 lg:pb-1">
+          <p class="lede max-w-[34ch]">
             {SELECTED_WORK_CONTENT.description}
           </p>
-          <GhostButton href={SELECTED_WORK_CONTENT.cta.href} class="shrink-0">
+          <GhostButton href={SELECTED_WORK_CONTENT.cta.href}>
             {SELECTED_WORK_CONTENT.cta.label}
           </GhostButton>
         </div>
       </div>
     </FadeIn>
+
+    <div
+      class="mt-8 grid items-start gap-8 sm:mt-10 lg:mt-12 lg:grid-cols-12 lg:items-stretch lg:gap-10 xl:gap-14"
+    >
+      {/* The list takes the wider half. It is the part the reader works —
+          six engagements to run an eye down — and the card beside it answers
+          whichever one they are on, so the card only needs to be big enough
+          to hold one story, not to compete with the list for the page. */}
+      <div class="work-list min-w-0 lg:col-span-7">
+        {
+          HOME_STORIES.map((study, i) => (
+            <WorkRow study={study} index={i} total={total} active={i === 0} />
+          ))
+        }
+      </div>
+
+      {/* All six stories share one grid cell, so the column is as tall as the
+          longest of them and nothing on the page moves when the reader crosses
+          from one row to the next. Hidden entirely below the split, where the
+          rows carry the summary themselves.
+
+          The card itself — the white, the hairline, the radius, the shadow —
+          is this element, not the six inside it. Six cards fading past each
+          other meant the card's own background went with them, so the middle
+          of every swap was a hole in the page where the cream showed through.
+          The shell holds still and only the story dissolves. */}
+      <div class="work-card hidden lg:col-span-5 lg:grid lg:self-start">
+        {
+          HOME_STORIES.map((study, i) => (
+            <WorkPanel study={study} index={i} total={total} active={i === 0} />
+          ))
+        }
+      </div>
+    </div>
   </Container>
-
-  <div
-    data-work-viewport
-    data-reveal
-    data-reveal-margin="-80px"
-    style="--reveal-y:24px"
-    class="relative mt-7 overflow-hidden py-3 sm:mt-8 lg:mt-10 max-sm:snap-x max-sm:snap-mandatory max-sm:overflow-x-auto max-sm:overflow-y-hidden max-sm:overscroll-x-contain max-sm:scroll-px-5 max-sm:px-5 motion-reduce:overflow-x-auto motion-reduce:overflow-y-hidden motion-reduce:overscroll-x-contain motion-reduce:scroll-px-6 motion-reduce:px-6 motion-reduce:lg:px-8"
-  >
-    <div
-      data-work-track
-      class={gap}
-    >
-      <div data-work-copy class={gap}>
-        {
-          HOME_STORIES.map((study, i) => (
-            <StoryCard study={study} index={i} total={total} />
-          ))
-        }
-      </div>
-      <div data-work-clone aria-hidden="true" class={gap}>
-        {
-          HOME_STORIES.map((study, i) => (
-            <StoryCard study={study} index={i} total={total} duplicate />
-          ))
-        }
-      </div>
-    </div>
-
-    <div
-      aria-hidden="true"
-      data-work-scrim
-      class="pointer-events-none absolute inset-y-0 left-0 w-10 bg-linear-to-r from-background to-transparent max-sm:hidden motion-reduce:hidden sm:w-16 lg:w-28"
-    >
-    </div>
-    <div
-      aria-hidden="true"
-      data-work-scrim
-      class="pointer-events-none absolute inset-y-0 right-0 w-10 bg-linear-to-l from-background to-transparent max-sm:hidden motion-reduce:hidden sm:w-16 lg:w-28"
-    >
-    </div>
-  </div>
 </section>
 
-<script>
-  const SPEED = 34;
-  const RAMP = 0.22;
-  const EASE = (t: number) => 1 - Math.pow(1 - t, 3);
-  const METRIC_PATTERN = /^(\D*)(\d+(?:\.\d+)?)(.*)$/;
-
-  type ParsedMetric = {
-    prefix: string;
-    suffix: string;
-    target: number;
-    decimals: number;
-    display: HTMLElement;
-  };
-
-  function parseMetric(value: string) {
-    const match = METRIC_PATTERN.exec(value);
-    if (!match) return null;
-    const [, prefix, digits, suffix] = match;
-    return {
-      prefix,
-      suffix,
-      target: Number(digits),
-      decimals: digits.includes(".") ? digits.split(".")[1].length : 0,
-    };
+<style>
+  .work-card {
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--rounded-lg);
+    background: var(--card);
+    box-shadow: 0 18px 45px rgba(34, 32, 28, 0.07);
+    /* The frame the cover happens inside. `overflow` is not tidiness here —
+       it is the thing that holds the arriving story off the edge of the card
+       until it slides on, and cuts it to the card's corners while it does. */
   }
 
-  const formatMetric = (parsed: Omit<ParsedMetric, "display">, n: number) =>
-    `${parsed.prefix}${n.toFixed(parsed.decimals)}${parsed.suffix}`;
-
-  function initSelectedWork() {
-    const section = document.querySelector<HTMLElement>("[data-selected-work]");
-    if (!section || section.dataset.workReady === "true") return;
-    section.dataset.workReady = "true";
-
-    const viewport = section.querySelector<HTMLElement>("[data-work-viewport]");
-    const track = section.querySelector<HTMLElement>("[data-work-track]");
-    const copy = section.querySelector<HTMLElement>("[data-work-copy]");
-    if (!viewport || !track || !copy) return;
-
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    const mobileMq = window.matchMedia("(max-width: 639px)");
-    const staticRail = () => reduceMotion || mobileMq.matches;
-    const paused = { current: false };
-
-    const collectMetrics = (): ParsedMetric[] => {
-      const items: ParsedMetric[] = [];
-      section.querySelectorAll<HTMLElement>("[data-metric]").forEach((el) => {
-        const parsed = parseMetric(el.dataset.metric ?? "");
-        const display = el.querySelector<HTMLElement>("[data-metric-display]");
-        if (!parsed || !display) return;
-        items.push({ ...parsed, display });
-      });
-      return items;
-    };
-
-    if (staticRail()) {
-      track.querySelectorAll("[data-work-clone]").forEach((el) => el.remove());
-      track.style.transform = "";
-      track.style.willChange = "";
-      return;
+  /* The list carries the card's height at the split and the six rows share it
+     between them, so the two columns end on the same line instead of leaving
+     300px of cream under the last engagement. */
+  @media (min-width: 1024px) {
+    .work-list {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
 
-    track.style.willChange = "transform";
+    /* `auto`, not `0`: each row keeps its own height and the rows share what
+       is left over equally. That is also what absorbs the summary opening on
+       the active row — the free space in the column shrinks by exactly what
+       the row grows, so nothing below the section moves. */
+    .work-list > :global(a) {
+      flex: 1 1 auto;
+    }
+  }
+</style>
 
-    let copies = 2;
-    let counted = false;
-    const ensureCopies = (n: number) => {
-      while (track.querySelectorAll("[data-work-clone]").length < n - 1) {
-        const clone = copy.cloneNode(true) as HTMLElement;
-        clone.removeAttribute("data-work-copy");
-        clone.setAttribute("data-work-clone", "");
-        clone.setAttribute("aria-hidden", "true");
-        clone.querySelectorAll("a").forEach((a) => {
-          a.tabIndex = -1;
+<script>
+  /**
+   * The only script in this section: it moves one class between six rows and
+   * six panels.
+   *
+   * The active row is held in state rather than read off `:hover` in CSS,
+   * because the reader has to be able to leave the row and cross the gutter
+   * into the panel to press its button — a pure `:hover` rule would swap the
+   * story out from under them somewhere in between. Nothing here measures
+   * anything, and there is no clock.
+   */
+  function initSelectedWork() {
+    document
+      .querySelectorAll<HTMLElement>("[data-selected-work]")
+      .forEach((section) => {
+        if (section.dataset.workReady === "true") return;
+        section.dataset.workReady = "true";
+
+        const rows = [
+          ...section.querySelectorAll<HTMLElement>("[data-work-row]"),
+        ];
+        const panels = [
+          ...section.querySelectorAll<HTMLElement>("[data-work-panel]"),
+        ];
+        if (rows.length === 0 || panels.length === 0) return;
+
+        /* A cover, not a cross-fade: the story arriving comes in over the one
+           already there from a full card-width away, and the one behind it
+           holds still until it is fully hidden. */
+        const OFF_CARD = 100;
+
+        /**
+         * How long the pointer has to stay on a row before the card follows
+         * it.
+         *
+         * Without this, crossing the list to reach the sixth row fired five
+         * covers on the way, each one cutting the last off partway across, and
+         * the card thrashed. A tenth of a second is under what reads as a
+         * pause — a reader who means a row rests on it for longer than this
+         * without knowing they have — and it is enough that a sweep down the
+         * whole list now costs one cover instead of five.
+         */
+        const SETTLE = 110;
+
+        const currentX = (el: HTMLElement) =>
+          new DOMMatrixReadOnly(getComputedStyle(el).transform).m41;
+
+        let active = 0;
+        let pending = 0;
+        let timer = 0;
+        const show = (next: number) => {
+          if (next === active || !panels[next]) return;
+
+          /* The reader's direction, not the card's: going down the list the
+             new story comes in from the right, going back up it comes in from
+             the left. The one being covered is pinned where it stands — it is
+             behind, and a story that slid or faded while it was being covered
+             would show through the strip not yet reached. */
+          const heading = next > active ? 1 : -1;
+          const outgoing = panels[active];
+          const incoming = panels[next];
+
+          /* Frozen exactly where it stands rather than sent back to 0. If it
+             was itself still sliding on, `0%` would snap it across the card in
+             a single frame — which is the jump you saw when two covers
+             overlapped. */
+          outgoing?.style.setProperty(
+            "--enter",
+            outgoing ? `${currentX(outgoing)}px` : "0%",
+          );
+          rows[active]?.classList.remove("is-active");
+          outgoing?.classList.remove("is-active");
+
+          /* Never three deep. Anything still on its way out from an earlier
+             cover is dropped now, so the card is only ever the story being
+             covered and the one covering it. */
+          panels.forEach((panel, i) => {
+            if (i !== next && i !== active) panel.classList.add("is-dropped");
+          });
+          incoming?.classList.remove("is-dropped");
+          outgoing?.classList.remove("is-dropped");
+
+          if (incoming) {
+            incoming.style.setProperty("--enter", `${heading * OFF_CARD}%`);
+            /* The shade rides the leading edge, so which edge that is follows
+               the direction of travel. */
+            incoming.style.setProperty(
+              "--shade-dir",
+              heading > 0 ? "to right" : "to left",
+            );
+            /* Put it down off the edge with no transition, force the browser
+               to accept that as where it now is, and only then let it travel —
+               otherwise it slides there from wherever it last stood. */
+            incoming.classList.add("is-entering");
+            void incoming.offsetWidth;
+            incoming.classList.remove("is-entering");
+            incoming.classList.add("is-active");
+          }
+
+          rows[next]?.classList.add("is-active");
+          active = next;
+        };
+
+        const settleOn = (i: number) => {
+          if (i === pending) return;
+          pending = i;
+          window.clearTimeout(timer);
+          timer = window.setTimeout(() => show(i), SETTLE);
+        };
+
+        rows.forEach((row, i) => {
+          /* Mouse only. On a touch screen `pointerenter` fires on the tap that
+             is already following the link, so the card would swap for the
+             instant before the page changes. */
+          row.addEventListener("pointerenter", (event) => {
+            if (event.pointerType === "mouse") settleOn(i);
+          });
+          /* Keyboard tabs through the list one row at a time and every stop is
+             deliberate, so focus does not wait out the settle. */
+          row.addEventListener("focus", () => {
+            window.clearTimeout(timer);
+            pending = i;
+            show(i);
+          });
         });
-        track.appendChild(clone);
-      }
-      const extra = track.querySelectorAll("[data-work-clone]");
-      for (let i = extra.length - 1; i >= n - 1; i -= 1) {
-        extra[i]?.remove();
-      }
-    };
-
-    let metrics: ParsedMetric[] = [];
-    const syncMetrics = () => {
-      if (counted) return;
-      metrics = collectMetrics();
-      for (const m of metrics) m.display.textContent = formatMetric(m, 0);
-    };
-
-    let unit = 0;
-    const measure = () => {
-      const columnGap = parseFloat(getComputedStyle(track).columnGap) || 0;
-      unit = copy.offsetWidth + columnGap;
-      if (unit <= 0) return;
-      const next = Math.max(2, Math.ceil(viewport.clientWidth / unit) + 1);
-      if (next === copies) {
-        if (metrics.length === 0) syncMetrics();
-        return;
-      }
-      copies = next;
-      ensureCopies(copies);
-      syncMetrics();
-    };
-    measure();
-
-    const countMetrics = () => {
-      counted = true;
-      const duration = 1100;
-      const start = performance.now();
-      /* Every write here dirties layout for the whole rail, so a value that
-         formats to the same string as last frame is not written at all —
-         with tabular numbers most frames of a two-digit count-up repeat. */
-      const shown = new Map<HTMLElement, string>();
-      const tick = (now: number) => {
-        const t = Math.min(1, (now - start) / duration);
-        const eased = EASE(t);
-        for (const m of metrics) {
-          const next = formatMetric(m, m.target * eased);
-          if (shown.get(m.display) === next) continue;
-          shown.set(m.display, next);
-          m.display.textContent = next;
-        }
-        if (t < 1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    };
-
-    const metricObserver = new IntersectionObserver(
-      ([entry], obs) => {
-        if (!entry.isIntersecting) return;
-        obs.disconnect();
-        countMetrics();
-      },
-      { rootMargin: "-12% 0px", threshold: 0 },
-    );
-    metricObserver.observe(section);
-
-    const resize = new ResizeObserver(measure);
-    resize.observe(copy);
-    resize.observe(viewport);
-
-    let onScreen = true;
-    const visibility = new IntersectionObserver(
-      ([entry]) => {
-        onScreen = entry.isIntersecting;
-      },
-      { rootMargin: "150px 0px" },
-    );
-    visibility.observe(viewport);
-
-    let offset = 0;
-    let rate = 0;
-    let last = 0;
-    let frame = 0;
-
-    const tick = (now: number) => {
-      frame = requestAnimationFrame(tick);
-      const dt = last ? Math.min((now - last) / 1000, 0.05) : 0;
-      last = now;
-
-      const target = paused.current || !onScreen ? 0 : 1;
-      rate += (target - rate) * (1 - Math.exp(-dt / RAMP));
-
-      if (target === 0 && rate < 0.0005) {
-        rate = 0;
-        return;
-      }
-
-      if (unit > 0) {
-        offset = (offset + SPEED * rate * dt) % unit;
-        track.style.transform = `translate3d(${-offset}px, 0, 0)`;
-      }
-    };
-    frame = requestAnimationFrame(tick);
-
-    viewport.addEventListener("pointerenter", () => {
-      paused.current = true;
-    });
-    viewport.addEventListener("pointerleave", () => {
-      paused.current = false;
-    });
-    viewport.addEventListener(
-      "focusin",
-      () => {
-        paused.current = true;
-      },
-      true,
-    );
-    viewport.addEventListener(
-      "focusout",
-      () => {
-        paused.current = false;
-      },
-      true,
-    );
-
-    document.addEventListener(
-      "astro:before-swap",
-      () => {
-        cancelAnimationFrame(frame);
-        resize.disconnect();
-        visibility.disconnect();
-        metricObserver.disconnect();
-      },
-      { once: true },
-    );
+      });
   }
 
   initSelectedWork();
