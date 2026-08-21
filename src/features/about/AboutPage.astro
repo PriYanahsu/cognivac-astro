@@ -74,7 +74,7 @@ const PRINCIPLES = [
   breadcrumbs={[{ label: "About" }]}
   primaryCta={{ label: "Work with us", href: NAV_ROUTES.contact }}
   secondaryCta={{ label: "See open roles", href: NAV_ROUTES.careers }}
-  highlights={["120+ systems in production", "25+ industries", "98% retention"]}
+  highlights={["Founder-led delivery", "You own the IP", "Production from day one"]}
 />
 
 <section class="bg-background section-padding">
@@ -128,10 +128,10 @@ const PRINCIPLES = [
       class="max-w-2xl"
     />
 
-    <div class="mt-9 grid grid-cols-2 gap-x-5 gap-y-8 sm:mt-12 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-5 lg:gap-8">
+    <div class="mt-9 grid grid-cols-2 gap-x-6 gap-y-8 sm:mt-12 sm:gap-x-8 sm:gap-y-10 lg:grid-cols-4 lg:gap-10">
       {
         STATS.map((stat, i) => (
-          <FadeIn delay={0.06 * (i + 1)}>
+          <FadeIn delay={0.06 * (i + 1)} class="w-full">
             <div class="text-center">
               <p class="text-[clamp(1.75rem,7vw,3rem)] font-bold leading-none tracking-[-0.02em] text-white">
                 <CountUp
@@ -141,7 +141,7 @@ const PRINCIPLES = [
                   decimals={stat.decimals}
                 />
               </p>
-              <p class="mx-auto mt-2.5 max-w-[20ch] text-[12.5px] leading-snug text-white/78 sm:mt-3 sm:text-[13.5px]">
+              <p class="mx-auto mt-2.5 max-w-[16ch] text-pretty text-[12.5px] leading-snug text-white/78 sm:mt-3 sm:max-w-none sm:text-[13.5px]">
                 {stat.label}
               </p>
             </div>

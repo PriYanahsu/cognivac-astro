@@ -5,7 +5,7 @@ import SectionIntro from "@/components/shared/SectionIntro.astro";
 import GradientButton from "@/components/shared/GradientButton.astro";
 import PersonAvatar from "@/components/shared/PersonAvatar.astro";
 import FadeIn from "@/components/animations/FadeIn.astro";
-import { FOUNDERS, TEAM_HEADCOUNT, TEAM_MEMBERS } from "@/constants/people";
+import { FOUNDERS } from "@/constants/people";
 import { FOUNDERS_CONTENT, TEAM_STRIP } from "../constants";
 import FounderCard from "./FounderCard.astro";
 
@@ -21,9 +21,7 @@ import FounderCard from "./FounderCard.astro";
  * instead of near-black boxes on near-black.
  */
 
-const STACK = 5;
-const stack = TEAM_MEMBERS.slice(0, STACK);
-const remaining = TEAM_HEADCOUNT - stack.length;
+const stack = FOUNDERS;
 ---
 
 <section
@@ -126,12 +124,6 @@ const remaining = TEAM_HEADCOUNT - stack.length;
                 </li>
               ))
             }
-            <li
-              aria-hidden="true"
-              class="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-[12.5px] font-bold text-white/88 ring-2 ring-[#141417]"
-            >
-              +{remaining}
-            </li>
           </ul>
 
           {/*

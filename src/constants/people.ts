@@ -4,10 +4,9 @@
  * once and a title is corrected once.
  *
  * ⚠️ PART PLACEHOLDER. The two founders are real — Manoj Singh and Saurabh
- * Singh — and their credentials come from the wireframe ($200k+ delivered /
- * Top Rated, and 25 years in tech). The titles, focus lines and bios around
- * them are still stand-ins, and every teammate below is invented. Replace the
- * rest before this goes live — this is the one file to edit.
+ * Singh. Teammate portraits that used to live here are invented and now
+ * quarantined in `@/constants/claims`. This file only exports people we will
+ * put a name to on a live page.
  *
  * `image` is optional everywhere on purpose: with no file the avatar renders a
  * monogram, which is a deliberate design, not a broken state. Drop real
@@ -48,7 +47,7 @@ export const FOUNDERS: readonly Founder[] = [
     image: "/images/team/manoj.webp",
     bio: "Runs discovery and architecture on every engagement, then stays on the build rather than handing it down. The scope you agree is the scope he is accountable for shipping.",
     credentials: [
-      { value: "$200k+", label: "Delivered" },
+      { value: "Founder", label: "On every build" },
       { value: "Top Rated", label: "Platform status" },
       { value: "Hands-on", label: "Through launch" },
     ],
@@ -84,88 +83,28 @@ export const TEAM_GROUPS: readonly TeamGroup[] = [
     title: "Engineering",
     summary:
       "The people who write the system you keep, and the integrations that decide whether it survives contact with your stack.",
-    members: [
-      {
-        id: "arjun-mehta",
-        name: "Arjun Mehta",
-        role: "Principal Engineer",
-        focus: "Platform architecture and the hard parts of integration",
-        image: "/images/team/arjun.webp",
-      },
-      {
-        id: "sofia-almeida",
-        name: "Sofia Almeida",
-        role: "Senior Full-Stack Engineer",
-        focus: "Product surfaces, from API contract to interface",
-        image: "/images/team/sofia.webp",
-      },
-      {
-        id: "daniel-okoye",
-        name: "Daniel Okoye",
-        role: "Senior Backend Engineer",
-        focus: "Data pipelines and the systems that carry load",
-        image: "/images/team/daniel.webp",
-      },
-    ],
+    members: [],
   },
   {
     id: "ai",
     title: "AI & Data",
     summary:
       "Models are the easy half. This is the half that keeps them accurate, affordable, and explainable a year after launch.",
-    members: [
-      {
-        id: "neha-kapoor",
-        name: "Neha Kapoor",
-        role: "Lead ML Engineer",
-        focus: "Retrieval, evaluation, and models that stay honest in production",
-        image: "/images/team/neha.webp",
-      },
-      {
-        id: "tomas-lindqvist",
-        name: "Tomas Lindqvist",
-        role: "MLOps Engineer",
-        focus: "Training, serving, and the running cost of both",
-        image: "/images/team/tomas.webp",
-      },
-    ],
+    members: [],
   },
   {
     id: "design",
     title: "Design",
     summary:
       "An AI system nobody opens twice has not shipped. Design is where adoption is won or lost.",
-    members: [
-      {
-        id: "aisha-rahman",
-        name: "Aisha Rahman",
-        role: "Product Design Lead",
-        focus: "Interfaces teams adopt without being told to",
-        image: "/images/team/aisha.webp",
-      },
-    ],
+    members: [],
   },
   {
     id: "delivery",
     title: "Delivery & Quality",
     summary:
       "The people who make sure the schedule you were shown is the schedule you get, and that what ships was tested first.",
-    members: [
-      {
-        id: "marco-bianchi",
-        name: "Marco Bianchi",
-        role: "Delivery Lead",
-        focus: "Scope, schedule, and the weekly truth about both",
-        image: "/images/team/marco.webp",
-      },
-      {
-        id: "grace-liu",
-        name: "Grace Liu",
-        role: "QA & Reliability Lead",
-        focus: "Finding what breaks before your users do",
-        image: "/images/team/grace.webp",
-      },
-    ],
+    members: [],
   },
 ];
 

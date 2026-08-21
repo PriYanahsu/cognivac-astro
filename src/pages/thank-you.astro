@@ -1,0 +1,91 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import PageHero from "@/components/shared/PageHero.astro";
+import Container from "@/components/shared/Container.astro";
+import GradientButton from "@/components/shared/GradientButton.astro";
+import GhostButton from "@/components/shared/GhostButton.astro";
+import { createPageMetadata } from "@/lib/seo";
+import { NAV_ROUTES } from "@/constants/site";
+
+const metadata = createPageMetadata({
+  title: "Message received",
+  description: "We have your note. An engineer will reply within one business day.",
+  path: NAV_ROUTES.thankYou,
+  noIndex: true,
+});
+---
+
+<Layout metadata={metadata}>
+  <PageHero
+    label="Thank you"
+    title="We have it."
+    description="An engineer reads every message. You will hear back within one business day — not a routing form, not a sequence."
+    breadcrumbs={[{ label: "Thank you" }]}
+  />
+
+  <section class="bg-background section-padding">
+    <Container>
+      <div class="mx-auto max-w-2xl rounded-md border border-border bg-card p-6 sm:p-10">
+        <p data-thank-you-context class="text-[16px] leading-[1.65] text-muted sm:text-[17.5px]">
+          If you asked about a build, the next step is a 30-minute technical discussion.
+        </p>
+
+        <div data-resource-download hidden class="mt-6 rounded-md border border-accent/20 bg-lavender/40 p-5">
+          <p class="text-[12px] font-semibold uppercase tracking-[0.14em] text-accent">
+            Your download
+          </p>
+          <p data-resource-title class="mt-2 text-[17px] font-bold text-foreground"></p>
+          <a
+            data-resource-link
+            href="#"
+            class="mt-4 inline-flex text-[14.5px] font-semibold text-accent underline-offset-4 hover:underline"
+          >
+            Open the brief
+          </a>
+        </div>
+
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+          <GradientButton href={`${NAV_ROUTES.contact}#book`} class="justify-center">
+            Book a time
+          </GradientButton>
+          <GhostButton href={NAV_ROUTES.home} class="justify-center">
+            Back to the home page
+          </GhostButton>
+        </div>
+      </div>
+    </Container>
+  </section>
+</Layout>
+
+<script>
+  import { track } from "@vercel/analytics";
+  import { ROLES } from "@/features/careers/constants";
+  import { RESOURCES } from "@/features/resources/constants";
+
+  const params = new URLSearchParams(window.location.search);
+  const roleId = params.get("role") ?? "";
+  const resourceSlug = params.get("resource") ?? "";
+  const role = ROLES.find((item) => item.id === roleId);
+  const resource = RESOURCES.find((item) => item.slug === resourceSlug);
+
+  track("Lead", {
+    role: roleId || undefined,
+    resource: resourceSlug || undefined,
+  });
+
+  const context = document.querySelector("[data-thank-you-context]");
+  if (context && role) {
+    context.textContent = `Application received for ${role.title}. We will reply within one business day — two conversations and a paired working session, no unpaid take-home.`;
+  }
+
+  if (resource) {
+    const panel = document.querySelector<HTMLElement>("[data-resource-download]");
+    const title = document.querySelector("[data-resource-title]");
+    const link = document.querySelector<HTMLAnchorElement>("[data-resource-link]");
+    if (panel && title && link) {
+      panel.hidden = false;
+      title.textContent = resource.title;
+      link.href = resource.href;
+    }
+  }
+</script>

@@ -1,15 +1,16 @@
 ---
-import { Mail, MapPin, Phone, Clock, Check } from "@lucide/astro";
+import { Mail, MapPin, Clock, Check } from "@lucide/astro";
 import JsonLd from "@/lib/seo/JsonLd.astro";
 import { breadcrumbSchema } from "@/lib/seo";
 import PageHero from "@/components/shared/PageHero.astro";
 import Container from "@/components/shared/Container.astro";
 import SectionIntro from "@/components/shared/SectionIntro.astro";
 import FadeIn from "@/components/animations/FadeIn.astro";
-import { SITE_CONFIG } from "@/constants/site";
+import { SITE_CONFIG, NAV_ROUTES } from "@/constants/site";
 import { FAQS } from "@/features/home/constants/content";
 import FaqAccordion from "@/components/shared/FaqAccordion.astro";
 import ContactForm from "./components/ContactForm.astro";
+import CalEmbed from "./components/CalEmbed.astro";
 
 /** Port of features/contact/index.tsx. */
 
@@ -57,6 +58,7 @@ const REASSURANCES = [
   description="Whether it is a stalled AI initiative, a legacy platform holding growth back, or a build you need a partner for — start with the problem and we will work backwards to the approach."
   breadcrumbs={[{ label: "Contact" }]}
   highlights={["Reply within 1 business day", "Talk to an engineer, not a rep"]}
+  primaryCta={{ label: "Book a time", href: `${NAV_ROUTES.contact}#book` }}
 />
 
 <section class="bg-background section-padding">
@@ -87,23 +89,6 @@ const REASSURANCES = [
                 class="mt-0.5 block text-[15px] font-semibold text-foreground transition-colors hover:text-accent sm:mt-1 sm:text-[16px]"
               >
                 {SITE_CONFIG.email}
-              </a>
-            </div>
-          </li>
-
-          <li class="flex gap-3.5 sm:gap-4">
-            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-card text-accent ring-1 ring-border sm:h-11 sm:w-11">
-              <Phone class="h-4.5 w-4.5 sm:h-5 sm:w-5" />
-            </span>
-            <div class="min-w-0">
-              <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted sm:text-[12px]">
-                Phone
-              </p>
-              <a
-                href={`tel:${SITE_CONFIG.phone.replace(/\s/g, "")}`}
-                class="mt-0.5 block text-[15px] font-semibold text-foreground transition-colors hover:text-accent sm:mt-1 sm:text-[16px]"
-              >
-                {SITE_CONFIG.phone}
               </a>
             </div>
           </li>
@@ -150,6 +135,24 @@ const REASSURANCES = [
           }
         </ul>
       </div>
+    </div>
+  </Container>
+</section>
+
+<section class="border-y border-border bg-card section-padding">
+  <Container>
+    <div class="grid gap-8 lg:grid-cols-12 lg:gap-14">
+      <SectionIntro
+        label="Schedule"
+        title="Book the 30-minute call instead"
+        description="Same conversation as the form — a working session on the problem, not a qualification call. Pick a time or send the note above."
+        class="max-w-none lg:col-span-4"
+        titleClass="max-w-[16ch]"
+        descriptionClass="max-w-[36ch]"
+      />
+      <FadeIn delay={0.1} class="lg:col-span-8">
+        <CalEmbed />
+      </FadeIn>
     </div>
   </Container>
 </section>

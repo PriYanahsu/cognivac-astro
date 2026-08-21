@@ -9,7 +9,7 @@ import PersonPortrait from "@/components/shared/PersonPortrait.astro";
 import SocialIcon from "@/components/shared/SocialIcon.astro";
 import FadeIn from "@/components/animations/FadeIn.astro";
 import CtaSection from "@/features/cta-section/components/CtaSection.astro";
-import { FOUNDERS, TEAM_GROUPS, TEAM_HEADCOUNT } from "@/constants/people";
+import { FOUNDERS, TEAM_GROUPS } from "@/constants/people";
 import { NAV_ROUTES } from "@/constants/site";
 import { STAFFING_RULES, TEAM_PAGE } from "./constants";
 import MemberCard from "./components/MemberCard.astro";
@@ -32,8 +32,8 @@ import MemberCard from "./components/MemberCard.astro";
   primaryCta={{ label: "Talk to a founder", href: NAV_ROUTES.contact }}
   secondaryCta={{ label: "See open roles", href: NAV_ROUTES.careers }}
   highlights={[
-    `${TEAM_HEADCOUNT} people, all senior`,
     "Two founders on every account",
+    "Pods of two to six",
     "No juniors on billable work",
   ]}
 />
@@ -135,7 +135,9 @@ import MemberCard from "./components/MemberCard.astro";
                     {group.title}
                   </h3>
                   <span class="rounded-pill-category bg-hairline-soft px-2.5 py-1 text-[11px] font-semibold text-muted [font-variant-numeric:tabular-nums]">
-                    {String(group.members.length).padStart(2, "0")}
+                    {group.members.length > 0
+                      ? String(group.members.length).padStart(2, "0")
+                      : "Pod"}
                   </span>
                 </div>
                 <p class="mt-2 text-[13.5px] leading-[1.55] text-muted sm:mt-2.5 sm:text-[15px] sm:leading-[1.6]">
@@ -145,11 +147,21 @@ import MemberCard from "./components/MemberCard.astro";
             </FadeIn>
 
             <div class="mt-4 grid gap-3 sm:mt-6 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 lg:gap-5">
-              {group.members.map((person, i) => (
-                <FadeIn delay={0.05 * i + 0.04 * groupIndex} class="h-full">
-                  <MemberCard person={person} />
-                </FadeIn>
-              ))}
+              {
+                group.members.length > 0 ? (
+                  group.members.map((person, i) => (
+                    <FadeIn delay={0.05 * i + 0.04 * groupIndex} class="h-full">
+                      <MemberCard person={person} />
+                    </FadeIn>
+                  ))
+                ) : (
+                  <FadeIn class="lg:col-span-3">
+                    <p class="rounded-md border border-border bg-background px-4 py-3 text-[13.5px] leading-[1.55] text-muted sm:text-[14.5px]">
+                      Named on the engagement, not on this page — you meet them in discovery.
+                    </p>
+                  </FadeIn>
+                )
+              }
             </div>
           </div>
         ))

@@ -11,7 +11,8 @@ import type {
   TestimonialItem,
   FaqItem,
 } from "@/types";
-import { NAV_ROUTES } from "@/constants/site";
+import { NAV_ROUTES, servicePath, industryPath } from "@/constants/site";
+import { SERVICE_SLUGS } from "@/features/services/constants";
 
 export const SERVICES: ServiceItem[] = [
   {
@@ -20,7 +21,7 @@ export const SERVICES: ServiceItem[] = [
     description:
       "Autonomous and assisted agents that execute multi-step work across your tools and data.",
     icon: "Bot",
-    href: `${NAV_ROUTES.services}#ai-agents`,
+    href: servicePath(SERVICE_SLUGS["ai-agents"]),
   },
   {
     id: "machine-learning",
@@ -28,7 +29,7 @@ export const SERVICES: ServiceItem[] = [
     description:
       "Custom models, MLOps pipelines, and evaluation frameworks built for production scale.",
     icon: "Brain",
-    href: `${NAV_ROUTES.services}#machine-learning`,
+    href: servicePath(SERVICE_SLUGS["machine-learning"]),
   },
   {
     id: "generative-ai",
@@ -36,7 +37,7 @@ export const SERVICES: ServiceItem[] = [
     description:
       "LLM applications, RAG systems, copilots, and content platforms with enterprise guardrails.",
     icon: "Sparkles",
-    href: `${NAV_ROUTES.services}#generative-ai`,
+    href: servicePath(SERVICE_SLUGS["generative-ai"]),
   },
   {
     id: "cloud",
@@ -44,7 +45,7 @@ export const SERVICES: ServiceItem[] = [
     description:
       "Cloud-native architectures, DevOps, and infrastructure that scale with your AI workloads.",
     icon: "Cloud",
-    href: `${NAV_ROUTES.services}#cloud`,
+    href: servicePath(SERVICE_SLUGS.cloud),
   },
   {
     id: "automation",
@@ -52,7 +53,7 @@ export const SERVICES: ServiceItem[] = [
     description:
       "Intelligent process automation that connects people, systems, and decisions.",
     icon: "Workflow",
-    href: `${NAV_ROUTES.services}#automation`,
+    href: servicePath(SERVICE_SLUGS.automation),
   },
   {
     id: "apps",
@@ -60,7 +61,7 @@ export const SERVICES: ServiceItem[] = [
     description:
       "Web, mobile, and internal platforms designed for speed, security, and usability.",
     icon: "AppWindow",
-    href: `${NAV_ROUTES.services}#apps`,
+    href: servicePath(SERVICE_SLUGS.apps),
   },
 ];
 
@@ -70,28 +71,28 @@ export const INDUSTRIES: IndustryItem[] = [
     title: "FinTech",
     description: "Risk, fraud, personalization, and ops intelligence for financial institutions.",
     image: "/images/industries/fintech.webp",
-    href: `${NAV_ROUTES.industries}#fintech`,
+    href: industryPath("fintech"),
   },
   {
     id: "retail",
     title: "Retail",
     description: "Demand forecasting, customer intelligence, and supply chain optimization.",
     image: "/images/industries/retail.webp",
-    href: `${NAV_ROUTES.industries}#retail`,
+    href: industryPath("retail"),
   },
   {
     id: "manufacturing",
     title: "Manufacturing",
     description: "Predictive maintenance, quality vision, and plant-floor automation.",
     image: "/images/industries/manufacturing.webp",
-    href: `${NAV_ROUTES.industries}#manufacturing`,
+    href: industryPath("manufacturing"),
   },
   {
     id: "saas",
     title: "SaaS",
     description: "Product AI features, usage intelligence, and growth automation.",
     image: "/images/industries/saas.webp",
-    href: `${NAV_ROUTES.industries}#saas`,
+    href: industryPath("saas"),
   },
 ];
 
@@ -171,37 +172,31 @@ export const CASE_STUDIES: CaseStudyItem[] = [
   },
 ];
 
+/** Process commitments — not historical marketing stats. Unverified figures live in `@/constants/claims`. */
 export const STATS: StatItem[] = [
   {
     id: "1",
-    value: 120,
-    suffix: "+",
-    label: "AI systems shipped to production",
+    value: 2,
+    suffix: " wks",
+    label: "Discovery workshop",
   },
   {
     id: "2",
-    value: 40,
-    suffix: "M+",
-    label: "Automated decisions processed monthly",
+    value: 6,
+    suffix: " wks",
+    label: "First working milestone",
   },
   {
     id: "3",
-    value: 98,
-    suffix: "%",
-    label: "Client retention across engagements",
+    value: 1,
+    suffix: " day",
+    label: "Reply on new conversations",
   },
   {
     id: "4",
-    value: 25,
-    suffix: "+",
-    label: "Industries served worldwide",
-  },
-  {
-    id: "5",
-    value: 4.9,
+    value: 6,
     suffix: "",
-    decimals: 1,
-    label: "Average delivery satisfaction score",
+    label: "Engineers on a large pod",
   },
 ];
 

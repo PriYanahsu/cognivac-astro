@@ -1,59 +1,23 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import PageHero from "@/components/shared/PageHero.astro";
-import Container from "@/components/shared/Container.astro";
-import FadeIn from "@/components/animations/FadeIn.astro";
-import { createPageMetadata } from "@/lib/seo";
-import { SITE_CONFIG } from "@/constants/site";
+import JsonLd from "@/lib/seo/JsonLd.astro";
+import { breadcrumbSchema, createPageMetadata } from "@/lib/seo";
+import LegalDoc from "@/features/legal/LegalDoc.astro";
+import { PRIVACY } from "@/features/legal/constants";
 
-/**
- * Port of app/privacy/page.tsx.
- * The Next version declared no metadata, so all three legal routes inherited
- * the home page's title. Given a distinct title costs nothing and fixes a real
- * duplicate-title problem for crawlers, each legal route now declares its own.
- */
 const metadata = createPageMetadata({
-  title: "Privacy Policy",
-  description:
-    "How Cognivac collects, uses, and protects information across our website and client engagements.",
-  path: "/privacy",
+  title: PRIVACY.title,
+  description: PRIVACY.description,
+  path: PRIVACY.path,
 });
 ---
 
 <Layout metadata={metadata}>
-  <PageHero
-    label="Legal"
-    title="Privacy Policy"
-    description="How Cognivac collects, uses, and protects information across our website and client engagements."
-    breadcrumbs={[{ label: "Privacy Policy" }]}
+  <JsonLd
+    data={breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: PRIVACY.title, path: PRIVACY.path },
+    ])}
   />
-
-  <section class="bg-background section-padding">
-    <Container>
-      <FadeIn class="mx-auto max-w-3xl">
-        <div
-          class="rounded-md border border-border bg-card p-6 sm:rounded-md sm:p-10"
-        >
-          <p
-            class="text-[12px] font-semibold uppercase tracking-[0.14em] text-accent"
-          >
-            Placeholder
-          </p>
-          <p class="mt-4 text-[16px] leading-[1.7] text-muted sm:text-[17.5px]">
-            Cognivac respects your privacy. The full privacy policy will be
-            published here before production launch. In the meantime, for data
-            access, correction, or deletion requests — or to ask how data is
-            handled inside a specific engagement — contact us directly and we
-            will respond within one business day.
-          </p>
-          <a
-            href={`mailto:${SITE_CONFIG.email}`}
-            class="mt-6 inline-block text-[15px] font-semibold text-foreground underline underline-offset-4 transition-colors hover:text-accent"
-          >
-            {SITE_CONFIG.email}
-          </a>
-        </div>
-      </FadeIn>
-    </Container>
-  </section>
+  <LegalDoc doc={PRIVACY} />
 </Layout>

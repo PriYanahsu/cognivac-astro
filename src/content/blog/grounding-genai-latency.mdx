@@ -1,0 +1,42 @@
+---
+title: "Grounding GenAI without killing latency"
+excerpt: "Practical retrieval architecture tradeoffs for enterprise knowledge systems, and where the p95 actually goes."
+date: 2026-05-04
+category: "Generative AI"
+image: "/images/blog/post-3.webp"
+readingTime: "8 min read"
+---
+
+Grounding is a retrieval problem with a latency budget. Teams treat it as a prompt problem and then wonder why p95 is 12 seconds and the answer cites a document the asker cannot open.
+
+## Filter before you embed-search
+
+Permission is not a post-filter you hope the model respects. Apply the caller's groups at query time, before the first chunk is retrieved. If the index cannot express that, you have the wrong index. A shared dump of the company wiki with a system prompt that says "be careful" is an incident report waiting for a date.
+
+## Where the time goes
+
+On a typical enterprise copilot, p95 is not the LLM. It is:
+
+1. Auth and tenancy resolution
+2. Retrieval (especially multi-hop or oversized chunk sets)
+3. Rerank
+4. Generation
+5. Citation alignment
+
+If you do not measure each hop, you will "optimize the model" for a year. Trace the request. Cap the chunks. Rerank on a small set. Generate with a token limit that matches the UI, not a completion that nobody will read.
+
+## Citations are a contract
+
+If the answer claims a fact, it shows a source the caller is allowed to see. No source, no claim — the model is allowed to say it does not know. Hallucinated citations are worse than no citations. Align spans at generation time or do not offer the feature.
+
+## Latency budgets we actually use
+
+- Sidebar copilot: p95 under 4s end-to-end, or people stop waiting
+- Search-like Q&A: p95 under 8s with streaming, first token under 1.5s
+- Batch summarization: latency is a cost problem, not a UX problem — queue it
+
+Streaming the first tokens does not fix a 6-second retrieval. Fix retrieval.
+
+## The model is a config value
+
+Retrieval, permissions, evals, and traces are the product. The generator should be swappable without a rewrite. If your architecture hard-codes a vendor's chat API in six services, you did not build a knowledge system. You built a coupling.

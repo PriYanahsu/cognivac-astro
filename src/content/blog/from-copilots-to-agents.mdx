@@ -1,0 +1,40 @@
+---
+title: "From copilots to agents: designing reliable autonomy"
+excerpt: "What separates a useful agent from a brittle demo — and the evaluation work that has to exist before you let one act on its own."
+date: 2026-06-12
+category: "AI Agents"
+image: "/images/blog/post-1.webp"
+readingTime: "9 min read"
+---
+
+A copilot drafts. An agent acts. The gap between those two is not a bigger model. It is a control plane: tools with types, a state machine that can fail closed, and an evaluation harness that runs before the agent is allowed to touch anything that matters.
+
+## The demo is a single path
+
+Most agent demos are a happy path with a human hovering. Production is a graph. Tools time out. Permissions differ by caller. The CRM object the agent wants to update is in a layout the prompt never saw. If your architecture cannot name those states, you do not have an agent. You have a script with extra steps.
+
+We start by drawing the workflow as a graph before choosing a framework. Nodes are tools or human steps. Edges are the conditions under which you proceed, retry, or stop. If you cannot draw the stop condition, do not give the system a write tool.
+
+## Evals before autonomy
+
+Autonomy is a privilege you grant after the eval suite says the agent is boring. Boring is the goal. The suite needs:
+
+- **Task success** on a frozen set of real tickets, not toy prompts.
+- **Tool-call legality** — did it call a tool it should not have, even if the answer looked fine?
+- **Cost and latency budgets** as first-class scores. An agent that is right in 90 seconds is not right for a queue that has a 20-second SLA.
+
+Run the suite on every prompt change, every model swap, every new tool. If that sounds heavy, you are not ready for autonomy. Stay on copilot until the suite exists.
+
+## Human in the loop is a product surface
+
+Escalation is not a log line. It is a queue a person will actually clear: the original context, the attempted tool calls, and a one-click approve or reject. Slack DMs to the engineer who built it are not an escalation path. They are a pager that only works while that engineer is employed.
+
+## What to ship first
+
+1. Read-only tools. Citations. No writes.
+2. Writes behind an approval.
+3. Writes on a bounded class of actions, with a rollback.
+
+Skip a step and you will spend the next quarter explaining an incident that a copilot would not have been able to cause.
+
+The model will keep getting cheaper. The control plane will not build itself.

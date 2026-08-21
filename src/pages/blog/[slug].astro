@@ -1,0 +1,76 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import JsonLd from "@/lib/seo/JsonLd.astro";
+import { articleSchema, breadcrumbSchema, createPageMetadata } from "@/lib/seo";
+import PageHero from "@/components/shared/PageHero.astro";
+import Container from "@/components/shared/Container.astro";
+import CtaSection from "@/features/cta-section/components/CtaSection.astro";
+import { NAV_ROUTES } from "@/constants/site";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const date = post.data.date.toISOString().slice(0, 10);
+
+const metadata = createPageMetadata({
+  title: post.data.title,
+  description: post.data.excerpt,
+  path: `/blog/${post.id}`,
+  image: post.data.image,
+});
+---
+
+<Layout metadata={metadata}>
+  <JsonLd
+    data={[
+      breadcrumbSchema([
+        { name: "Home", path: "/" },
+        { name: "Insights", path: NAV_ROUTES.blog },
+        { name: post.data.title, path: `/blog/${post.id}` },
+      ]),
+      articleSchema({
+        title: post.data.title,
+        description: post.data.excerpt,
+        path: `/blog/${post.id}`,
+        datePublished: date,
+        image: post.data.image,
+      }),
+    ]}
+  />
+
+  <PageHero
+    label={post.data.category}
+    title={post.data.title}
+    description={post.data.excerpt}
+    breadcrumbs={[
+      { label: "Insights", href: NAV_ROUTES.blog },
+      { label: post.data.title },
+    ]}
+    highlights={[post.data.readingTime, date]}
+  />
+
+  <section class="bg-background section-padding">
+    <Container>
+      <article class="mx-auto max-w-3xl">
+        <img
+          src={post.data.image}
+          alt=""
+          class="mb-10 aspect-video w-full rounded-md object-cover"
+        />
+        <div class="space-y-5 text-[16.5px] leading-[1.7] text-muted sm:text-[17.5px] [&_h2]:mt-10 [&_h2]:text-[22px] [&_h2]:font-bold [&_h2]:tracking-[-0.02em] [&_h2]:text-foreground [&_ol]:list-decimal [&_ol]:space-y-2 [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-5 [&_strong]:text-foreground">
+          <Content />
+        </div>
+      </article>
+    </Container>
+  </section>
+
+  <CtaSection />
+</Layout>

@@ -1,0 +1,39 @@
+---
+title: "MLOps patterns that survive your first ten models"
+excerpt: "Evaluation, monitoring, and rollback strategies for teams whose second model exposed everything the first one let them ignore."
+date: 2026-05-28
+category: "Machine Learning"
+image: "/images/blog/post-2.webp"
+readingTime: "11 min read"
+---
+
+The first model in production is a hero project. The tenth is an operating problem. The difference is whether training, serving, and monitoring were designed as one system or as a notebook that escaped.
+
+## Version more than weights
+
+If you cannot answer "what data, what code, what config produced this endpoint?" you cannot roll back. Store:
+
+- Training data snapshot or a query that is pinned, not "whatever is in the table today"
+- Feature code at the commit that trained
+- Hyperparameters and the eval that blessed the run
+- The serving image, not just the artifact in object storage
+
+MLflow, or the equivalent you already pay for, is the index. Object storage is the blob. Neither is optional.
+
+## Drift is not a dashboard
+
+A chart that nobody pages on is decoration. Pick the metrics that mean the model is making a different decision than last month — input drift on the features that actually move the score, output drift on the score itself, and downstream drift on the business event you claimed to change.
+
+When drift fires, the runbook is: freeze promotion, compare against the eval set from launch, then retrain or roll back. Retrain without a freeze is how you ship a worse model at 2 a.m.
+
+## Rollback is a product requirement
+
+Blue/green or a traffic split with an automatic revert on eval regression. If rollback requires the original data scientist to be awake, you do not have MLOps. You have a person.
+
+## Cost belongs next to accuracy
+
+A 0.4% lift that triples GPU spend is a product decision, not a research win. Report cost per decision on the same page as the AUC. The person who owns the P&L should be able to read it without a translation layer.
+
+## The pattern that scales to ten
+
+One training pipeline shape. One serving shape. One eval gate. New models are configuration and data, not a new snowflake. The tenth model should be boring. If it is exciting, the platform is not done.

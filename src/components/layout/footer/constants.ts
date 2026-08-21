@@ -1,4 +1,5 @@
-import { NAV_ROUTES } from "@/constants/site";
+import { NAV_ROUTES, servicePath } from "@/constants/site";
+import { SERVICE_SLUGS } from "@/features/services/constants";
 
 export const FOOTER_COMPANY_LINKS = [
   { label: "About Us", href: NAV_ROUTES.about },
@@ -9,21 +10,29 @@ export const FOOTER_COMPANY_LINKS = [
 
 export const FOOTER_SERVICE_LINKS = [
   { label: "All Services", href: NAV_ROUTES.services },
-  { label: "AI Agents", href: `${NAV_ROUTES.services}#ai-agents` },
-  { label: "Machine Learning", href: `${NAV_ROUTES.services}#machine-learning` },
-  { label: "Generative AI", href: `${NAV_ROUTES.services}#generative-ai` },
-  { label: "Cloud & DevOps", href: `${NAV_ROUTES.services}#cloud` },
-  { label: "Automation", href: `${NAV_ROUTES.services}#automation` },
+  { label: "AI Agents", href: servicePath(SERVICE_SLUGS["ai-agents"]) },
+  { label: "Machine Learning", href: servicePath(SERVICE_SLUGS["machine-learning"]) },
+  { label: "Generative AI", href: servicePath(SERVICE_SLUGS["generative-ai"]) },
+  { label: "Cloud & DevOps", href: servicePath(SERVICE_SLUGS.cloud) },
+  { label: "Automation", href: servicePath(SERVICE_SLUGS.automation) },
+  { label: "Enterprise Applications", href: servicePath(SERVICE_SLUGS.apps) },
 ] as const;
 
 export const FOOTER_RESOURCE_LINKS = [
   { label: "Case Studies", href: NAV_ROUTES.caseStudies },
   { label: "Blog", href: NAV_ROUTES.blog },
+  { label: "Resources", href: NAV_ROUTES.resources },
   { label: "Industries", href: NAV_ROUTES.industries },
+  { label: "Security", href: NAV_ROUTES.security },
+  { label: "Pricing", href: NAV_ROUTES.pricing },
 ] as const;
 
 export const FOOTER_LEGAL_LINKS = [
-  { label: "Privacy Policy", href: "/privacy" },
-  { label: "Terms of Service", href: "/terms" },
-  { label: "Cookie Policy", href: "/cookies" },
+  { label: "Privacy Policy", href: NAV_ROUTES.privacy },
+  { label: "Terms of Service", href: NAV_ROUTES.terms },
+  { label: "Cookie Policy", href: NAV_ROUTES.cookies },
+  { label: "DPA", href: NAV_ROUTES.dpa },
+  { label: "Subprocessors", href: NAV_ROUTES.subprocessors },
+  { label: "AI usage", href: NAV_ROUTES.aiUsage },
+  { label: "Accessibility", href: NAV_ROUTES.accessibility },
 ] as const;

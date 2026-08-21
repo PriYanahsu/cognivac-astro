@@ -1,0 +1,38 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import JsonLd from "@/lib/seo/JsonLd.astro";
+import { breadcrumbSchema, createPageMetadata } from "@/lib/seo";
+import PageHero from "@/components/shared/PageHero.astro";
+import CtaSection from "@/features/cta-section/components/CtaSection.astro";
+import PlatformSection from "@/features/platform-section/components/PlatformSection.astro";
+import { NAV_ROUTES } from "@/constants/site";
+import { PLATFORM_CONTENT } from "@/features/platform-section/constants";
+
+const metadata = createPageMetadata({
+  title: "Technology",
+  description: PLATFORM_CONTENT.description,
+  path: NAV_ROUTES.technology,
+});
+---
+
+<Layout metadata={metadata}>
+  <JsonLd
+    data={breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: "Technology", path: NAV_ROUTES.technology },
+    ])}
+  />
+
+  <PageHero
+    label="Technology"
+    title={PLATFORM_CONTENT.title}
+    description={PLATFORM_CONTENT.description}
+    breadcrumbs={[{ label: "Technology" }]}
+    primaryCta={{ label: "See integrations", href: NAV_ROUTES.integrations }}
+    secondaryCta={{ label: "Talk to an engineer", href: NAV_ROUTES.contact }}
+    highlights={["LangGraph", "MLflow", "pgvector", "Terraform", "Kafka"]}
+  />
+
+  <PlatformSection />
+  <CtaSection />
+</Layout>

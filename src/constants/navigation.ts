@@ -1,5 +1,6 @@
 import type { NavItem } from "@/types";
-import { NAV_ROUTES } from "@/constants/site";
+import { NAV_ROUTES, servicePath, industryPath } from "@/constants/site";
+import { SERVICE_SLUGS } from "@/features/services/constants";
 
 export const NAV_ITEMS: NavItem[] = [
   {
@@ -14,7 +15,7 @@ export const NAV_ITEMS: NavItem[] = [
       {
         label: "Team",
         href: NAV_ROUTES.team,
-        description: "The founders and the bench behind the work",
+        description: "The founders and how a pod is staffed",
       },
       {
         label: "Careers",
@@ -32,9 +33,6 @@ export const NAV_ITEMS: NavItem[] = [
     label: "Solutions",
     href: NAV_ROUTES.services,
     children: [
-      // The parent is a disclosure button, not a link, so without this row
-      // there is no way to reach /services itself from the nav — only to
-      // land part-way down it on one capability's anchor.
       {
         label: "All Services",
         href: NAV_ROUTES.services,
@@ -42,34 +40,32 @@ export const NAV_ITEMS: NavItem[] = [
       },
       {
         label: "AI Agents",
-        href: `${NAV_ROUTES.services}#ai-agents`,
+        href: servicePath(SERVICE_SLUGS["ai-agents"]),
         description: "Autonomous agents for enterprise workflows",
       },
       {
         label: "Machine Learning",
-        href: `${NAV_ROUTES.services}#machine-learning`,
+        href: servicePath(SERVICE_SLUGS["machine-learning"]),
         description: "Custom ML models and pipelines",
       },
       {
         label: "Generative AI",
-        href: `${NAV_ROUTES.services}#generative-ai`,
+        href: servicePath(SERVICE_SLUGS["generative-ai"]),
         description: "LLM apps, RAG, and copilots",
       },
       {
         label: "Cloud & DevOps",
-        href: `${NAV_ROUTES.services}#cloud`,
+        href: servicePath(SERVICE_SLUGS.cloud),
         description: "Scalable cloud-native platforms",
       },
       {
         label: "Automation",
-        href: `${NAV_ROUTES.services}#automation`,
+        href: servicePath(SERVICE_SLUGS.automation),
         description: "Intelligent process automation",
       },
-      // The services page has six capabilities; this menu listed five, so
-      // `#apps` was a section with no way in from the nav.
       {
         label: "Enterprise Applications",
-        href: `${NAV_ROUTES.services}#apps`,
+        href: servicePath(SERVICE_SLUGS.apps),
         description: "Web, mobile, and internal platforms",
       },
     ],
@@ -85,30 +81,35 @@ export const NAV_ITEMS: NavItem[] = [
       },
       {
         label: "FinTech",
-        href: `${NAV_ROUTES.industries}#fintech`,
+        href: industryPath("fintech"),
         description: "AI for banking, payments, and risk",
       },
       {
         label: "Retail",
-        href: `${NAV_ROUTES.industries}#retail`,
+        href: industryPath("retail"),
         description: "Personalization and supply chain AI",
       },
       {
         label: "Manufacturing",
-        href: `${NAV_ROUTES.industries}#manufacturing`,
+        href: industryPath("manufacturing"),
         description: "Predictive ops and quality systems",
       },
       {
         label: "SaaS",
-        href: `${NAV_ROUTES.industries}#saas`,
+        href: industryPath("saas"),
         description: "Product intelligence and growth",
       },
     ],
   },
   {
     label: "Resources",
-    href: NAV_ROUTES.blog,
+    href: NAV_ROUTES.resources,
     children: [
+      {
+        label: "Resources",
+        href: NAV_ROUTES.resources,
+        description: "Briefs, agendas, and comparisons",
+      },
       {
         label: "Blog",
         href: NAV_ROUTES.blog,
@@ -118,6 +119,16 @@ export const NAV_ITEMS: NavItem[] = [
         label: "Case Studies",
         href: NAV_ROUTES.caseStudies,
         description: "Outcomes from real engagements",
+      },
+      {
+        label: "Security",
+        href: NAV_ROUTES.security,
+        description: "Residency, DPA, and questionnaires",
+      },
+      {
+        label: "Pricing",
+        href: NAV_ROUTES.pricing,
+        description: "Discovery workshop and build bands",
       },
     ],
   },

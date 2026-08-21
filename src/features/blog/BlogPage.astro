@@ -11,41 +11,21 @@ import CtaSection from "@/features/cta-section/components/CtaSection.astro";
 import { NAV_ROUTES } from "@/constants/site";
 import PostGrid from "./components/PostGrid.astro";
 import type { BlogPost } from "./types";
+import { getCollection } from "astro:content";
 
-/** Port of features/blog/index.tsx. */
+const collection = (await getCollection("blog")).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
 
-const POSTS: BlogPost[] = [
-  {
-    id: "1",
-    title: "From copilots to agents: designing reliable autonomy",
-    excerpt:
-      "What separates a useful agent from a brittle demo — and the evaluation work that has to exist before you let one act on its own.",
-    image: "/images/blog/post-1.webp",
-    date: "2026-06-12",
-    category: "AI Agents",
-    readingTime: "9 min read",
-  },
-  {
-    id: "2",
-    title: "MLOps patterns that survive your first ten models",
-    excerpt:
-      "Evaluation, monitoring, and rollback strategies for teams whose second model exposed everything the first one let them ignore.",
-    image: "/images/blog/post-2.webp",
-    date: "2026-05-28",
-    category: "Machine Learning",
-    readingTime: "11 min read",
-  },
-  {
-    id: "3",
-    title: "Grounding GenAI without killing latency",
-    excerpt:
-      "Practical retrieval architecture tradeoffs for enterprise knowledge systems, and where the p95 actually goes.",
-    image: "/images/blog/post-3.webp",
-    date: "2026-05-04",
-    category: "Generative AI",
-    readingTime: "8 min read",
-  },
-];
+const POSTS: BlogPost[] = collection.map((post) => ({
+  id: post.id,
+  title: post.data.title,
+  excerpt: post.data.excerpt,
+  image: post.data.image,
+  date: post.data.date.toISOString().slice(0, 10),
+  category: post.data.category,
+  readingTime: post.data.readingTime,
+}));
 
 const TOPICS = [
   "AI Agents",
@@ -77,7 +57,7 @@ const [featured] = POSTS;
       articleSchema({
         title: p.title,
         description: p.excerpt,
-        path: `/blog#${p.id}`,
+        path: `/blog/${p.id}`,
         datePublished: p.date,
         image: p.image,
       }),
@@ -94,62 +74,66 @@ const [featured] = POSTS;
   highlights={TOPICS.slice(0, 3)}
 />
 
-<section class="bg-background section-padding">
-  <Container>
-    <FadeIn>
-      <article class="group relative grid overflow-hidden rounded-md border border-border bg-card transition-[border-color,box-shadow] duration-300 hover:border-accent/40 hover:shadow-soft lg:grid-cols-12">
-        <div class="relative aspect-video overflow-hidden lg:col-span-6 lg:aspect-auto lg:min-h-95">
-          <img
-            src={featured.image}
-            alt={featured.title}
-            class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-105"
-          />
-        </div>
+{
+  featured && (
+    <section class="bg-background section-padding">
+      <Container>
+        <FadeIn>
+          <article class="group relative grid overflow-hidden rounded-md border border-border bg-card transition-[border-color,box-shadow] duration-300 hover:border-accent/40 hover:shadow-soft lg:grid-cols-12">
+            <div class="relative aspect-video overflow-hidden lg:col-span-6 lg:aspect-auto lg:min-h-95">
+              <img
+                src={featured.image}
+                alt={featured.title}
+                class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-105"
+              />
+            </div>
 
-        <div class="flex flex-col justify-center p-5 sm:p-8 lg:col-span-6 lg:p-12">
-          <div class="flex flex-wrap items-center gap-2.5 sm:gap-3">
-            <span class="rounded-full bg-accent px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-white sm:px-3.5 sm:py-1.5 sm:text-[12px]">
-              Latest
-            </span>
-            <span class="text-[11.5px] font-semibold uppercase tracking-[0.14em] text-accent sm:text-[12.5px]">
-              {featured.category}
-            </span>
-          </div>
+            <div class="flex flex-col justify-center p-5 sm:p-8 lg:col-span-6 lg:p-12">
+              <div class="flex flex-wrap items-center gap-2.5 sm:gap-3">
+                <span class="rounded-full bg-accent px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-white sm:px-3.5 sm:py-1.5 sm:text-[12px]">
+                  Latest
+                </span>
+                <span class="text-[11.5px] font-semibold uppercase tracking-[0.14em] text-accent sm:text-[12.5px]">
+                  {featured.category}
+                </span>
+              </div>
 
-          <h2 class="mt-3.5 text-[clamp(1.375rem,2vw+0.9rem,2.375rem)] font-bold leading-[1.15] tracking-[-0.02em] text-foreground sm:mt-5">
-            <a
-              href={`/blog#${featured.id}`}
-              class="transition-colors after:absolute after:inset-0 after:content-[''] group-hover:text-accent"
-            >
-              {featured.title}
-            </a>
-          </h2>
-          <p class="mt-2.5 max-w-[52ch] text-[14.5px] leading-[1.55] text-muted sm:mt-4 sm:text-[17.5px] sm:leading-[1.65]">
-            {featured.excerpt}
-          </p>
+              <h2 class="mt-3.5 text-[clamp(1.375rem,2vw+0.9rem,2.375rem)] font-bold leading-[1.15] tracking-[-0.02em] text-foreground sm:mt-5">
+                <a
+                  href={`/blog/${featured.id}`}
+                  class="transition-colors after:absolute after:inset-0 after:content-[''] group-hover:text-accent"
+                >
+                  {featured.title}
+                </a>
+              </h2>
+              <p class="mt-2.5 max-w-[52ch] text-[14.5px] leading-[1.55] text-muted sm:mt-4 sm:text-[17.5px] sm:leading-[1.65]">
+                {featured.excerpt}
+              </p>
 
-          <div class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[12.5px] text-muted sm:mt-6 sm:gap-x-4 sm:text-[13.5px]">
-            <time datetime={featured.date}>{formatDate(featured.date)}</time>
-            <span class="h-1 w-1 rounded-full bg-muted-light" />
-            <span>{featured.readingTime}</span>
-          </div>
+              <div class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[12.5px] text-muted sm:mt-6 sm:gap-x-4 sm:text-[13.5px]">
+                <time datetime={featured.date}>{formatDate(featured.date)}</time>
+                <span class="h-1 w-1 rounded-full bg-muted-light" />
+                <span>{featured.readingTime}</span>
+              </div>
 
-          <span class="mt-5 inline-flex w-fit items-center gap-1.5 text-[13.5px] font-semibold text-foreground transition-colors group-hover:text-accent sm:mt-7 sm:text-[14px]">
-            Read the article
-            <ArrowUpRight class="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </span>
-        </div>
-      </article>
-    </FadeIn>
-  </Container>
-</section>
+              <span class="mt-5 inline-flex w-fit items-center gap-1.5 text-[13.5px] font-semibold text-foreground transition-colors group-hover:text-accent sm:mt-7 sm:text-[14px]">
+                Read the article
+                <ArrowUpRight class="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </span>
+            </div>
+          </article>
+        </FadeIn>
+      </Container>
+    </section>
+  )
+}
 
 <section class="border-y border-border bg-card section-padding">
   <Container>
     <SectionIntro
       label="More Reading"
       title="Every article, by topic"
-      description="Three pieces so far, each written by the engineer who did the work it describes."
+      description={`${POSTS.length} pieces so far, each written by the engineer who did the work it describes.`}
       descriptionClass="max-w-[52ch]"
     />
 

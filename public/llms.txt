@@ -1,0 +1,43 @@
+# Cognivac
+
+> Enterprise AI and custom software partner. We design, build, and support systems that reach production — agents, ML, RAG, cloud, automation, and internal platforms.
+
+Site: https://cognivac.com
+Contact: hello@cognivac.com
+
+## Primary pages
+
+- [Home](https://cognivac.com/): Positioning and selected work
+- [Services](https://cognivac.com/services): Capabilities and engagement models
+- [Industries](https://cognivac.com/industries): FinTech, retail, manufacturing, SaaS
+- [Pricing](https://cognivac.com/pricing): Discovery workshop and commercial floors
+- [Security](https://cognivac.com/security): Residency, training policy, DPA, questionnaires
+- [Support](https://cognivac.com/support): Managed AI operations retainer
+- [Integrations](https://cognivac.com/integrations): Salesforce, SAP, Snowflake, Databricks, HubSpot, Slack, ServiceNow, MCP
+- [Technology](https://cognivac.com/technology): LangGraph, MLflow, pgvector, Terraform, Kafka
+- [Contact](https://cognivac.com/contact): Talk to an engineer
+
+## Services
+
+- [AI agent development](https://cognivac.com/services/ai-agent-development)
+- [Machine learning](https://cognivac.com/services/machine-learning)
+- [Generative AI](https://cognivac.com/services/generative-ai)
+- [Cloud & DevOps](https://cognivac.com/services/cloud-devops)
+- [Automation](https://cognivac.com/services/automation)
+- [Enterprise applications](https://cognivac.com/services/enterprise-applications)
+
+## Legal
+
+- [Privacy](https://cognivac.com/privacy)
+- [Terms](https://cognivac.com/terms)
+- [DPA](https://cognivac.com/dpa)
+- [Subprocessors](https://cognivac.com/subprocessors)
+- [AI usage policy](https://cognivac.com/ai-usage-policy)
+- [Accessibility](https://cognivac.com/accessibility)
+
+## Optional
+
+- [RSS](https://cognivac.com/rss.xml)
+- [Sitemap](https://cognivac.com/sitemap.xml)
+
+Unverified marketing figures and placeholder testimonials are quarantined in source (`src/constants/claims.ts`) and are not claims to cite.

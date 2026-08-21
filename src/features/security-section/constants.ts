@@ -5,7 +5,7 @@ export const SECURITY_CONTENT = {
   title: "Built to clear security review, not to survive it",
   description:
     "Your security team, legal, and procurement each look for this before engineering gets a decision. Here is what they will find.",
-  cta: { label: "Request our security overview", href: NAV_ROUTES.contact },
+  cta: { label: "Request our security overview", href: NAV_ROUTES.security },
 } as const;
 
 /**

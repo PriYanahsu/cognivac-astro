@@ -1,4 +1,5 @@
-import { NAV_ROUTES } from "@/constants/site";
+import { servicePath } from "@/constants/site";
+import { SERVICE_SLUGS } from "@/features/services/constants";
 
 /**
  * Wireframe slot 4 · Services — by problem, not tech.
@@ -32,7 +33,7 @@ export const SERVICE_OFFERS = [
     description:
       "Your product already has users. We add the intelligent part without you rebuilding what works or freezing the roadmap for two quarters.",
     icon: "Puzzle",
-    href: `${NAV_ROUTES.services}#machine-learning`,
+    href: servicePath(SERVICE_SLUGS["machine-learning"]),
     color: "#BFE3FF",
     image: "/images/solutions/ml-integration.webp",
     stats: [
@@ -47,7 +48,7 @@ export const SERVICE_OFFERS = [
     description:
       "The repetitive work that eats your team's week, handled end to end — with a person kept in the loop wherever the stakes are high.",
     icon: "Workflow",
-    href: `${NAV_ROUTES.services}#automation`,
+    href: servicePath(SERVICE_SLUGS.automation),
     color: "#E4DDFF",
     image: "/images/solutions/automation.webp",
     stats: [
@@ -62,11 +63,11 @@ export const SERVICE_OFFERS = [
     description:
       "Nothing exists yet. We take it from the first conversation to something real people are using every day, on web and on mobile.",
     icon: "Rocket",
-    href: `${NAV_ROUTES.services}#apps`,
+    href: servicePath(SERVICE_SLUGS.apps),
     color: "#FFE985",
     image: "/images/solutions/web-apps.webp",
     stats: [
-      { value: "99.9%", label: "uptime SLA" },
+      { value: "Owned", label: "by you at handover" },
       { value: "<1s", label: "page load" },
     ],
   },
@@ -77,7 +78,7 @@ export const SERVICE_OFFERS = [
     description:
       "Multi-step jobs that currently need a person to chase them between tools, teams, and inboxes — running on their own, around the clock.",
     icon: "Bot",
-    href: `${NAV_ROUTES.services}#ai-agents`,
+    href: servicePath(SERVICE_SLUGS["ai-agents"]),
     color: "#F5F0E8",
     image: "/images/solutions/ai-agents.webp",
     stats: [
@@ -94,7 +95,7 @@ export const SERVICE_OFFERS = [
     description:
       "Before anything intelligent works, the records underneath it have to be trustworthy. We do that groundwork first, not as a surprise halfway through.",
     icon: "Database",
-    href: `${NAV_ROUTES.services}#machine-learning`,
+    href: servicePath(SERVICE_SLUGS["machine-learning"]),
     color: "#D8EFC0",
     image: "/images/solutions/data.webp",
     stats: [
@@ -109,7 +110,7 @@ export const SERVICE_OFFERS = [
     description:
       "Something was built, it demoed well, and then it stopped. We find what is actually blocking it and take it the rest of the way.",
     icon: "LifeBuoy",
-    href: `${NAV_ROUTES.services}#ai-agents`,
+    href: servicePath(SERVICE_SLUGS["ai-agents"]),
     color: "#FFD8C7",
     image: "/images/solutions/pilot-rescue.webp",
     stats: [
@@ -126,7 +127,7 @@ export const SERVICE_OFFERS = [
     description:
       "Growth should not mean an emergency rebuild. We put it on foundations that stretch when demand does, without the bill climbing at the same rate.",
     icon: "Gauge",
-    href: `${NAV_ROUTES.services}#cloud`,
+    href: servicePath(SERVICE_SLUGS.cloud),
     color: "#C7F2E3",
     image: "/images/solutions/cloud.webp",
     stats: [
@@ -141,11 +142,11 @@ export const SERVICE_OFFERS = [
     description:
       "Uptime, fixes, and improvements handled by the same people who built it — so it does not quietly rot the month after go-live.",
     icon: "Activity",
-    href: `${NAV_ROUTES.services}#cloud`,
+    href: servicePath(SERVICE_SLUGS.cloud),
     color: "#FBD6E3",
     image: "/images/solutions/operate.webp",
     stats: [
-      { value: "99.9%", label: "uptime SLA" },
+      { value: "Owned", label: "by you at handover" },
       { value: "<24h", label: "response" },
     ],
   },
@@ -158,7 +159,7 @@ export const SERVICE_OFFERS = [
     description:
       "Extra senior engineers working inside your team and your process — without a hiring round, an agency markup, or a six-week ramp.",
     icon: "Users",
-    href: `${NAV_ROUTES.services}#apps`,
+    href: servicePath(SERVICE_SLUGS.apps),
     color: "#DDE4EA",
     image: "/images/solutions/team.webp",
     stats: [

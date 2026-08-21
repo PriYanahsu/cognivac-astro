@@ -12,7 +12,6 @@ export function organizationSchema() {
     sameAs: Object.values(SITE_CONFIG.social).map((profile) => profile.href),
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: SITE_CONFIG.phone,
       contactType: "sales",
       email: SITE_CONFIG.email,
     },
@@ -105,7 +104,7 @@ export function articleSchema(article: {
     url: `${SITE_CONFIG.url}${article.path}`,
     datePublished: article.datePublished,
     dateModified: article.dateModified ?? article.datePublished,
-    image: article.image ?? `${SITE_CONFIG.url}/images/og-default.svg`,
+    image: article.image ?? `${SITE_CONFIG.url}/images/og-default.png`,
     author: {
       "@type": "Organization",
       name: SITE_CONFIG.name,

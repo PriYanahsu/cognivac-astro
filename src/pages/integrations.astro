@@ -1,0 +1,55 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import JsonLd from "@/lib/seo/JsonLd.astro";
+import { breadcrumbSchema, createPageMetadata } from "@/lib/seo";
+import PageHero from "@/components/shared/PageHero.astro";
+import Container from "@/components/shared/Container.astro";
+import FadeIn from "@/components/animations/FadeIn.astro";
+import CtaSection from "@/features/cta-section/components/CtaSection.astro";
+import { NAV_ROUTES } from "@/constants/site";
+import { INTEGRATIONS_PAGE, INTEGRATIONS } from "@/features/integrations/constants";
+
+const metadata = createPageMetadata({
+  title: "Integrations",
+  description: INTEGRATIONS_PAGE.description,
+  path: NAV_ROUTES.integrations,
+});
+---
+
+<Layout metadata={metadata}>
+  <JsonLd
+    data={breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: "Integrations", path: NAV_ROUTES.integrations },
+    ])}
+  />
+
+  <PageHero
+    label={INTEGRATIONS_PAGE.label}
+    title={INTEGRATIONS_PAGE.title}
+    description={INTEGRATIONS_PAGE.description}
+    breadcrumbs={[{ label: "Integrations" }]}
+    primaryCta={{ label: "Talk through your stack", href: NAV_ROUTES.contact }}
+    secondaryCta={{ label: "Technology", href: NAV_ROUTES.technology }}
+    highlights={[...INTEGRATIONS_PAGE.highlights]}
+  />
+
+  <section class="bg-background section-padding">
+    <Container>
+      <div class="card-grid md:grid-cols-2">
+        {
+          INTEGRATIONS.map((item, i) => (
+            <FadeIn delay={0.05 * (i + 1)} class="h-full">
+              <article class="flex h-full flex-col rounded-md border border-border bg-card p-5 sm:p-8">
+                <h2 class="text-card-title text-foreground">{item.name}</h2>
+                <p class="mt-3 copy-md">{item.body}</p>
+              </article>
+            </FadeIn>
+          ))
+        }
+      </div>
+    </Container>
+  </section>
+
+  <CtaSection />
+</Layout>

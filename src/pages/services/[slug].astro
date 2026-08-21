@@ -1,0 +1,120 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import JsonLd from "@/lib/seo/JsonLd.astro";
+import { breadcrumbSchema, createPageMetadata } from "@/lib/seo";
+import PageHero from "@/components/shared/PageHero.astro";
+import Container from "@/components/shared/Container.astro";
+import SectionIntro from "@/components/shared/SectionIntro.astro";
+import FadeIn from "@/components/animations/FadeIn.astro";
+import CtaSection from "@/features/cta-section/components/CtaSection.astro";
+import ChipCloud from "@/components/shared/ChipCloud.astro";
+import { NAV_ROUTES } from "@/constants/site";
+import { SERVICE_PAGES, DELIVERABLES } from "@/features/services/constants";
+import type { ServicePage } from "@/features/services/constants";
+
+export function getStaticPaths() {
+  return SERVICE_PAGES.map((page) => ({
+    params: { slug: page.slug },
+    props: { page },
+  }));
+}
+
+interface Props {
+  page: ServicePage;
+}
+
+const { page } = Astro.props;
+const deliverables = DELIVERABLES[page.id] ?? [];
+
+const metadata = createPageMetadata({
+  title: page.title,
+  description: page.description,
+  path: `/services/${page.slug}`,
+  image: "/images/og/services.png",
+});
+---
+
+<Layout metadata={metadata}>
+  <JsonLd
+    data={breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: "Services", path: NAV_ROUTES.services },
+      { name: page.title, path: `/services/${page.slug}` },
+    ])}
+  />
+
+  <PageHero
+    label={page.title}
+    title={page.heroTitle}
+    description={page.description}
+    breadcrumbs={[
+      { label: "Services", href: NAV_ROUTES.services },
+      { label: page.title },
+    ]}
+    primaryCta={{ label: "Discuss this capability", href: NAV_ROUTES.contact }}
+    secondaryCta={{ label: "All services", href: NAV_ROUTES.services }}
+  />
+
+  <section class="bg-background section-padding">
+    <Container>
+      <div class="grid gap-10 lg:grid-cols-12">
+        <SectionIntro
+          label="The failure mode"
+          title="Why this work exists"
+          class="lg:col-span-4"
+        />
+        <FadeIn class="lg:col-span-8">
+          <p class="text-[17px] leading-[1.65] text-muted sm:text-[18.5px]">
+            {page.problem}
+          </p>
+        </FadeIn>
+      </div>
+    </Container>
+  </section>
+
+  <section class="border-y border-border bg-card section-padding">
+    <Container>
+      <SectionIntro label="How we run it" title="Approach" />
+      <ol class="mt-8 grid gap-4 md:grid-cols-3">
+        {
+          page.approach.map((step, i) => (
+            <FadeIn delay={0.08 * (i + 1)} class="h-full">
+              <li class="flex h-full flex-col rounded-md border border-border bg-background p-5 sm:p-7">
+                <span class="text-[11px] font-bold tracking-[0.16em] text-accent">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <p class="mt-3 text-[15px] leading-[1.6] text-foreground/80">{step}</p>
+              </li>
+            </FadeIn>
+          ))
+        }
+      </ol>
+    </Container>
+  </section>
+
+  <section class="bg-background section-padding">
+    <Container>
+      <div class="grid gap-8 lg:grid-cols-2">
+        <div>
+          <SectionIntro label="What ships" title="You can hold us to these" />
+          <ul class="mt-6 space-y-3">
+            {
+              [...deliverables, ...page.outcomes].map((line) => (
+                <li class="flex gap-2.5 text-[15px] leading-[1.55] text-foreground/80">
+                  <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                  {line}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        <div>
+          <SectionIntro label="Typical stack" title="Tools, not a lock-in" />
+          <ChipCloud items={[...page.stack]} class="mt-6" />
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <CtaSection />
+</Layout>

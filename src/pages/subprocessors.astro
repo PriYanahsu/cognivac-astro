@@ -1,0 +1,23 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import JsonLd from "@/lib/seo/JsonLd.astro";
+import { breadcrumbSchema, createPageMetadata } from "@/lib/seo";
+import LegalDoc from "@/features/legal/LegalDoc.astro";
+import { SUBPROCESSORS } from "@/features/legal/constants";
+
+const metadata = createPageMetadata({
+  title: SUBPROCESSORS.title,
+  description: SUBPROCESSORS.description,
+  path: SUBPROCESSORS.path,
+});
+---
+
+<Layout metadata={metadata}>
+  <JsonLd
+    data={breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: SUBPROCESSORS.title, path: SUBPROCESSORS.path },
+    ])}
+  />
+  <LegalDoc doc={SUBPROCESSORS} />
+</Layout>

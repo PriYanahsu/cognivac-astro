@@ -10,67 +10,19 @@ import FadeIn from "@/components/animations/FadeIn.astro";
 import { SERVICES } from "@/features/home/constants/content";
 import { PROCESS_STEPS } from "@/features/process-section/constants";
 import CtaSection from "@/features/cta-section/components/CtaSection.astro";
+import HashRedirect from "@/components/shared/HashRedirect.astro";
 import { NAV_ROUTES } from "@/constants/site";
+import {
+  DELIVERABLES,
+  ENGAGEMENT_MODELS,
+  SERVICE_ANCHOR_REDIRECTS,
+} from "./constants";
 
 /** Port of features/services/index.tsx. */
-
-const DELIVERABLES: Record<string, readonly string[]> = {
-  "ai-agents": [
-    "Agent architecture and tool design",
-    "Evaluation harness and guardrails",
-    "Human-in-the-loop escalation paths",
-  ],
-  "machine-learning": [
-    "Feature pipelines and training infrastructure",
-    "MLOps: versioning, rollback, monitoring",
-    "Drift detection and retraining cadence",
-  ],
-  "generative-ai": [
-    "RAG retrieval with permission scoping",
-    "Prompt and output governance",
-    "Grounding, citations, and audit trails",
-  ],
-  cloud: [
-    "Infrastructure as code and CI/CD",
-    "Multi-environment and cost controls",
-    "Observability and incident runbooks",
-  ],
-  automation: [
-    "Process mapping and exception design",
-    "Integration across ERP, CRM, and internal tools",
-    "Rollout with fallback to manual paths",
-  ],
-  apps: [
-    "Web, mobile, and internal platforms",
-    "Design system and accessibility",
-    "Auth, roles, and audit logging",
-  ],
-};
-
-const ENGAGEMENT_MODELS = [
-  {
-    id: "fixed",
-    title: "Fixed-scope project",
-    description:
-      "A defined outcome, milestone schedule, and fixed commercial envelope. Best when the problem is well understood.",
-    fit: "Clear brief, firm budget",
-  },
-  {
-    id: "pod",
-    title: "Dedicated pod",
-    description:
-      "A standing team of engineers plus a named PM working your roadmap sprint over sprint, with scope that can flex.",
-    fit: "Multi-quarter programs",
-  },
-  {
-    id: "augmentation",
-    title: "Team augmentation",
-    description:
-      "Senior engineers embedded into your existing squads, working your process, your board, your standards.",
-    fit: "Capacity or skill gap",
-  },
-];
 ---
+
+<HashRedirect map={SERVICE_ANCHOR_REDIRECTS} />
+
 
 <JsonLd
   data={breadcrumbSchema([
@@ -139,10 +91,10 @@ const ENGAGEMENT_MODELS = [
               )}
 
               <a
-                href={NAV_ROUTES.contact}
+                href={service.href}
                 class="mt-auto inline-flex items-center gap-1.5 pt-5 text-[13.5px] font-semibold text-foreground transition-colors hover:text-accent sm:pt-6"
               >
-                Discuss this capability
+                Open this capability
                 <ArrowUpRight class="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </a>
             </article>
@@ -213,6 +165,9 @@ const ENGAGEMENT_MODELS = [
                 {model.title}
               </h3>
               <p class="mt-2.5 copy-md sm:mt-3">{model.description}</p>
+              <p class="mt-auto pt-5 text-[14px] font-semibold text-foreground">
+                {model.band}
+              </p>
             </div>
           </FadeIn>
         ))

@@ -5,4 +5,5 @@ export const contactMetadata = createPageMetadata({
   description:
     "Talk with the Cognivac team about custom software, AI integration, machine learning platforms, and long-term engineering partnership. We reply within one business day.",
   path: "/contact",
+  image: "/images/og/contact.png",
 });

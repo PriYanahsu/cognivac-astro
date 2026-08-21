@@ -10,4 +10,5 @@ export const aboutMetadata = createPageMetadata({
   description:
     "Cognivac is a service-based software development company with AI integration at its core — we design, build, and support custom systems as a long-term engineering partner.",
   path: "/about",
+  image: "/images/og/about.png",
 });

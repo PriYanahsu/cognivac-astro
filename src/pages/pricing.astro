@@ -1,0 +1,151 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import JsonLd from "@/lib/seo/JsonLd.astro";
+import { breadcrumbSchema, createPageMetadata, faqSchema } from "@/lib/seo";
+import PageHero from "@/components/shared/PageHero.astro";
+import Container from "@/components/shared/Container.astro";
+import SectionIntro from "@/components/shared/SectionIntro.astro";
+import FadeIn from "@/components/animations/FadeIn.astro";
+import FaqAccordion from "@/components/shared/FaqAccordion.astro";
+import CtaSection from "@/features/cta-section/components/CtaSection.astro";
+import { NAV_ROUTES } from "@/constants/site";
+import {
+  PRICING_PAGE,
+  DISCOVERY_WORKSHOP,
+  PRICE_MODELS,
+  PRICE_DRIVERS,
+  PRICING_FAQ,
+} from "@/features/pricing/constants";
+
+const metadata = createPageMetadata({
+  title: "Pricing",
+  description: PRICING_PAGE.description,
+  path: NAV_ROUTES.pricing,
+  image: "/images/og/pricing.png",
+});
+---
+
+<Layout metadata={metadata}>
+  <JsonLd
+    data={[
+      breadcrumbSchema([
+        { name: "Home", path: "/" },
+        { name: "Pricing", path: NAV_ROUTES.pricing },
+      ]),
+      faqSchema(PRICING_FAQ.map((item) => ({ question: item.question, answer: item.answer }))),
+    ]}
+  />
+
+  <PageHero
+    label={PRICING_PAGE.label}
+    title={PRICING_PAGE.title}
+    description={PRICING_PAGE.description}
+    breadcrumbs={[{ label: "Pricing" }]}
+    primaryCta={{ label: "Scope a workshop", href: NAV_ROUTES.contact }}
+    secondaryCta={{ label: "How delivery runs", href: NAV_ROUTES.services }}
+    highlights={[...PRICING_PAGE.highlights]}
+  />
+
+  <section class="bg-background section-padding">
+    <Container>
+      <div class="grid gap-8 lg:grid-cols-12">
+        <SectionIntro
+          label="Start here"
+          title={DISCOVERY_WORKSHOP.title}
+          description={DISCOVERY_WORKSHOP.description}
+          class="lg:col-span-5"
+          titleClass="max-w-[16ch]"
+        />
+        <FadeIn class="lg:col-span-7">
+          <div class="rounded-md border border-border bg-card p-6 sm:p-10">
+            <p class="text-[12px] font-semibold uppercase tracking-[0.14em] text-accent">
+              {DISCOVERY_WORKSHOP.duration}
+            </p>
+            <p class="mt-3 text-[clamp(2rem,4vw,3.25rem)] font-bold tracking-[-0.03em] text-foreground">
+              {DISCOVERY_WORKSHOP.fee}
+            </p>
+            <ul class="mt-6 space-y-3">
+              {
+                DISCOVERY_WORKSHOP.includes.map((line) => (
+                  <li class="flex gap-2.5 text-[14.5px] leading-[1.55] text-foreground/80">
+                    <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                    {line}
+                  </li>
+                ))
+              }
+            </ul>
+            <p class="mt-6 text-[13px] text-muted">{PRICING_PAGE.footnote}</p>
+          </div>
+        </FadeIn>
+      </div>
+    </Container>
+  </section>
+
+  <section class="border-y border-border bg-card section-padding">
+    <Container>
+      <SectionIntro
+        label="Then the build"
+        title="Three commercial models, with a published floor"
+        description="Teams often start fixed-scope and move to a pod once the roadmap extends past the first release."
+        titleClass="max-w-[22ch]"
+      />
+      <div class="card-grid md:grid-cols-3">
+        {
+          PRICE_MODELS.map((model, i) => (
+            <FadeIn delay={0.08 * (i + 1)} class="h-full">
+              <div class="flex h-full flex-col rounded-md border border-border bg-background p-5 sm:p-8">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent">
+                  {model.fit}
+                </p>
+                <h2 class="text-card-title mt-3 text-foreground">{model.title}</h2>
+                <p class="mt-2.5 copy-md">{model.description}</p>
+                <p class="mt-auto pt-6 text-[18px] font-bold tracking-[-0.02em] text-foreground">
+                  {model.band}
+                </p>
+              </div>
+            </FadeIn>
+          ))
+        }
+      </div>
+    </Container>
+  </section>
+
+  <section class="bg-background section-padding">
+    <Container>
+      <SectionIntro
+        label="What moves the number"
+        title="Four things that change the price"
+        titleClass="max-w-[18ch]"
+      />
+      <div class="card-grid md:grid-cols-2">
+        {
+          PRICE_DRIVERS.map((item, i) => (
+            <FadeIn delay={0.06 * (i + 1)} class="h-full">
+              <article class="flex h-full flex-col rounded-md border border-border bg-card p-5 sm:p-8">
+                <h2 class="text-card-title text-foreground">{item.title}</h2>
+                <p class="mt-3 copy-md">{item.body}</p>
+              </article>
+            </FadeIn>
+          ))
+        }
+      </div>
+    </Container>
+  </section>
+
+  <section class="bg-lavender/30 section-padding">
+    <Container>
+      <div class="grid gap-8 lg:grid-cols-12">
+        <SectionIntro
+          label="Pricing FAQ"
+          title="Before you write"
+          class="lg:col-span-4"
+        />
+        <FadeIn class="lg:col-span-8">
+          <FaqAccordion items={[...PRICING_FAQ]} idPrefix="pricing-faq" />
+        </FadeIn>
+      </div>
+    </Container>
+  </section>
+
+  <CtaSection />
+</Layout>

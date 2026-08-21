@@ -1,46 +1,45 @@
 ---
-import { Check } from "@lucide/astro";
 import Input from "@/components/ui/Input.astro";
 import Label from "@/components/ui/Label.astro";
 import GradientButton from "@/components/shared/GradientButton.astro";
+import { NAV_ROUTES } from "@/constants/site";
+import { ROLES } from "@/features/careers/constants";
 
-/**
- * Port of features/contact/components/contact-form.tsx.
- * Success replaces the form. Validation re-checks as the field is corrected.
- */
+interface Props {
+  /** Hidden field so a gated resource request lands in the same inbox. */
+  resource?: string;
+  submitLabel?: string;
+}
+
+const { resource, submitLabel = "Send message" } = Astro.props;
+const roleIds = ROLES.map((role) => role.id).join(",");
 ---
 
-<div data-contact-wrap>
-  <div
-    data-contact-success-panel
-    hidden
-    role="status"
-    class="flex h-full min-h-80 flex-col items-center justify-center rounded-md border border-border bg-card p-8 text-center shadow-soft"
-  >
-    <span class="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-white">
-      <Check class="h-6 w-6" />
-    </span>
-    <h3 class="mt-5 text-[20px] font-bold tracking-[-0.02em] text-foreground sm:text-[23px]">
-      Message sent
-    </h3>
-    <p class="mt-2.5 max-w-[38ch] text-[14.5px] leading-[1.55] text-muted sm:text-[15.5px]">
-      An engineer reads it, not a routing form. You will hear back within one
-      business day.
-    </p>
-    <button
-      type="button"
-      data-contact-again
-      class="mt-6 text-[13.5px] font-semibold text-accent underline-offset-4 hover:underline"
-    >
-      Send another
-    </button>
-  </div>
-
+<div data-contact-wrap data-thank-you={NAV_ROUTES.thankYou} data-role-ids={roleIds}>
   <form
     data-contact-form
-    class="space-y-4 rounded-md border border-border bg-card p-5 shadow-soft sm:space-y-5 sm:p-8"
+    class="relative space-y-4 rounded-md border border-border bg-card p-5 shadow-soft sm:space-y-5 sm:p-8"
     novalidate
+    enctype="multipart/form-data"
   >
+    <input
+      type="text"
+      name="website"
+      tabindex="-1"
+      autocomplete="off"
+      aria-hidden="true"
+      class="absolute -left-[9999px] h-0 w-0 opacity-0"
+    />
+    <input type="hidden" name="role" id="contact-role" value="" />
+    {resource && <input type="hidden" name="resource" value={resource} />}
+
+    <div data-role-banner hidden class="rounded-md border border-accent/25 bg-lavender/50 px-4 py-3">
+      <p class="text-[12px] font-semibold uppercase tracking-[0.14em] text-accent">
+        Applying
+      </p>
+      <p data-role-label class="mt-1 text-[14.5px] font-semibold text-foreground"></p>
+    </div>
+
     <div class="grid gap-4 sm:grid-cols-2 sm:gap-5">
       <div class="space-y-2">
         <Label for="name">Full name</Label>
@@ -99,11 +98,27 @@ import GradientButton from "@/components/shared/GradientButton.astro";
       </p>
     </div>
 
+    <div data-resume-field hidden class="space-y-2">
+      <Label for="resume">Resume (PDF or Word, 5 MB max)</Label>
+      <Input
+        id="resume"
+        name="resume"
+        type="file"
+        accept=".pdf,.doc,.docx,application/pdf"
+      />
+      <p
+        data-error-for="resume"
+        class="hidden flex items-center gap-1.5 overflow-hidden text-[12.5px] font-medium text-error"
+        role="alert"
+      >
+      </p>
+    </div>
+
     <GradientButton
       type="submit"
       class="h-12 min-h-12 w-full justify-center"
     >
-      <span data-submit-label>Send message</span>
+      <span data-submit-label>{submitLabel}</span>
     </GradientButton>
 
     <p
@@ -121,7 +136,10 @@ import GradientButton from "@/components/shared/GradientButton.astro";
 </div>
 
 <script>
+  import { ROLES } from "@/features/careers/constants";
+
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const MAX_RESUME = 5 * 1024 * 1024;
 
   const RULES: Record<string, (value: string) => string | null> = {
     name: (v) => (v.trim().length >= 2 ? null : "Name is required"),
@@ -139,20 +157,35 @@ import GradientButton from "@/components/shared/GradientButton.astro";
         wrap.dataset.contactReady = "true";
 
         const form = wrap.querySelector<HTMLFormElement>("[data-contact-form]");
-        const success = wrap.querySelector<HTMLElement>(
-          "[data-contact-success-panel]",
-        );
-        const again = wrap.querySelector<HTMLButtonElement>(
-          "[data-contact-again]",
-        );
-        if (!form || !success) return;
+        if (!form) return;
 
+        const thankYou = wrap.dataset.thankYou ?? "/thank-you";
         const label = form.querySelector<HTMLElement>("[data-submit-label]");
         const submitBtn = form.querySelector<HTMLButtonElement>(
           'button[type="submit"]',
         );
         const failure = form.querySelector<HTMLElement>("[data-contact-error]");
+        const roleInput = form.querySelector<HTMLInputElement>("#contact-role");
+        const resumeField = form.querySelector<HTMLElement>("[data-resume-field]");
+        const roleBanner = wrap.querySelector<HTMLElement>("[data-role-banner]");
+        const roleLabel = wrap.querySelector<HTMLElement>("[data-role-label]");
         const touched = new Set<string>();
+
+        const params = new URLSearchParams(window.location.search);
+        const roleId = params.get("role") ?? "";
+        const known = ROLES.find((role) => role.id === roleId);
+        if (known && roleInput) {
+          roleInput.value = known.id;
+          if (roleBanner && roleLabel) {
+            roleBanner.hidden = false;
+            roleLabel.textContent = known.title;
+          }
+          resumeField?.removeAttribute("hidden");
+          const message = form.querySelector<HTMLTextAreaElement>("#message");
+          if (message && !message.value) {
+            message.value = `I would like to apply for ${known.title}.`;
+          }
+        }
 
         const showError = (field: string, message: string | null) => {
           const node = form.querySelector<HTMLElement>(
@@ -177,9 +210,7 @@ import GradientButton from "@/components/shared/GradientButton.astro";
         const validateField = (field: string) => {
           const rule = RULES[field];
           if (!rule) return true;
-          const value = String(
-            new FormData(form).get(field) ?? "",
-          );
+          const value = String(new FormData(form).get(field) ?? "");
           const message = rule(value);
           showError(field, message);
           return !message;
@@ -199,26 +230,26 @@ import GradientButton from "@/components/shared/GradientButton.astro";
           validateField(name);
         });
 
-        again?.addEventListener("click", () => {
-          success.hidden = true;
-          form.hidden = false;
-        });
-
         form.addEventListener("submit", async (event) => {
           event.preventDefault();
           failure?.classList.add("hidden");
 
           const data = new FormData(form);
-          const payload: Record<string, string> = {};
           let valid = true;
 
-          for (const [field, rule] of Object.entries(RULES)) {
-            const value = String(data.get(field) ?? "");
-            payload[field] = value;
+          for (const field of Object.keys(RULES)) {
             touched.add(field);
-            const message = rule(value);
-            showError(field, message);
-            if (message) valid = false;
+            if (!validateField(field)) valid = false;
+          }
+
+          const resume = data.get("resume");
+          if (resume instanceof File && resume.size > 0) {
+            if (resume.size > MAX_RESUME) {
+              showError("resume", "Resume must be 5 MB or smaller");
+              valid = false;
+            } else {
+              showError("resume", null);
+            }
           }
 
           if (!valid) return;
@@ -229,19 +260,18 @@ import GradientButton from "@/components/shared/GradientButton.astro";
           try {
             const res = await fetch("/api/contact", {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(payload),
+              body: data,
             });
             if (!res.ok) throw new Error("Failed");
 
-            form.reset();
-            Object.keys(RULES).forEach((field) => showError(field, null));
-            touched.clear();
-            form.hidden = true;
-            success.hidden = false;
+            const next = new URL(thankYou, window.location.origin);
+            const role = String(data.get("role") ?? "");
+            const resource = String(data.get("resource") ?? "");
+            if (role) next.searchParams.set("role", role);
+            if (resource) next.searchParams.set("resource", resource);
+            window.location.assign(next.pathname + next.search);
           } catch {
             failure?.classList.remove("hidden");
-          } finally {
             if (label) label.textContent = "Send message";
             if (submitBtn) submitBtn.disabled = false;
           }

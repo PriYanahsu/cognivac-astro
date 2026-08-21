@@ -28,7 +28,7 @@ export function createPageMetadata({
   title,
   description,
   path = "",
-  image = "/images/og-default.svg",
+  image = "/images/og-default.png",
   noIndex = false,
 }: PageMetadataInput): PageMetadata {
   const url = `${SITE_CONFIG.url}${path}`;

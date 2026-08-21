@@ -17,9 +17,9 @@ export const TEAM_PAGE = {
   },
   bench: {
     label: "The Bench",
-    title: "Specialists, grouped by what they are accountable for",
+    title: "Disciplines on a pod, not a stock bench",
     description:
-      "An engagement draws two to six of these people. They stay on it start to finish, so the context you paid to build never has to be rebuilt for a new face.",
+      "We do not publish a roster of names we cannot put on a call. An engagement draws two to six senior people across these disciplines; you meet them in discovery, and they stay through handover.",
   },
   staffing: {
     label: "How We Staff",

@@ -11,47 +11,20 @@ import FadeIn from "@/components/animations/FadeIn.astro";
 import { INDUSTRIES } from "@/features/home/constants/content";
 import { INDUSTRY_DETAILS } from "@/features/industries-showcase/constants";
 import CtaSection from "@/features/cta-section/components/CtaSection.astro";
+import HashRedirect from "@/components/shared/HashRedirect.astro";
 import { NAV_ROUTES } from "@/constants/site";
 import { cn } from "@/lib/utils";
+import {
+  ALSO_SERVED,
+  INDUSTRY_ANCHOR_REDIRECTS,
+  SECTOR_WORK,
+} from "./constants";
 
 /** Port of features/industries/index.tsx. */
-
-const SECTOR_WORK: Record<string, readonly string[]> = {
-  fintech: [
-    "Real-time fraud and risk decisioning",
-    "KYC/AML document intelligence",
-    "Core banking and payment rail integration",
-  ],
-  retail: [
-    "Demand forecasting at SKU and store level",
-    "Customer intelligence and personalization",
-    "Inventory and supply chain optimization",
-  ],
-  manufacturing: [
-    "Predictive maintenance on sensor streams",
-    "Computer-vision quality inspection",
-    "MES and plant-floor system integration",
-  ],
-  saas: [
-    "In-product AI features and copilots",
-    "Usage intelligence and churn modelling",
-    "Multi-tenant platform modernization",
-  ],
-};
-
-const ALSO_SERVED = [
-  "Healthcare",
-  "Logistics",
-  "Insurance",
-  "Real Estate",
-  "EdTech",
-  "Energy",
-  "Media & Entertainment",
-  "Travel & Hospitality",
-  "Telecommunications",
-  "Professional Services",
-];
 ---
+
+<HashRedirect map={INDUSTRY_ANCHOR_REDIRECTS} />
+
 
 <JsonLd
   data={breadcrumbSchema([
@@ -67,7 +40,7 @@ const ALSO_SERVED = [
   breadcrumbs={[{ label: "Industries" }]}
   primaryCta={{ label: "Talk to a domain lead", href: NAV_ROUTES.contact }}
   secondaryCta={{ label: "Browse our work", href: NAV_ROUTES.caseStudies }}
-  highlights={["25+ industries served", "Regulated-sector experience"]}
+  highlights={["Regulated-sector experience", "Systems of record, not slides"]}
 />
 
 <section class="bg-background section-padding">
@@ -157,10 +130,10 @@ const ALSO_SERVED = [
                 )}
 
                 <a
-                  href={NAV_ROUTES.contact}
+                  href={industry.href}
                   class="mt-auto inline-flex items-center gap-1.5 pt-6 text-[13.5px] font-semibold text-foreground transition-colors hover:text-accent sm:pt-7"
                 >
-                  Discuss {industry.title.toLowerCase()} work
+                  {industry.title} in detail
                   <ArrowUpRight class="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </a>
               </div>

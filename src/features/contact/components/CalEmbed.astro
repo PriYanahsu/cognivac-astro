@@ -1,0 +1,44 @@
+---
+import { SITE_CONFIG } from "@/constants/site";
+
+const calUrl = SITE_CONFIG.calUrl;
+---
+
+{
+  calUrl ? (
+    <div
+      id="book"
+      class="scroll-mt-28 overflow-hidden rounded-md border border-border bg-card shadow-soft"
+    >
+      <iframe
+        src={`${calUrl}${calUrl.includes("?") ? "&" : "?"}embed=true`}
+        title="Schedule a consultation"
+        class="h-[720px] w-full border-0"
+        loading="lazy"
+      />
+    </div>
+  ) : (
+    <div
+      id="book"
+      class="rounded-md border border-border bg-card p-6 shadow-soft sm:p-8"
+    >
+      <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent">
+        Prefer a calendar
+      </p>
+      <h3 class="mt-2 text-[18px] font-bold tracking-[-0.02em] text-foreground sm:text-[21px]">
+        A 30-minute technical discussion
+      </h3>
+      <p class="mt-2.5 text-[14.5px] leading-[1.55] text-muted sm:text-[15.5px]">
+        No pitch deck. Send a few times that work to{" "}
+        <a
+          href={`mailto:${SITE_CONFIG.email}?subject=Consultation%20times`}
+          class="font-semibold text-foreground underline underline-offset-4 hover:text-accent"
+        >
+          {SITE_CONFIG.email}
+        </a>
+        {" "}and we will send a hold. Set{" "}
+        <code class="text-[13px]">PUBLIC_CAL_URL</code> to embed Cal.com here.
+      </p>
+    </div>
+  )
+}

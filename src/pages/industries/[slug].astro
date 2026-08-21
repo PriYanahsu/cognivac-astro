@@ -1,0 +1,108 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import JsonLd from "@/lib/seo/JsonLd.astro";
+import { breadcrumbSchema, createPageMetadata } from "@/lib/seo";
+import PageHero from "@/components/shared/PageHero.astro";
+import Container from "@/components/shared/Container.astro";
+import SectionIntro from "@/components/shared/SectionIntro.astro";
+import FadeIn from "@/components/animations/FadeIn.astro";
+import ChipCloud from "@/components/shared/ChipCloud.astro";
+import CtaSection from "@/features/cta-section/components/CtaSection.astro";
+import { NAV_ROUTES } from "@/constants/site";
+import { INDUSTRY_PAGES, SECTOR_WORK } from "@/features/industries/constants";
+import { INDUSTRY_DETAILS } from "@/features/industries-showcase/constants";
+import type { IndustryPage } from "@/features/industries/constants";
+
+export function getStaticPaths() {
+  return INDUSTRY_PAGES.map((page) => ({
+    params: { slug: page.slug },
+    props: { page },
+  }));
+}
+
+interface Props {
+  page: IndustryPage;
+}
+
+const { page } = Astro.props;
+const typical = SECTOR_WORK[page.id] ?? page.typical;
+
+const metadata = createPageMetadata({
+  title: page.title,
+  description: page.description,
+  path: `/industries/${page.slug}`,
+  image: "/images/og/industries.png",
+});
+---
+
+<Layout metadata={metadata}>
+  <JsonLd
+    data={breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: "Industries", path: NAV_ROUTES.industries },
+      { name: page.title, path: `/industries/${page.slug}` },
+    ])}
+  />
+
+  <PageHero
+    label={page.title}
+    title={page.heroTitle}
+    description={page.description}
+    breadcrumbs={[
+      { label: "Industries", href: NAV_ROUTES.industries },
+      { label: page.title },
+    ]}
+    primaryCta={{ label: `Discuss ${page.title} work`, href: NAV_ROUTES.contact }}
+    secondaryCta={{ label: "All industries", href: NAV_ROUTES.industries }}
+  />
+
+  <section class="bg-background section-padding">
+    <Container>
+      <div class="grid gap-10 lg:grid-cols-12">
+        <SectionIntro
+          label="The constraint"
+          title="What is actually hard here"
+          class="lg:col-span-4"
+        />
+        <FadeIn class="lg:col-span-8 space-y-4">
+          <p class="text-[17px] leading-[1.65] text-muted sm:text-[18.5px]">
+            {page.regulation}
+          </p>
+          {
+            INDUSTRY_DETAILS[page.id] && (
+              <p class="border-l-2 border-accent pl-4 text-[15px] font-medium text-accent">
+                {INDUSTRY_DETAILS[page.id]}
+              </p>
+            )
+          }
+        </FadeIn>
+      </div>
+    </Container>
+  </section>
+
+  <section class="border-y border-border bg-card section-padding">
+    <Container>
+      <SectionIntro label="Typical work" title="What engagements look like" />
+      <ul class="mt-8 grid gap-4 md:grid-cols-3">
+        {
+          typical.map((line, i) => (
+            <FadeIn delay={0.08 * (i + 1)} class="h-full">
+              <li class="h-full rounded-md border border-border bg-background p-5 text-[15px] leading-[1.55] text-foreground/80 sm:p-7">
+                {line}
+              </li>
+            </FadeIn>
+          ))
+        }
+      </ul>
+    </Container>
+  </section>
+
+  <section class="bg-background section-padding">
+    <Container>
+      <SectionIntro label="Systems" title="Where it has to live" />
+      <ChipCloud items={[...page.systems]} class="mt-6" />
+    </Container>
+  </section>
+
+  <CtaSection />
+</Layout>

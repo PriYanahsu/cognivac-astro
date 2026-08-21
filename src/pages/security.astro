@@ -1,0 +1,88 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import JsonLd from "@/lib/seo/JsonLd.astro";
+import { breadcrumbSchema, createPageMetadata } from "@/lib/seo";
+import PageHero from "@/components/shared/PageHero.astro";
+import Container from "@/components/shared/Container.astro";
+import SectionIntro from "@/components/shared/SectionIntro.astro";
+import FadeIn from "@/components/animations/FadeIn.astro";
+import CtaSection from "@/features/cta-section/components/CtaSection.astro";
+import SecuritySection from "@/features/security-section/components/SecuritySection.astro";
+import { NAV_ROUTES } from "@/constants/site";
+import { SECURITY_PAGE, SECURITY_TOPICS, SECURITY_ACTIONS } from "@/features/security/constants";
+
+const metadata = createPageMetadata({
+  title: "Security",
+  description: SECURITY_PAGE.description,
+  path: NAV_ROUTES.security,
+  image: "/images/og/security.png",
+});
+---
+
+<Layout metadata={metadata}>
+  <JsonLd
+    data={breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: "Security", path: NAV_ROUTES.security },
+    ])}
+  />
+
+  <PageHero
+    label={SECURITY_PAGE.label}
+    title={SECURITY_PAGE.title}
+    description={SECURITY_PAGE.description}
+    breadcrumbs={[{ label: "Security" }]}
+    primaryCta={{ label: "Request a questionnaire review", href: `${NAV_ROUTES.contact}?resource=security-questionnaire` }}
+    secondaryCta={{ label: "Read the DPA", href: NAV_ROUTES.dpa }}
+    highlights={[...SECURITY_PAGE.highlights]}
+  />
+
+  <SecuritySection />
+
+  <section class="bg-background section-padding">
+    <Container>
+      <SectionIntro
+        label="In Detail"
+        title="The questions that stall a deal if they have no owner"
+        titleClass="max-w-[22ch]"
+      />
+      <div class="card-grid md:grid-cols-2">
+        {
+          SECURITY_TOPICS.map((topic, i) => (
+            <FadeIn delay={0.06 * (i + 1)} class="h-full">
+              <article class="flex h-full flex-col rounded-md border border-border bg-card p-5 sm:p-8">
+                <h2 class="text-card-title text-foreground">{topic.title}</h2>
+                <p class="mt-3 copy-md">{topic.body}</p>
+              </article>
+            </FadeIn>
+          ))
+        }
+      </div>
+    </Container>
+  </section>
+
+  <section class="border-y border-border bg-card section-padding">
+    <Container>
+      <div class="card-grid md:grid-cols-3">
+        {
+          SECURITY_ACTIONS.map((action, i) => (
+            <FadeIn delay={0.08 * (i + 1)} class="h-full">
+              <a
+                href={action.href}
+                class="flex h-full flex-col rounded-md border border-border bg-background p-5 transition-colors hover:border-accent/40 sm:p-8"
+              >
+                <h2 class="text-card-title text-foreground">{action.title}</h2>
+                <p class="mt-3 copy-md">{action.description}</p>
+                <span class="mt-auto pt-5 text-[13.5px] font-semibold text-accent">
+                  {action.label}
+                </span>
+              </a>
+            </FadeIn>
+          ))
+        }
+      </div>
+    </Container>
+  </section>
+
+  <CtaSection />
+</Layout>

@@ -1,5 +1,5 @@
 ---
-import { ArrowUp, ArrowUpRight, Mail, MapPin, Phone } from "@lucide/astro";
+import { ArrowUp, ArrowUpRight, Mail, MapPin } from "@lucide/astro";
 import Container from "@/components/shared/Container.astro";
 import CognivacLogo from "@/components/shared/CognivacLogo.astro";
 import SocialIcon, {
@@ -81,11 +81,6 @@ const CONTACT = [
     icon: Mail,
     label: SITE_CONFIG.email,
     href: `mailto:${SITE_CONFIG.email}`,
-  },
-  {
-    icon: Phone,
-    label: SITE_CONFIG.phone,
-    href: `tel:${SITE_CONFIG.phone.replace(/\D/g, "")}`,
   },
   { icon: MapPin, label: SITE_CONFIG.address, href: undefined },
 ];

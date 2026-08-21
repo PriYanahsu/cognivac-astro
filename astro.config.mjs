@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import vercel from '@astrojs/vercel';
+import mdx from '@astrojs/mdx';
 import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
@@ -9,11 +10,12 @@ export default defineConfig({
 
   /**
    * Every page is prerendered to static HTML for fast first paint and clean
-   * crawling. Only `/api/contact` opts out (`export const prerender = false`),
-   * which is why an adapter is present at all.
+   * crawling. `/api/contact` and `/api/newsletter` opt out
+   * (`export const prerender = false`), which is why an adapter is present.
    */
   output: 'static',
   adapter: vercel(),
+  integrations: [mdx()],
 
   // Floating Menu/Inspect/Audit bar sits over the page bottom in dev —
   // disable so it doesn't read as a second site banner.

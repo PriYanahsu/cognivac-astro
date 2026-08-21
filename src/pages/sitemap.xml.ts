@@ -1,31 +1,51 @@
 import type { APIRoute } from "astro";
+import { getCollection } from "astro:content";
 import { CASE_STUDIES } from "@/features/home/constants/content";
+import { SERVICE_PAGES } from "@/features/services/constants";
+import { INDUSTRY_PAGES } from "@/features/industries/constants";
+import { RESOURCES } from "@/features/resources/constants";
+import { NAV_ROUTES } from "@/constants/site";
 
-/** Port of app/sitemap.ts — emitted as a static /sitemap.xml at build time. */
 const siteUrl = "https://cognivac.com";
+
 const routes = [
-  "/",
-  "/about",
-  "/team",
-  "/services",
-  "/industries",
-  "/case-studies",
-  "/blog",
-  "/careers",
-  "/contact",
+  NAV_ROUTES.home,
+  NAV_ROUTES.about,
+  NAV_ROUTES.team,
+  NAV_ROUTES.services,
+  NAV_ROUTES.industries,
+  NAV_ROUTES.caseStudies,
+  NAV_ROUTES.blog,
+  NAV_ROUTES.careers,
+  NAV_ROUTES.contact,
+  NAV_ROUTES.security,
+  NAV_ROUTES.pricing,
+  NAV_ROUTES.support,
+  NAV_ROUTES.integrations,
+  NAV_ROUTES.technology,
+  NAV_ROUTES.resources,
+  NAV_ROUTES.privacy,
+  NAV_ROUTES.terms,
+  NAV_ROUTES.cookies,
+  NAV_ROUTES.dpa,
+  NAV_ROUTES.subprocessors,
+  NAV_ROUTES.aiUsage,
+  NAV_ROUTES.accessibility,
 ];
 
-/**
- * Individual study pages are generated from the same array that generates the
- * routes themselves, so a study added to CASE_STUDIES is never left out of the
- * sitemap by hand.
- */
-const studyRoutes = CASE_STUDIES.map((study) => `/case-studies/${study.slug}`);
-
-export const GET: APIRoute = () => {
+export const GET: APIRoute = async () => {
+  const posts = await getCollection("blog");
   const lastModified = new Date().toISOString();
 
-  const urls = [...routes, ...studyRoutes]
+  const extra = [
+    ...CASE_STUDIES.map((study) => `/case-studies/${study.slug}`),
+    ...SERVICE_PAGES.map((page) => `/services/${page.slug}`),
+    ...INDUSTRY_PAGES.map((page) => `/industries/${page.slug}`),
+    ...RESOURCES.map((page) => page.href),
+    ...posts.map((post) => `/blog/${post.id}`),
+  ];
+
+  const urls = [...routes, ...extra]
     .map((path) => {
       const loc = `${siteUrl}${path === "/" ? "" : path}`;
       const changefreq = path === "/" ? "weekly" : "monthly";

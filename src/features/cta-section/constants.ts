@@ -6,7 +6,7 @@ export const CTA_CONTENT = {
   /** Names the cost (30 min) and the return (an opinion) — converts far better than "Contact us". */
   description:
     "A 30-minute technical discussion. No pitch deck. You'll leave with an architecture opinion whether or not we end up working together.",
-  primaryCta: { label: "Book a Consultation", href: NAV_ROUTES.contact },
+  primaryCta: { label: "Book a Consultation", href: `${NAV_ROUTES.contact}#book` },
   secondaryCta: { label: "See how we work", href: NAV_ROUTES.about },
   reassurances: [
     "No sales qualification call first",

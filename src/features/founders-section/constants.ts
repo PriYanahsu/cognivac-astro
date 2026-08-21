@@ -14,8 +14,8 @@ export const FOUNDERS_CONTENT = {
  */
 export const TEAM_STRIP = {
   label: "Behind them",
-  title: "A senior bench, assembled per engagement",
-  description:
-    "Engineers, ML specialists, design, and delivery. No juniors on billable work, and no rotating cast — the pod that starts your build is the pod that finishes it.",
+    title: "A senior pod, assembled per engagement",
+    description:
+      "Engineers, ML specialists, design, and delivery — named on the statement of work, not a rotating bench of stock portraits. No juniors on billable work, and the pod that starts your build is the pod that finishes it.",
   cta: { label: "Meet the team", href: NAV_ROUTES.team },
 } as const;

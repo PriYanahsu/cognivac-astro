@@ -5,4 +5,5 @@ export const industriesMetadata = createPageMetadata({
   description:
     "Cognivac delivers custom software and AI integration for FinTech, Retail, Manufacturing, SaaS, healthcare, logistics, and more — with the domain context each sector requires.",
   path: "/industries",
+  image: "/images/og/industries.png",
 });

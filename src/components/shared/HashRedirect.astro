@@ -1,0 +1,16 @@
+---
+interface Props {
+  map: Record<string, string>;
+}
+
+const { map } = Astro.props;
+---
+
+<script is:inline define:vars={{ map }}>
+  (() => {
+    const hash = window.location.hash.replace(/^#/, "");
+    if (hash && map[hash]) {
+      window.location.replace(map[hash]);
+    }
+  })();
+</script>

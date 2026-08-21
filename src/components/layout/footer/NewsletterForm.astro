@@ -8,7 +8,7 @@ import Input from "@/components/ui/Input.astro";
  */
 ---
 
-<form data-newsletter-form class="space-y-3" novalidate>
+<form data-newsletter-form class="relative space-y-3" novalidate>
   <div>
     <p class="text-eyebrow uppercase tracking-[0.12em] text-white/72">
       Newsletter
@@ -21,6 +21,14 @@ import Input from "@/components/ui/Input.astro";
   <div
     class="flex overflow-hidden rounded-full border border-white/15 bg-white/6 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] focus-within:border-accent/50 focus-within:bg-white/8"
   >
+    <input
+      type="text"
+      name="website"
+      tabindex="-1"
+      autocomplete="off"
+      aria-hidden="true"
+      class="absolute -left-[9999px] h-0 w-0 opacity-0"
+    />
     <Input
       type="email"
       name="email"
@@ -83,12 +91,29 @@ import Input from "@/components/ui/Input.astro";
 
           submitBtn.disabled = true;
           label.textContent = "…";
-          await new Promise((resolve) => setTimeout(resolve, 600));
-          label.textContent = "Subscribe";
-          submitBtn.disabled = false;
 
-          form.reset();
-          success.classList.remove("hidden");
+          try {
+            const res = await fetch("/api/newsletter", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                email: input.value.trim(),
+                website: String(
+                  new FormData(form).get("website") ?? "",
+                ),
+              }),
+            });
+            if (!res.ok) throw new Error("Failed");
+            form.reset();
+            success.classList.remove("hidden");
+          } catch {
+            error.textContent =
+              "Could not subscribe. Email hello@cognivac.com instead.";
+            error.classList.remove("hidden");
+          } finally {
+            label.textContent = "Subscribe";
+            submitBtn.disabled = false;
+          }
         });
       });
   }

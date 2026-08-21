@@ -1,0 +1,23 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import JsonLd from "@/lib/seo/JsonLd.astro";
+import { breadcrumbSchema, createPageMetadata } from "@/lib/seo";
+import LegalDoc from "@/features/legal/LegalDoc.astro";
+import { ACCESSIBILITY } from "@/features/legal/constants";
+
+const metadata = createPageMetadata({
+  title: ACCESSIBILITY.title,
+  description: ACCESSIBILITY.description,
+  path: ACCESSIBILITY.path,
+});
+---
+
+<Layout metadata={metadata}>
+  <JsonLd
+    data={breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: ACCESSIBILITY.title, path: ACCESSIBILITY.path },
+    ])}
+  />
+  <LegalDoc doc={ACCESSIBILITY} />
+</Layout>
